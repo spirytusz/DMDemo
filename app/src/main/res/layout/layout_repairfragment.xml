@@ -1,0 +1,324 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:background="@color/colorWhite"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="@string/Student_ID" />
+
+        <EditText
+            android:id="@+id/repair_edittext_id"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="3"
+            android:background="@null"
+            android:gravity="center"
+            android:hint="@string/Your_Id"
+            android:textColor="@color/colorAccent"
+            android:textSize="12dp" />
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:orientation="horizontal"
+        android:background="@color/colorWhite">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="@string/Student_Name"/>
+
+        <EditText
+            android:id="@+id/repair_edittext_name"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="3"
+            android:hint="@string/Your_Name"
+            android:textSize="12dp"
+            android:textColor="@color/colorAccent"
+            android:gravity="center"
+            android:background="@null"/>
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"/>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:orientation="horizontal"
+        android:background="@color/colorWhite">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="@string/Repair_Area"/>
+
+        <TextView
+            android:id="@+id/repair_select_area"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="3"
+            android:hint="@string/Please_Select"
+            android:textColor="@color/colorAccent"
+            android:textSize="12dp"
+            android:gravity="center" />
+
+        <ImageView
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:src="@drawable/ic_keyboard_arrow_left_black_48dp"/>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:orientation="horizontal"
+        android:background="@color/colorWhite">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="@string/Repair_Place"/>
+
+        <EditText
+            android:id="@+id/repair_edittext_place"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="3"
+            android:hint="@string/Your_Place"
+            android:textSize="12dp"
+            android:textColor="@color/colorAccent"
+            android:gravity="center"
+            android:background="@null"/>
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"/>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:orientation="horizontal"
+        android:background="@color/colorWhite">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="@string/Repair_Category"/>
+
+        <TextView
+            android:id="@+id/repair_select_category"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="3"
+            android:gravity="center"
+            android:textColor="@color/colorAccent"
+            android:hint="@string/Please_Select"
+            android:textSize="12dp" />
+
+        <ImageView
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:src="@drawable/ic_keyboard_arrow_left_black_48dp"/>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:orientation="horizontal"
+        android:background="@color/colorWhite">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="@string/Repair_Detail"/>
+
+        <EditText
+            android:id="@+id/repair_edittext_detail"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="3"
+            android:hint="@string/Your_Detail"
+            android:textSize="12dp"
+            android:textColor="@color/colorAccent"
+            android:gravity="center"
+            android:background="@null"/>
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"/>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:orientation="horizontal"
+        android:background="@color/colorWhite">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="@string/Appointment_Date"/>
+
+        <TextView
+            android:id="@+id/repair_select_date"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="3"
+            android:textColor="@color/colorAccent"
+            android:hint="@string/Please_Select"
+            android:textSize="12dp"
+            android:gravity="center" />
+
+        <ImageView
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:src="@drawable/ic_keyboard_arrow_left_black_48dp"/>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:orientation="horizontal"
+        android:background="@color/colorWhite">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="@string/Appointment_Time"/>
+
+        <TextView
+            android:id="@+id/repair_select_time"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="3"
+            android:textColor="@color/colorAccent"
+            android:hint="@string/Please_Select"
+            android:textSize="12dp"
+            android:gravity="center" />
+
+        <ImageView
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:src="@drawable/ic_keyboard_arrow_left_black_48dp"/>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:orientation="horizontal"
+        android:background="@color/colorWhite">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="@string/Contact_Info"/>
+
+        <EditText
+            android:id="@+id/repair_edittext_contact"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="3"
+            android:hint="@string/Your_Contact"
+            android:textSize="12dp"
+            android:textColor="@color/colorAccent"
+            android:gravity="center"
+            android:background="@null"/>
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"/>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:orientation="horizontal"
+        android:background="@color/colorWhite">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="@string/Photo"/>
+
+        <TextView
+            android:id="@+id/repair_select_photo"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="3"
+            android:hint="@string/Add_Your_Photo"
+            android:textSize="12dp"
+            android:textColor="@color/colorAccent"
+            android:gravity="center" />
+
+        <ImageView
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:src="@drawable/ic_add_a_photo_black_48dp"/>
+
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/button_repair"
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:text="Send"
+        android:textAllCaps="false"/>
+
+</LinearLayout>
