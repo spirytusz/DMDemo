@@ -30,6 +30,7 @@
             android:id="@+id/layout_minfo_lisview_top"
             android:layout_width="match_parent"
             android:layout_height="0dp"
+            android:listSelector="@android:color/transparent"
             android:layout_weight="3"></ListView>
 
         <TextView
@@ -47,6 +48,7 @@
             android:id="@+id/layout_minfo_lisview_bottom"
             android:layout_width="match_parent"
             android:layout_height="0dp"
+            android:listSelector="@android:color/transparent"
             android:layout_weight="2"></ListView>
 
     </LinearLayout>

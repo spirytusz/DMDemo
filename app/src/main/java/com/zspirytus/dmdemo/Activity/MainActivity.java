@@ -1,15 +1,10 @@
 package com.zspirytus.dmdemo.Activity;
 
-import android.Manifest;
 import android.app.Activity;
-import android.content.ComponentName;
-import android.content.ContentValues;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
-import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
@@ -17,16 +12,9 @@ import android.graphics.Matrix;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Environment;
-import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v4.content.ContextCompat;
-import android.support.v4.content.FileProvider;
-import android.support.v7.app.AlertDialog;
-import android.util.Base64;
-import android.util.Log;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -45,10 +33,10 @@ import com.zspirytus.dmdemo.Fragment.Settings;
 import com.zspirytus.dmdemo.Interface.SetMyInfoAvatar;
 import com.zspirytus.dmdemo.Interface.SetUploadPicPath;
 import com.zspirytus.dmdemo.JavaSource.ActivityManager;
+import com.zspirytus.dmdemo.JavaSource.PhotoUtils;
 import com.zspirytus.dmdemo.R;
 import com.zspirytus.dmdemo.Reproduction.CircleImageView;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 
 public class MainActivity extends BaseActivity
@@ -82,13 +70,10 @@ public class MainActivity extends BaseActivity
 
     private String mAccountVaule;
     private File picName;
-    private File cropPicName;
     private Uri picUri;
-    private Uri cropPicUri;
     private boolean isAlbum = false;
     private boolean isRepairPicDir = false;
 
-    private Bitmap bitmap;
     private CircleImageView cimg;
     private TextView repairPicDir;
 
@@ -111,9 +96,9 @@ public class MainActivity extends BaseActivity
         repairPicDir = textView;
         isRepairPicDir = true;
         if(by == BY_CAMERA)
-            applyPermissionForCamera();
+            picUri = PhotoUtils.applyPermissionForCamera(this);
         else if(by == BY_ALBUM)
-            applyPermissionForAlbum();
+            PhotoUtils.applyPermissionForAlbum(this);
     }
 
     private void setStatusBarBackgroundColor() {
@@ -127,19 +112,7 @@ public class MainActivity extends BaseActivity
     public void RestoreAvatar(){
         SharedPreferences pref = getSharedPreferences("data",MODE_PRIVATE);
         if(pref.getBoolean(hasCustomAvatar,false))
-            mAvatar.setImageBitmap(getBitmapbyString(pref.getString(mAvatarKey,"")));
-    }
-
-    public Bitmap getBitmapbyString(String str){
-        Bitmap bitmap = null;
-        try{
-            byte[] bitmapArray;
-            bitmapArray = Base64.decode(str,Base64.DEFAULT);
-            bitmap = BitmapFactory.decodeByteArray(bitmapArray,0,bitmapArray.length);
-        }catch(Exception e){
-            e.printStackTrace();
-        }
-        return bitmap;
+            mAvatar.setImageBitmap(PhotoUtils.getBitmapbyString(pref.getString(mAvatarKey,"")));
     }
 
     private void LoadPane() {
@@ -164,125 +137,6 @@ public class MainActivity extends BaseActivity
         RestoreAvatar();
     }
 
-    public void useCamera(){
-        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        picName = new File(Environment.getExternalStorageDirectory().getAbsolutePath()
-                + "/dmdemo/" + "temp.jpg");
-        picName.getParentFile().mkdirs();
-        picUri = FileProvider.getUriForFile(this, "com.zspirytus.dmdemo.Activity.MainActivity.fileprovider", picName);
-        intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-        intent.putExtra(MediaStore.EXTRA_OUTPUT, picUri);
-        startActivityForResult(intent, REQ_CAMERA);
-    }
-
-    private void selectFromAlbum() {
-        Intent intent = new Intent(Intent.ACTION_PICK);
-        intent.setDataAndType(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, "image/*");
-        startActivityForResult(intent, REQ_ALBUM);
-    }
-
-    private void cropPicture() {
-        cropPicName = new File(Environment.getExternalStorageDirectory().getAbsolutePath()+"/dmdemo/crop.jpg");
-        if(!cropPicName.exists())
-            cropPicName.getParentFile().mkdirs();
-        cropPicUri = Uri.fromFile(cropPicName);
-        Intent intent = new Intent("com.android.camera.action.CROP");
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-        }
-        intent.setDataAndType(picUri, "image/*");
-        intent.putExtra("crop", "true");
-        intent.putExtra("aspectX", 1);
-        intent.putExtra("aspectY", 1);
-        intent.putExtra("scale", true);
-        intent.putExtra("return-data", false);
-        intent.putExtra(MediaStore.EXTRA_OUTPUT, cropPicUri);
-        intent.putExtra("outputFormat",
-                Bitmap.CompressFormat.JPEG.toString());
-        intent.putExtra("noFaceDetection", true);
-        startActivityForResult(intent, REQ_CUT);
-    }
-
-    public String convertIconToString(Bitmap bitmap)
-    {
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();// outputstream
-        bitmap.compress(Bitmap.CompressFormat.PNG, 100, baos);
-        byte[] appicon = baos.toByteArray();// 转为byte数组
-        return Base64.encodeToString(appicon, Base64.DEFAULT);
-
-    }
-
-    public void applyPermissionForCamera(){
-        String[] permissions = {
-                Manifest.permission.CAMERA,
-                Manifest.permission.WRITE_EXTERNAL_STORAGE,
-                Manifest.permission.READ_EXTERNAL_STORAGE
-        };
-        if(ContextCompat.checkSelfPermission(this, permissions[0]) == PackageManager.PERMISSION_GRANTED
-                &&ContextCompat.checkSelfPermission(this, permissions[1]) == PackageManager.PERMISSION_GRANTED
-                &&ContextCompat.checkSelfPermission(this, permissions[2]) == PackageManager.PERMISSION_GRANTED
-                ){
-            useCamera();
-        }else{
-            AlertDialog.Builder dialog = new AlertDialog.Builder(MainActivity.this);
-            dialog.setTitle(getString(R.string.Need_Permission));
-            dialog.setMessage(getString(R.string.The_Application_Need_the_Permission));
-            dialog.setCancelable(false);
-            dialog.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialogInterface, int i) {
-                    String[] permissions = {
-                            Manifest.permission.CAMERA,
-                            Manifest.permission.WRITE_EXTERNAL_STORAGE,
-                            Manifest.permission.READ_EXTERNAL_STORAGE
-                    };
-                    requestPermissions(permissions,REQ_PERMISSION_FOR_CAMERA);
-                }
-            });
-            dialog.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialogInterface, int i) {
-
-                }
-            });
-            dialog.show();
-        }
-    }
-
-    private void applyPermissionForAlbum(){
-        String[] permissions = {
-                Manifest.permission.WRITE_EXTERNAL_STORAGE,
-                Manifest.permission.READ_EXTERNAL_STORAGE
-        };
-        if(ContextCompat.checkSelfPermission(this, permissions[0]) == PackageManager.PERMISSION_GRANTED
-                &&ContextCompat.checkSelfPermission(this, permissions[1]) == PackageManager.PERMISSION_GRANTED
-                ){
-            selectFromAlbum();
-        }else{
-            AlertDialog.Builder dialog = new AlertDialog.Builder(MainActivity.this);
-            dialog.setTitle(getString(R.string.Need_Permission));
-            dialog.setMessage(getString(R.string.The_Application_Need_the_Permission));
-            dialog.setCancelable(false);
-            dialog.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialogInterface, int i) {
-                    String[] permissions = {
-                            Manifest.permission.WRITE_EXTERNAL_STORAGE,
-                            Manifest.permission.READ_EXTERNAL_STORAGE
-                    };
-                    requestPermissions(permissions,REQ_PERMISSION_FOR_ALBUM);
-                }
-            });
-            dialog.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialogInterface, int i) {
-
-                }
-            });
-            dialog.show();
-        }
-    }
-
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
                                            @NonNull int[] grantResults) {
@@ -290,7 +144,7 @@ public class MainActivity extends BaseActivity
         switch(requestCode){
             case REQ_PERMISSION_FOR_CAMERA:
                 if(grantResults[0] == PackageManager.PERMISSION_GRANTED)
-                    useCamera();
+                    picUri = PhotoUtils.useCamera(this);
                 else{
                     // 没有获取到权限，重新请求
                     if(true){
@@ -301,7 +155,7 @@ public class MainActivity extends BaseActivity
                 break;
             case REQ_PERMISSION_FOR_ALBUM:
                 if(grantResults[0] == PackageManager.PERMISSION_GRANTED)
-                    selectFromAlbum();
+                    PhotoUtils.selectFromAlbum(this);
                 else{
                     // 没有获取到权限，重新请求
                     if(true){
@@ -316,9 +170,9 @@ public class MainActivity extends BaseActivity
     @Override
     public void setAvatar(CircleImageView img,int by){
         if(by == BY_CAMERA)
-            applyPermissionForCamera();
+            picUri = PhotoUtils.applyPermissionForCamera(this);
         else if (by == BY_ALBUM){
-            applyPermissionForAlbum();
+            PhotoUtils.applyPermissionForAlbum(this);
             isAlbum = true;
         }
         cimg = img;
@@ -332,28 +186,28 @@ public class MainActivity extends BaseActivity
             switch (requestCode){
                 case REQ_CAMERA:
                     if(isRepairPicDir){
-                        repairPicDir.setText(picName.getAbsolutePath());
+                        repairPicDir.setText(PhotoUtils.picName.getAbsolutePath());
                         break;
                     }
-                    cropPicture();
+                    PhotoUtils.cropPicture(this,picUri);
                     break;
                 case REQ_ALBUM:
                     picUri = data.getData();
-                    cropPicture();
+                    PhotoUtils.cropPicture(this,picUri);
                     break;
                 case REQ_CUT:
-                    Bitmap bitmap = BitmapFactory.decodeFile(cropPicName.getAbsolutePath());
+                    Bitmap bitmap = BitmapFactory.decodeFile(PhotoUtils.cropPicName.getAbsolutePath());
                     SharedPreferences.Editor editor = getSharedPreferences("data",MODE_PRIVATE).edit();
-                    editor.putString(mAvatarKey,convertIconToString(bitmap));
+                    editor.putString(mAvatarKey,PhotoUtils.convertIconToString(bitmap));
                     editor.putBoolean(hasCustomAvatar,true);
                     editor.apply();
                     cimg.setImageBitmap(bitmap);
                     mAvatar.setImageBitmap(bitmap);
                     if(isAlbum)
-                        cropPicName.delete();
+                        PhotoUtils.cropPicName.delete();
                     else{
-                        picName.delete();
-                        cropPicName.delete();
+                        PhotoUtils.picName.delete();
+                        PhotoUtils.cropPicName.delete();
                     }
                     break;
             }

@@ -113,8 +113,4 @@ public class RepairScheduleFragment extends Fragment{
         return result;
     }
 
-    public interface RSFCallBack{
-        public void onItemClick(AdapterView<?> adapterView, View view, int i, long l);
-    }
-
 }

@@ -42,6 +42,7 @@ public class RepairScheduleActivity extends AppCompatActivity {
                 finish();
             }
         });
+        toolbar.setTitle(R.string.Repair);
         ListView listView = (ListView)findViewById(R.id.repairschedule_listview);
         listView.setAdapter(getAdapter());
     }

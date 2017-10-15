@@ -26,6 +26,7 @@
             android:layout_width="match_parent"
             android:layout_height="54dp"
             android:textSize="20dp"
+            android:textColor="@color/colorBlack"
             android:gravity="center" />
 
         <TextView
@@ -33,6 +34,7 @@
             android:layout_width="match_parent"
             android:layout_height="54dp"
             android:textSize="16dp"
+            android:textColor="@color/colorBlack"
             android:gravity="bottom|right" />
 
     </LinearLayout>

@@ -6,7 +6,10 @@ import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -17,19 +20,27 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.SimpleAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.zspirytus.dmdemo.Activity.LoginActivity;
 import com.zspirytus.dmdemo.Activity.RepairScheduleActivity;
 import com.zspirytus.dmdemo.Interface.SetMyInfoAvatar;
+import com.zspirytus.dmdemo.JavaSource.InfoItem;
+import com.zspirytus.dmdemo.JavaSource.PhotoUtils;
+import com.zspirytus.dmdemo.JavaSource.RSFListViewItem;
 import com.zspirytus.dmdemo.R;
 import com.zspirytus.dmdemo.Reproduction.CircleImageView;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static android.content.Context.MODE_PRIVATE;
 
@@ -66,19 +77,73 @@ public class MyInfoFragment extends Fragment{
     public void RestoreEditArea(){
         SharedPreferences pref = getActivity().getSharedPreferences("data",MODE_PRIVATE);
         if(pref.getBoolean(hasCustomAvatar,false))
-            mAvatar.setImageBitmap(getBitmapbyString(pref.getString(mAvatarKey,"")));
+            mAvatar.setImageBitmap(PhotoUtils.getBitmapbyString(pref.getString(mAvatarKey,"")));
     }
 
-    public Bitmap getBitmapbyString(String str){
-        Bitmap bitmap = null;
-        try{
-            byte[] bitmapArray;
-            bitmapArray = Base64.decode(str,Base64.DEFAULT);
-            bitmap = BitmapFactory.decodeByteArray(bitmapArray,0,bitmapArray.length);
-        }catch(Exception e){
-            e.printStackTrace();
+    private SimpleAdapter getAdapter(){
+        List<InfoItem> list = getListViewItemList();
+        List<Map<String,String>> result = getListData(list);
+        SimpleAdapter adapter=new SimpleAdapter(
+                getActivity(),
+                result,
+                R.layout.layout_infolistview_item,
+                new String[]{"rowName","rowElement"},
+                new int[]{R.id.rowname,R.id.rowElement}
+        );
+        /*adapter.setViewBinder(new SimpleAdapter.ViewBinder(){
+            @Override
+            public boolean setViewValue(View view, Object data, String textRepresentation) {
+                if( view instanceof TextView ) {
+                    TextView tv = (TextView) view;
+                    tv.setTextColor(Color.rgb(255, 255, 255));
+                    return true;
+                }
+                return false;
+            }
+        });*/
+        return adapter;
+    }
+
+    /**
+     *
+     * @return 加入了InfoItem的List<InfoItem> list
+     */
+    private List<InfoItem> getListViewItemList(){
+        String[] str = {
+                getString(R.string.Student_Name),
+                getString(R.string.Student_ID),
+                getString(R.string.Student_Department),
+                getString(R.string.Student_Class)
+        };
+        String[] item = new String[str.length];
+        List<InfoItem> list = new ArrayList<InfoItem>();
+        list.clear();
+        InfoItem[] info = new InfoItem[str.length];
+        for(int i=0;i<str.length;i++){
+            info[i] = new InfoItem();
+            info[i].setRowName(str[i]);
+            info[i].setRowElement("default");
+            list.add(info[i]);
         }
-        return bitmap;
+        return list;
+    }
+
+    /**
+     *
+     * @param list    List<InfoItem>
+     * @return        List<Map<String, String>> result
+     */
+    private List<Map<String, String>> getListData(List<InfoItem> list){
+        List<Map<String, String>> result = new ArrayList<Map<String, String>>();
+        for(InfoItem info:list){
+            Map<String, String> map = new HashMap<String, String>();
+            String rowName = info.getRowName();
+            String rowElement = info.getRowElement();
+            map.put("rowName", rowName);
+            map.put("rowElement", rowElement);
+            result.add(map);
+        }
+        return result;
     }
 
     public void LoadPane(View v){
@@ -134,7 +199,7 @@ public class MyInfoFragment extends Fragment{
         mInfo = v.findViewById(R.id.layout_minfo_lisview_top);
         mSchedule = v.findViewById(R.id.layout_minfo_lisview_bottom);
         ArrayAdapter<String> mInfoAdapter = new ArrayAdapter<String>(getActivity(),android.R.layout.simple_list_item_1,mInfoItem);
-        mInfo.setAdapter(mInfoAdapter);
+        mInfo.setAdapter(getAdapter());
         final ArrayAdapter<String> mScheduleAdapter = new ArrayAdapter<String>(getActivity(),android.R.layout.simple_list_item_1,mScheduleList);
         mSchedule.setAdapter(mScheduleAdapter);
         mSchedule.setOnItemClickListener(new AdapterView.OnItemClickListener() {
