@@ -24,11 +24,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.zspirytus.dmdemo.JavaSource.ActivityManager;
-import com.zspirytus.dmdemo.JavaSource.ObtainPermission;
 import com.zspirytus.dmdemo.R;
 
 import java.io.File;
-import java.io.IOException;
 
 public class LoginActivity extends BaseActivity {
 
