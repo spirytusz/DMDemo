@@ -24,6 +24,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.zspirytus.dmdemo.JavaSource.ActivityManager;
+import com.zspirytus.dmdemo.JavaSource.PhotoUtils;
 import com.zspirytus.dmdemo.R;
 
 import java.io.File;
@@ -34,7 +35,6 @@ public class LoginActivity extends BaseActivity {
     private static final String mAccountKey = "Account";
     private static final String mPwdKey = "PassWord";
     private static final String mAvatarKey = "Avatar";
-    private static final String hasCustomAvatar = "CustomAvatar";
     private final Activity activity = this;
 
     private ImageView mAvatar;
@@ -45,20 +45,20 @@ public class LoginActivity extends BaseActivity {
     private Button mButton;
     private TextView mForget;
     private TextView mRegistration;
+    private SharedPreferences pref;
     private String mAccountValue;
     private String mPwdValue;
 
     private boolean isVisible = false;
-    private boolean isDefaultAvatar = false;
-    private boolean isExit;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
         ActivityManager.addActivity(this);
+        pref = getSharedPreferences("data",MODE_PRIVATE);
         LoadPane();
-        isExit = getIntent().getBooleanExtra("isExit",false);
+        RestoreEditArea();
     }
 
     private void LoadPane(){
@@ -80,16 +80,16 @@ public class LoginActivity extends BaseActivity {
 
             @Override
             public void afterTextChanged(Editable editable) {
-                SharedPreferences pref = getSharedPreferences("data",MODE_PRIVATE);
                 String account = pref.getString(mAccountKey,"");
-                Bitmap bitmap = getBitmapbyString(pref.getString(mAvatarKey,""));
                 if(!mAccount.getText().toString().equals(account)){
                     mAvatar.setImageResource(R.drawable.ic_account_circle_black_24dp);
-                    mCheckBox.setChecked(false);
                 }
-                else
-                    if(pref.getBoolean(hasCustomAvatar,false))
+                else if(!account.equals("")){
+                    if(!pref.getString(mAvatarKey,"").equals("")){
+                        Bitmap bitmap = PhotoUtils.getBitmapbyString(pref.getString(mAvatarKey,""));
                         mAvatar.setImageBitmap(bitmap);
+                    }
+                }
             }
         });
         mPwd = (EditText) findViewById(R.id.edittext_pwd);
@@ -121,7 +121,6 @@ public class LoginActivity extends BaseActivity {
                     }else{
                         SharedPreferences.Editor editor = getSharedPreferences("data",MODE_PRIVATE).edit();
                         editor.putBoolean(isRememberKey,false);
-                        editor.putBoolean(hasCustomAvatar,false);
                         editor.apply();
                     }
                     MainActivity.StartThisActivity(activity,mAccountValue);
@@ -160,27 +159,34 @@ public class LoginActivity extends BaseActivity {
             mCheckBox.setChecked(true);
             mAccount.setText(pref.getString(mAccountKey,""));
             mPwd.setText(pref.getString(mPwdKey,""));
-            if(pref.getBoolean(hasCustomAvatar,false)){
-                mAvatar.setImageBitmap(getBitmapbyString(pref.getString(mAvatarKey,"")));
-                isDefaultAvatar = true;
+            if(!pref.getString(mAvatarKey,"").equals("")){
+                Log.d("","prefTest:\t"+!pref.getString(mAvatarKey,"").equals(""));
+                mAvatar.setImageBitmap(PhotoUtils.getBitmapbyString(pref.getString(mAvatarKey,"")));
             }
         }
     }
 
+    public void clear(){
+        SharedPreferences pref = getSharedPreferences("data",MODE_PRIVATE);
+        String oldAccount = pref.getString(mAccountKey,"");
+        String newAccount = mAccount.getText().toString();
+        boolean isNewAccount = !oldAccount.equals(newAccount);
+        Log.d("","oldAccount:\t"+oldAccount);
+        Log.d("","newAccount:\t"+newAccount);
+        Log.d("","isNewAccount:\t"+isNewAccount);
+        if(isNewAccount){
+            pref.edit().clear().commit();
+        }
+    }
+
     public void RememberIt(){
+        clear();
         String account = mAccount.getText().toString();
         String pwd = mPwd.getText().toString();
-        File file = new File("/data/data/"+getPackageName()+"/shared_prefs/data.xml");
-        SharedPreferences pref = getSharedPreferences("data",MODE_PRIVATE);
-        Boolean isNewAcccount = pref.getString(mAccountKey,"").equals(mAccount);
-        if(file.exists()&&!isNewAcccount)
-            file.delete();
         SharedPreferences.Editor editor = getSharedPreferences("data",MODE_PRIVATE).edit();
         editor.putString(mAccountKey,account);
         editor.putString(mPwdKey,pwd);
         editor.putBoolean(isRememberKey,true);
-        editor.putBoolean(hasCustomAvatar,isDefaultAvatar);
-        editor.putString(mAvatarKey,"");
         editor.apply();
     }
 
@@ -189,19 +195,7 @@ public class LoginActivity extends BaseActivity {
     }
 
     public boolean isEmpty(EditText et1,EditText et2){
-        return et1.getText().toString().isEmpty()&&et2.getText().toString().isEmpty();
-    }
-
-    public Bitmap getBitmapbyString(String str){
-        Bitmap bitmap = null;
-        try{
-            byte[] bitmapArray;
-            bitmapArray = Base64.decode(str,Base64.DEFAULT);
-            bitmap = BitmapFactory.decodeByteArray(bitmapArray,0,bitmapArray.length);
-        }catch(Exception e){
-            e.printStackTrace();
-        }
-        return bitmap;
+        return et1.getText().toString().isEmpty()||et2.getText().toString().isEmpty();
     }
 
     public static void StartThisActivity(Context context){

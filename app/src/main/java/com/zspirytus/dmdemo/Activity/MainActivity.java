@@ -15,6 +15,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.util.Log;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -83,7 +84,8 @@ public class MainActivity extends BaseActivity
         setContentView(R.layout.activity_main);
         ActivityManager.addActivity(this);
         LoadPane();
-        setResult(RESULT_OK);
+        RestoreAvatar();
+        //setResult(RESULT_OK);
     }
 
     @Override
@@ -101,18 +103,19 @@ public class MainActivity extends BaseActivity
             PhotoUtils.applyPermissionForAlbum(this);
     }
 
-    private void setStatusBarBackgroundColor() {
+    /*private void setStatusBarBackgroundColor() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             getWindow().getDecorView().setSystemUiVisibility(
                     View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN | View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
             getWindow().setStatusBarColor(Color.TRANSPARENT);
         }
-    }
+    }*/
 
     public void RestoreAvatar(){
         SharedPreferences pref = getSharedPreferences("data",MODE_PRIVATE);
-        if(pref.getBoolean(hasCustomAvatar,false))
-            mAvatar.setImageBitmap(PhotoUtils.getBitmapbyString(pref.getString(mAvatarKey,"")));
+        String avatar = pref.getString(mAvatarKey,"");
+        if(!avatar.equals(""))
+            mAvatar.setImageBitmap(PhotoUtils.getBitmapbyString(avatar));
     }
 
     private void LoadPane() {
@@ -134,7 +137,6 @@ public class MainActivity extends BaseActivity
         mAvatar = headerView.findViewById(R.id.imageView);
         mAvatar.setImageResource(R.drawable.ic_account_circle_black_24dp);
         setDefaultFragment(mFragmentManager);
-        RestoreAvatar();
     }
 
     @Override
@@ -197,10 +199,7 @@ public class MainActivity extends BaseActivity
                     break;
                 case REQ_CUT:
                     Bitmap bitmap = BitmapFactory.decodeFile(PhotoUtils.cropPicName.getAbsolutePath());
-                    SharedPreferences.Editor editor = getSharedPreferences("data",MODE_PRIVATE).edit();
-                    editor.putString(mAvatarKey,PhotoUtils.convertIconToString(bitmap));
-                    editor.putBoolean(hasCustomAvatar,true);
-                    editor.apply();
+                    PhotoUtils.saveAvatar(this,bitmap);
                     cimg.setImageBitmap(bitmap);
                     mAvatar.setImageBitmap(bitmap);
                     if(isAlbum)
@@ -209,6 +208,8 @@ public class MainActivity extends BaseActivity
                         PhotoUtils.picName.delete();
                         PhotoUtils.cropPicName.delete();
                     }
+                    File file = new File("/data/data/"+getPackageName().toString()+"/shared_prefs","data.xml");
+                    Log.d("","File length:\t"+file.length());
                     break;
             }
         }

@@ -2,8 +2,10 @@ package com.zspirytus.dmdemo.JavaSource;
 
 import android.Manifest;
 import android.app.Activity;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -17,6 +19,7 @@ import android.support.v4.content.FileProvider;
 import android.support.v7.app.AlertDialog;
 import android.util.Base64;
 
+import com.zspirytus.dmdemo.Activity.MainActivity;
 import com.zspirytus.dmdemo.R;
 
 import java.io.ByteArrayOutputStream;
@@ -24,6 +27,8 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+
+import static android.content.Context.MODE_PRIVATE;
 
 /**
  * Created by ZSpirytus on 2017/10/15.
@@ -189,5 +194,11 @@ public class PhotoUtils {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    public static void saveAvatar(Context context, Bitmap bitmap){
+        SharedPreferences.Editor editor = context.getSharedPreferences("data",MODE_PRIVATE).edit();
+        editor.putString("Avatar",PhotoUtils.convertIconToString(bitmap));
+        editor.apply();
     }
 }

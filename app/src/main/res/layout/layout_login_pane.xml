@@ -23,6 +23,7 @@
             android:layout_weight="4.5"
             android:background="@null"
             android:maxLines="1"
+            android:digits="@string/rule_password"
             android:gravity="center" />
 
         <View

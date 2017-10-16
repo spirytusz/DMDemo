@@ -4,34 +4,23 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Color;
-import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
-import android.util.Base64;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.zspirytus.dmdemo.Activity.LoginActivity;
 import com.zspirytus.dmdemo.Activity.RepairScheduleActivity;
 import com.zspirytus.dmdemo.Interface.SetMyInfoAvatar;
 import com.zspirytus.dmdemo.JavaSource.InfoItem;
 import com.zspirytus.dmdemo.JavaSource.PhotoUtils;
-import com.zspirytus.dmdemo.JavaSource.RSFListViewItem;
 import com.zspirytus.dmdemo.R;
 import com.zspirytus.dmdemo.Reproduction.CircleImageView;
 
@@ -52,19 +41,18 @@ import static android.content.Context.MODE_PRIVATE;
 public class MyInfoFragment extends Fragment{
 
     private static final String mAvatarKey = "Avatar";
-    private static final String hasCustomAvatar = "CustomAvatar";
 
     private SetMyInfoAvatar setAvatar;
 
     private ListView mInfo;
     private ListView mSchedule;
     private CircleImageView mAvatar;
-    private AppCompatActivity activity;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState){
         View view = inflater.inflate(R.layout.layout_myinfofragment,container,false);
         LoadPane(view);
+        RestoreAvatar();
         return  view;
     }
 
@@ -74,10 +62,11 @@ public class MyInfoFragment extends Fragment{
         setAvatar = (SetMyInfoAvatar)((Activity)context);
     }
 
-    public void RestoreEditArea(){
+    public void RestoreAvatar(){
         SharedPreferences pref = getActivity().getSharedPreferences("data",MODE_PRIVATE);
-        if(pref.getBoolean(hasCustomAvatar,false))
-            mAvatar.setImageBitmap(PhotoUtils.getBitmapbyString(pref.getString(mAvatarKey,"")));
+        String avatar = pref.getString(mAvatarKey,"");
+        if(!avatar.equals(""))
+            mAvatar.setImageBitmap(PhotoUtils.getBitmapbyString(avatar));
     }
 
     private SimpleAdapter getAdapter(){
@@ -90,17 +79,6 @@ public class MyInfoFragment extends Fragment{
                 new String[]{"rowName","rowElement"},
                 new int[]{R.id.rowname,R.id.rowElement}
         );
-        /*adapter.setViewBinder(new SimpleAdapter.ViewBinder(){
-            @Override
-            public boolean setViewValue(View view, Object data, String textRepresentation) {
-                if( view instanceof TextView ) {
-                    TextView tv = (TextView) view;
-                    tv.setTextColor(Color.rgb(255, 255, 255));
-                    return true;
-                }
-                return false;
-            }
-        });*/
         return adapter;
     }
 
@@ -159,9 +137,7 @@ public class MyInfoFragment extends Fragment{
                 getActivity().getString(R.string.Enrollment).toString()
         };
         List<String> mScheduleList = new ArrayList<>(Arrays.asList(mScheduleItem));
-        activity = (AppCompatActivity) getActivity();
         mAvatar = v.findViewById(R.id.mAvatar);
-        RestoreEditArea();
         mAvatar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
