@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
@@ -13,8 +12,6 @@ import android.support.v7.app.ActionBar;
 import android.text.Editable;
 import android.text.InputType;
 import android.text.TextWatcher;
-import android.util.Base64;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
@@ -160,7 +157,6 @@ public class LoginActivity extends BaseActivity {
             mAccount.setText(pref.getString(mAccountKey,""));
             mPwd.setText(pref.getString(mPwdKey,""));
             if(!pref.getString(mAvatarKey,"").equals("")){
-                Log.d("","prefTest:\t"+!pref.getString(mAvatarKey,"").equals(""));
                 mAvatar.setImageBitmap(PhotoUtils.getBitmapbyString(pref.getString(mAvatarKey,"")));
             }
         }
@@ -171,9 +167,6 @@ public class LoginActivity extends BaseActivity {
         String oldAccount = pref.getString(mAccountKey,"");
         String newAccount = mAccount.getText().toString();
         boolean isNewAccount = !oldAccount.equals(newAccount);
-        Log.d("","oldAccount:\t"+oldAccount);
-        Log.d("","newAccount:\t"+newAccount);
-        Log.d("","isNewAccount:\t"+isNewAccount);
         if(isNewAccount){
             pref.edit().clear().commit();
         }

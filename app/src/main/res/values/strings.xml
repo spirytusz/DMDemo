@@ -67,6 +67,7 @@
     <string name="UserPwd">zkw012300</string>
     <string name="Need_Permission">Need Permission</string>
     <string name="The_Application_Need_the_Permission">The Application Need the Permission</string>
+    <string name="Delete_Successfully">Delete Successfully</string>
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>

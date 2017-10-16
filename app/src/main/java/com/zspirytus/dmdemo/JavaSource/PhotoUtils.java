@@ -19,7 +19,6 @@ import android.support.v4.content.FileProvider;
 import android.support.v7.app.AlertDialog;
 import android.util.Base64;
 
-import com.zspirytus.dmdemo.Activity.MainActivity;
 import com.zspirytus.dmdemo.R;
 
 import java.io.ByteArrayOutputStream;
@@ -44,6 +43,11 @@ public class PhotoUtils {
     private static final int REQ_PERMISSION_FOR_CAMERA = 0x10;
     private static final int REQ_PERMISSION_FOR_ALBUM = 0x20;
 
+    /**
+     *
+     * @param activity 调用该方法的活动
+     * @return 权限已赋予，返回照片Uri；权限未赋予，返回null
+     */
     public static Uri applyPermissionForCamera(final Activity activity){
         String[] permissions = {
                 Manifest.permission.CAMERA,
@@ -83,6 +87,10 @@ public class PhotoUtils {
         return null;
     }
 
+    /**
+     *
+     * @param activity 调用该方法的活动
+     */
     public static void applyPermissionForAlbum(final Activity activity){
         String[] permissions = {
                 Manifest.permission.WRITE_EXTERNAL_STORAGE,
@@ -117,6 +125,11 @@ public class PhotoUtils {
         }
     }
 
+    /**
+     *
+     * @param activity 调用该方法的活动
+     * @return 返回拍照所得的照片的Uri
+     */
     public static Uri useCamera(Activity activity){
         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         picName.getParentFile().mkdirs();
@@ -127,12 +140,22 @@ public class PhotoUtils {
         return picUri;
     }
 
+    /**
+     *
+     * @param activity 调用该方法的活动
+     */
     public static void selectFromAlbum(Activity activity) {
         Intent intent = new Intent(Intent.ACTION_PICK);
         intent.setDataAndType(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, "image/*");
         activity.startActivityForResult(intent, REQ_ALBUM);
     }
 
+    /**
+     *
+     * @param activity 调用该方法的活动
+     * @param picUri 需要裁剪的图片的Uri
+     * @return 裁剪所得照片的Uri
+     */
     public static Uri cropPicture(Activity activity,Uri picUri) {
         if(!cropPicName.exists())
             cropPicName.getParentFile().mkdirs();
@@ -155,6 +178,11 @@ public class PhotoUtils {
         return cropPicUri;
     }
 
+    /** String to Bitmap
+     *
+     * @param str 转换成String的图片
+     * @return 图片Bitmap
+     */
     public static Bitmap getBitmapbyString(String str){
         Bitmap bitmap = null;
         try{
@@ -167,6 +195,11 @@ public class PhotoUtils {
         return bitmap;
     }
 
+    /** Bitmap to String
+     *
+     * @param bitmap 需要转String的图片
+     * @return String型的图片
+     */
     public static String convertIconToString(Bitmap bitmap)
     {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -175,6 +208,11 @@ public class PhotoUtils {
         return Base64.encodeToString(appicon, Base64.DEFAULT);
     }
 
+    /** 压缩图片
+     *
+     * @param bitmap 需要压缩的图片
+     * @return 压缩完成的图片
+     */
     public static Bitmap CompressBitmap(Bitmap bitmap){
         Matrix matrix = new Matrix();
         matrix.setScale(0.5f, 0.5f);
@@ -183,6 +221,11 @@ public class PhotoUtils {
         return newBitmap;
     }
 
+    /** 保存Bitmap图片到手机
+     *
+     * @param file 保存路径
+     * @param bm 需要保存的图片
+     */
     public static void saveNewBitmap(File file,Bitmap bm){
         try {
             FileOutputStream out = new FileOutputStream(file);
@@ -196,6 +239,11 @@ public class PhotoUtils {
         }
     }
 
+    /** 保存头像到SharedPreferences
+     *
+     * @param context 上下文
+     * @param bitmap 头像
+     */
     public static void saveAvatar(Context context, Bitmap bitmap){
         SharedPreferences.Editor editor = context.getSharedPreferences("data",MODE_PRIVATE).edit();
         editor.putString("Avatar",PhotoUtils.convertIconToString(bitmap));

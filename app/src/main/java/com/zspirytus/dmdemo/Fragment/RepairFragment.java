@@ -21,6 +21,7 @@ import android.widget.Toast;
 
 import com.zspirytus.dmdemo.Interface.SetMyInfoAvatar;
 import com.zspirytus.dmdemo.Interface.SetUploadPicPath;
+import com.zspirytus.dmdemo.JavaSource.FragmentCollector;
 import com.zspirytus.dmdemo.R;
 
 /**
@@ -61,6 +62,12 @@ public class RepairFragment extends Fragment {
     public void onAttach(Context context){
         super.onAttach(context);
         listener = (SetUploadPicPath)((Activity)context);
+    }
+
+    @Override
+    public void onDestroyView(){
+        FragmentCollector.removeFragment(this);
+        super.onDestroyView();
     }
 
     public void LoadPane(View v){

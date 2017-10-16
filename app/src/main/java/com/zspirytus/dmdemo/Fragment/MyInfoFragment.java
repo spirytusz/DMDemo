@@ -7,7 +7,6 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,12 +18,12 @@ import android.widget.TextView;
 
 import com.zspirytus.dmdemo.Activity.RepairScheduleActivity;
 import com.zspirytus.dmdemo.Interface.SetMyInfoAvatar;
+import com.zspirytus.dmdemo.JavaSource.FragmentCollector;
 import com.zspirytus.dmdemo.JavaSource.InfoItem;
 import com.zspirytus.dmdemo.JavaSource.PhotoUtils;
 import com.zspirytus.dmdemo.R;
 import com.zspirytus.dmdemo.Reproduction.CircleImageView;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -60,6 +59,12 @@ public class MyInfoFragment extends Fragment{
     public void onAttach(Context context){
         super.onAttach(context);
         setAvatar = (SetMyInfoAvatar)((Activity)context);
+    }
+
+    @Override
+    public void onDestroyView(){
+        FragmentCollector.removeFragment(this);
+        super.onDestroyView();
     }
 
     public void RestoreAvatar(){
@@ -100,7 +105,7 @@ public class MyInfoFragment extends Fragment{
         for(int i=0;i<str.length;i++){
             info[i] = new InfoItem();
             info[i].setRowName(str[i]);
-            info[i].setRowElement("default");
+            info[i].setRowElement(item[i]);
             list.add(info[i]);
         }
         return list;
@@ -187,7 +192,6 @@ public class MyInfoFragment extends Fragment{
                         RepairScheduleActivity.StartThisActivity(getActivity());
                         break;
                     case "Enrollment of Leaving School":
-                        Log.d("lkjk","Enrollment of Leaving School");
                         break;
                 }
             }

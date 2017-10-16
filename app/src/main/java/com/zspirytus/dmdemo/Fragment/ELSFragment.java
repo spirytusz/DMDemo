@@ -13,6 +13,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.zspirytus.dmdemo.JavaSource.FragmentCollector;
 import com.zspirytus.dmdemo.R;
 
 
@@ -37,6 +38,12 @@ public class ELSFragment extends Fragment {
         view = inflater.inflate(R.layout.layout_elsfragment,container,false);
         LoadPane(view);
         return view;
+    }
+
+    @Override
+    public void onDestroyView(){
+        FragmentCollector.removeFragment(this);
+        super.onDestroyView();
     }
 
     public void LoadPane(View v){
