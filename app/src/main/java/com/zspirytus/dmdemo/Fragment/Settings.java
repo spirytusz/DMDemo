@@ -53,12 +53,12 @@ public class Settings extends Fragment {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 String text = ((TextView)view).getText().toString();
-                switch (text){
-                    case "Switch Account":
+                switch (i){
+                    case 0:
                         getActivity().finish();
                         LoginActivity.StartThisActivity(getActivity());
                         break;
-                    case "Delete Account Info":
+                    case 1:
                         SharedPreferences pref = getActivity().getSharedPreferences("data", Context.MODE_PRIVATE);
                         pref.edit().clear().commit();
                         Toast.makeText(getActivity(),getString(R.string.Delete_Successfully),Toast.LENGTH_SHORT).show();

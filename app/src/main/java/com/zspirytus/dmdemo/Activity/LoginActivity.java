@@ -32,6 +32,7 @@ public class LoginActivity extends BaseActivity {
     private static final String mAccountKey = "Account";
     private static final String mPwdKey = "PassWord";
     private static final String mAvatarKey = "Avatar";
+    private static final String isExitKey = "isExit";
     private final Activity activity = this;
 
     private ImageView mAvatar;
@@ -50,12 +51,30 @@ public class LoginActivity extends BaseActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        Boolean isExit = getIntent().getBooleanExtra(isExitKey,false);
+        if(!isExit)
+            skip();
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
         ActivityManager.addActivity(this);
         pref = getSharedPreferences("data",MODE_PRIVATE);
         LoadPane();
         RestoreEditArea();
+    }
+
+    private void skip(){
+        SharedPreferences pref = getSharedPreferences("data",MODE_PRIVATE);
+        String account = pref.getString(mAccountKey,"");
+        String pwd = pref.getString(mPwdKey,"");
+        boolean isLegal = check(account,pwd);
+        if(isLegal)
+            MainActivity.StartThisActivity(this,account);
+    }
+
+    private boolean check(String account,String pwd){
+        if(account.equals("")||pwd.equals(""))
+            return false;
+        return  true;
     }
 
     private void LoadPane(){
@@ -193,7 +212,7 @@ public class LoginActivity extends BaseActivity {
 
     public static void StartThisActivity(Context context){
         Intent intent = new Intent(context,LoginActivity.class);
-        intent.putExtra("isExit",true);
+        intent.putExtra(isExitKey,true);
         context.startActivity(intent);
     }
 }

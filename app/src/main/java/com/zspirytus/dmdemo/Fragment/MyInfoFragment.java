@@ -47,6 +47,8 @@ public class MyInfoFragment extends Fragment{
     private ListView mSchedule;
     private CircleImageView mAvatar;
 
+    private String[] item;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState){
         View view = inflater.inflate(R.layout.layout_myinfofragment,container,false);
@@ -98,7 +100,7 @@ public class MyInfoFragment extends Fragment{
                 getString(R.string.Student_Department),
                 getString(R.string.Student_Class)
         };
-        String[] item = new String[str.length];
+        item = new String[str.length];
         List<InfoItem> list = new ArrayList<InfoItem>();
         list.clear();
         InfoItem[] info = new InfoItem[str.length];

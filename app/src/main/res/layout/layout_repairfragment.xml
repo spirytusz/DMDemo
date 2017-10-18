@@ -318,7 +318,7 @@
         android:id="@+id/button_repair"
         android:layout_width="match_parent"
         android:layout_height="56dp"
-        android:text="Send"
+        android:text="@string/Send"
         android:textAllCaps="false"/>
 
 </LinearLayout>

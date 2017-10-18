@@ -53,7 +53,6 @@ public class RepairFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState){
         view = inflater.inflate(R.layout.layout_repairfragment,container,false);
-        Toast.makeText(getActivity(),TAG, Toast.LENGTH_SHORT).show();
         LoadPane(view);
         return view;
     }
