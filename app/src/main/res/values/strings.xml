@@ -69,6 +69,7 @@
     <string name="Need_Permission">需要权限</string>
     <string name="The_Application_Need_the_Permission">应用需要权限</string>
     <string name="Delete_Successfully">删除成功！</string>
+    <string name="Back_late">夜归处理</string>
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>

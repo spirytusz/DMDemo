@@ -5,7 +5,9 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,7 +17,6 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.zspirytus.dmdemo.Activity.RepairScheduleActivity;
 import com.zspirytus.dmdemo.Interface.SetMyInfoAvatar;
@@ -24,11 +25,6 @@ import com.zspirytus.dmdemo.JavaSource.InfoItem;
 import com.zspirytus.dmdemo.JavaSource.PhotoUtils;
 import com.zspirytus.dmdemo.R;
 import com.zspirytus.dmdemo.Reproduction.CircleImageView;
-
-import org.ksoap2.SoapEnvelope;
-import org.ksoap2.serialization.SoapObject;
-import org.ksoap2.serialization.SoapSerializationEnvelope;
-import org.ksoap2.transport.HttpTransportSE;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -46,6 +42,7 @@ import static android.content.Context.MODE_PRIVATE;
 public class MyInfoFragment extends Fragment{
 
     private static final String mAvatarKey = "Avatar";
+    private static final String FRAGMENT_HIDDEN_STATUS = "FRAGMENT_HIDDEN_STATUS";
 
     private SetMyInfoAvatar setAvatar;
 
@@ -54,6 +51,26 @@ public class MyInfoFragment extends Fragment{
     private CircleImageView mAvatar;
 
     private String[] item;
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        if (savedInstanceState != null) {
+            boolean isSupportHidden = savedInstanceState.getBoolean(FRAGMENT_HIDDEN_STATUS);
+            FragmentTransaction ft = getFragmentManager().beginTransaction();
+            if (isSupportHidden) {
+                ft.hide(this);
+            } else {
+                ft.show(this);
+            }
+            ft.commit();
+        }
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState){
+        outState.putBoolean(FRAGMENT_HIDDEN_STATUS,isHidden());
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState){
@@ -147,7 +164,8 @@ public class MyInfoFragment extends Fragment{
         List<String> mInfoList = new ArrayList<>(Arrays.asList(mInfoItem));
         String[] mScheduleItem = {
                 getActivity().getString(R.string.Repair).toString(),
-                getActivity().getString(R.string.Enrollment).toString()
+                getActivity().getString(R.string.Enrollment).toString(),
+                getString(R.string.Back_late).toString()
         };
         List<String> mScheduleList = new ArrayList<>(Arrays.asList(mScheduleItem));
         mAvatar = v.findViewById(R.id.mAvatar);

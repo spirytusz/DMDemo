@@ -3,7 +3,9 @@ package com.zspirytus.dmdemo.Fragment;
 import android.app.DatePickerDialog;
 import android.icu.util.Calendar;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,14 +26,28 @@ import com.zspirytus.dmdemo.R;
 public class ELSFragment extends Fragment {
 
     private static final String TAG = "ELSchool";
+    private static final String FRAGMENT_HIDDEN_STATUS = "FRAGMENT_HIDDEN_STATUS";
 
     private View view;
-    private EditText mStudentId;
-    private EditText mStudentName;
     private TextView mStartTime;
     private TextView mEndTime;
     private EditText mReason;
     private Button mElsButton;
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        if (savedInstanceState != null) {
+            boolean isSupportHidden = savedInstanceState.getBoolean(FRAGMENT_HIDDEN_STATUS);
+            FragmentTransaction ft = getFragmentManager().beginTransaction();
+            if (isSupportHidden) {
+                ft.hide(this);
+            } else {
+                ft.show(this);
+            }
+            ft.commit();
+        }
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState){
@@ -41,14 +57,17 @@ public class ELSFragment extends Fragment {
     }
 
     @Override
+    public void onSaveInstanceState(Bundle outState){
+        outState.putBoolean(FRAGMENT_HIDDEN_STATUS,isHidden());
+    }
+
+    @Override
     public void onDestroyView(){
         FragmentCollector.removeFragment(this);
         super.onDestroyView();
     }
 
     public void LoadPane(View v){
-        mStudentId = v.findViewById(R.id.edittext_studId);
-        mStudentName = v.findViewById(R.id.edittext_studName);
         mStartTime = v.findViewById(R.id.els_start_time);
         mStartTime.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -105,12 +124,12 @@ public class ELSFragment extends Fragment {
         mElsButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                SendMessage(mStudentId.getText().toString(),mStudentName.getText().toString(),mStartTime.getText().toString(),mEndTime.getText().toString());
+                SendMessage(mStartTime.getText().toString(),mEndTime.getText().toString());
             }
         });
     }
 
-    public void SendMessage(String stdID,String stdName,String start,String end){
-        Toast.makeText(getActivity(),stdID+"\n"+stdName+"\n"+start+"\n"+end,Toast.LENGTH_SHORT).show();
+    public void SendMessage(String start,String end){
+        Toast.makeText(getActivity(),start+"\n"+end,Toast.LENGTH_SHORT).show();
     }
 }

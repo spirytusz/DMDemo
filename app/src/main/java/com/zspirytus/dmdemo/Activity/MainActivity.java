@@ -42,7 +42,7 @@ public class MainActivity extends BaseActivity
         implements
         NavigationView.OnNavigationItemSelectedListener,
         SetMyInfoAvatar,
-        SetUploadPicPath{
+        SetUploadPicPath {
 
     private static final String TAG = "MainActivity";
     private static final String mAccountKey = "Account";
@@ -82,21 +82,21 @@ public class MainActivity extends BaseActivity
         ActivityManager.addActivity(this);
         LoadPane();
         RestoreAvatar();
-        //setResult(RESULT_OK);
+
     }
 
     @Override
-    public void onResume(){
+    public void onResume() {
         super.onResume();
     }
 
     @Override
-    public void setUploadPicPath(TextView textView,int by){
+    public void setUploadPicPath(TextView textView, int by) {
         repairPicDir = textView;
         isRepairPicDir = true;
-        if(by == BY_CAMERA)
+        if (by == BY_CAMERA)
             picUri = PhotoUtils.applyPermissionForCamera(this);
-        else if(by == BY_ALBUM)
+        else if (by == BY_ALBUM)
             PhotoUtils.applyPermissionForAlbum(this);
     }
 
@@ -108,10 +108,10 @@ public class MainActivity extends BaseActivity
         }
     }*/
 
-    public void RestoreAvatar(){
-        SharedPreferences pref = getSharedPreferences("data",MODE_PRIVATE);
-        String avatar = pref.getString(mAvatarKey,"");
-        if(!avatar.equals(""))
+    public void RestoreAvatar() {
+        SharedPreferences pref = getSharedPreferences("data", MODE_PRIVATE);
+        String avatar = pref.getString(mAvatarKey, "");
+        if (!avatar.equals(""))
             mAvatar.setImageBitmap(PhotoUtils.getBitmapbyString(avatar));
     }
 
@@ -141,24 +141,24 @@ public class MainActivity extends BaseActivity
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
                                            @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        switch(requestCode){
+        switch (requestCode) {
             case REQ_PERMISSION_FOR_CAMERA:
-                if(grantResults[0] == PackageManager.PERMISSION_GRANTED)
+                if (grantResults[0] == PackageManager.PERMISSION_GRANTED)
                     picUri = PhotoUtils.useCamera(this);
-                else{
+                else {
                     // 没有获取到权限，重新请求
-                    if(true){
+                    if (true) {
 
                     }
                     Toast.makeText(this, "需要存储权限", Toast.LENGTH_SHORT).show();
                 }
                 break;
             case REQ_PERMISSION_FOR_ALBUM:
-                if(grantResults[0] == PackageManager.PERMISSION_GRANTED)
+                if (grantResults[0] == PackageManager.PERMISSION_GRANTED)
                     PhotoUtils.selectFromAlbum(this);
-                else{
+                else {
                     // 没有获取到权限，重新请求
-                    if(true){
+                    if (true) {
 
                     }
                     Toast.makeText(this, "需要存储权限", Toast.LENGTH_SHORT).show();
@@ -168,10 +168,10 @@ public class MainActivity extends BaseActivity
     }
 
     @Override
-    public void setAvatar(CircleImageView img,int by){
-        if(by == BY_CAMERA)
+    public void setAvatar(CircleImageView img, int by) {
+        if (by == BY_CAMERA)
             picUri = PhotoUtils.applyPermissionForCamera(this);
-        else if (by == BY_ALBUM){
+        else if (by == BY_ALBUM) {
             PhotoUtils.applyPermissionForAlbum(this);
             isAlbum = true;
         }
@@ -181,30 +181,29 @@ public class MainActivity extends BaseActivity
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if(resultCode == RESULT_OK)
-        {
-            switch (requestCode){
+        if (resultCode == RESULT_OK) {
+            switch (requestCode) {
                 case REQ_CAMERA:
-                    if(isRepairPicDir){
+                    if (isRepairPicDir) {
                         repairPicDir.setText(PhotoUtils.picName.getAbsolutePath());
                         break;
                     }
-                    PhotoUtils.cropPicture(this,picUri);
+                    PhotoUtils.cropPicture(this, picUri);
                     break;
                 case REQ_ALBUM:
                     picUri = data.getData();
-                    PhotoUtils.cropPicture(this,picUri);
+                    PhotoUtils.cropPicture(this, picUri);
                     break;
                 case REQ_CUT:
                     Bitmap bitmap = BitmapFactory.decodeFile(PhotoUtils.cropPicName.getAbsolutePath());
                     String a = PhotoUtils.convertIconToString(bitmap);
-                    Log.d("15","TestBase64\n"+a);
-                    PhotoUtils.saveAvatar(this,bitmap);
+                    Log.d("15", "TestBase64\n" + a);
+                    PhotoUtils.saveAvatar(this, bitmap);
                     cimg.setImageBitmap(bitmap);
                     mAvatar.setImageBitmap(bitmap);
-                    if(isAlbum)
+                    if (isAlbum)
                         PhotoUtils.cropPicName.delete();
-                    else{
+                    else {
                         PhotoUtils.picName.delete();
                         PhotoUtils.cropPicName.delete();
                     }
@@ -214,13 +213,12 @@ public class MainActivity extends BaseActivity
     }
 
 
-
     @Override
     public void onBackPressed() {
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
-        }else{
+        } else {
             super.onBackPressed();
         }
     }
