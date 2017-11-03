@@ -13,6 +13,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.util.Log;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -196,6 +197,8 @@ public class MainActivity extends BaseActivity
                     break;
                 case REQ_CUT:
                     Bitmap bitmap = BitmapFactory.decodeFile(PhotoUtils.cropPicName.getAbsolutePath());
+                    String a = PhotoUtils.convertIconToString(bitmap);
+                    Log.d("15","TestBase64\n"+a);
                     PhotoUtils.saveAvatar(this,bitmap);
                     cimg.setImageBitmap(bitmap);
                     mAvatar.setImageBitmap(bitmap);
