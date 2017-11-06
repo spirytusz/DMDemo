@@ -33,6 +33,7 @@ import com.zspirytus.dmdemo.Interface.SetUploadPicPath;
 import com.zspirytus.dmdemo.JavaSource.ActivityManager;
 import com.zspirytus.dmdemo.JavaSource.FragmentCollector;
 import com.zspirytus.dmdemo.JavaSource.PhotoUtils;
+import com.zspirytus.dmdemo.JavaSource.WebServiceUtils.WebServiceConnector;
 import com.zspirytus.dmdemo.R;
 import com.zspirytus.dmdemo.Reproduction.CircleImageView;
 
@@ -82,7 +83,6 @@ public class MainActivity extends BaseActivity
         ActivityManager.addActivity(this);
         LoadPane();
         RestoreAvatar();
-
     }
 
     @Override

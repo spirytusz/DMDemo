@@ -25,6 +25,7 @@ import com.zspirytus.dmdemo.JavaSource.InfoItem;
 import com.zspirytus.dmdemo.JavaSource.PhotoUtils;
 import com.zspirytus.dmdemo.R;
 import com.zspirytus.dmdemo.Reproduction.CircleImageView;
+import com.zspirytus.dmdemo.JavaSource.WebServiceUtils.*;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -124,6 +125,8 @@ public class MyInfoFragment extends Fragment{
                 getString(R.string.Student_Class)
         };
         item = new String[str.length];
+        GetStudentBasicInfoBySno gs = new GetStudentBasicInfoBySno();
+        gs.execute("15251102203");
         List<InfoItem> list = new ArrayList<InfoItem>();
         list.clear();
         InfoItem[] info = new InfoItem[str.length];
