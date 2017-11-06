@@ -17,26 +17,19 @@ public class WebServiceConnector {
     private static final String WSDL_URI = "http://39.108.113.13/DMS.asmx?wsdl";
     private static final String NAMESPACE = "http://zspirytus.org/";
     private static final String METHOD_GETBASICINFOBYSNO = "getBasicInfoBySno";
+    public static final String METHOD_GETSTUDENTBASICINFO = "getStudentBasicInfo";
+    public static final String METHOD_REG = "Reg";
     public static final String PARAM_SNO = "sno";
-    private static final String SOAPACTION = NAMESPACE + METHOD_GETBASICINFOBYSNO;
 
-    private static final String SOAP_HEADER =
-            "<?xml version=\"1.0\" encoding=\"utf-8\"?>   \n" +
-            "<soap12:Envelope xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"   \n" +
-            "  xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\"   \n" +
-            "  xmlns:soap12=\"http://www.w3.org/2003/05/soap-envelope\">   \n" +
-            "  <soap12:Body>";
+    private static final String SOAP_HEADER = "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n" +
+            "<soap12:Envelope xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:soap12=\"http://www.w3.org/2003/05/soap-envelope\">\n" +
+            "  <soap12:Body>\n";
     private static final String SOAP_END=
-            "  </soap12:Body>   \n" +
+            "\n  </soap12:Body>   \n" +
             "</soap12:Envelope>  ";
 
-    public static InputStream getBasicInfoBySno(ArrayList<String> paramType,ArrayList<String> param) {
-        /*String m = "<" + METHOD_GETBASICINFOBYSNO +" xmlns=\"" + NAMESPACE + "\"> ";
-        String t = "<" + paramType + ">" + param + "</" + paramType + "> ";
-        m = m + t;
-        m = m + "</"+ METHOD_GETBASICINFOBYSNO + ">";
-        String request = SOAP_HEADER + m  + SOAP_END;*/
-        String request = getRequset(METHOD_GETBASICINFOBYSNO,paramType,param);
+    public static InputStream executingMethod(String methodName, ArrayList<String> paramType,ArrayList<String> param) {
+        String request = getRequset(methodName, paramType,param);
         try{
             URL url = new URL(WSDL_URI);
             HttpURLConnection con = (HttpURLConnection) url.openConnection();
@@ -47,7 +40,7 @@ public class WebServiceConnector {
             con.setConnectTimeout (6000); // 设置超时时间
             con.setRequestMethod ("POST"); //指定发送方法名，包括Post和Get。
             con.setRequestProperty ("Content-Type", "text/xml;charset=utf-8"); //设置（发送的）内容类型
-            con.setRequestProperty ("SOAPAction", SOAPACTION); //指定soapAction
+            con.setRequestProperty ("SOAPAction", NAMESPACE + methodName); //指定soapAction
             con.setRequestProperty ("Content-Length", "" + bytes.length); //指定内容长度
 
             //发送数据
@@ -65,10 +58,15 @@ public class WebServiceConnector {
     }
 
     private static String getRequset(String methodName,ArrayList<String> paramType,ArrayList<String> params){
-        String command = "<" + methodName +" xmlns=\"" + NAMESPACE + "\"> ";
-        for(int i = 0;i<params.size();i++)
-            command = command + "<" + paramType.get(i) + ">" + params.get(i) + "</" + paramType.get(i) + "> ";
-        command = command + "</"+ methodName + ">";
+        String command;
+        if(paramType.size() != 0 && params.size() != 0){
+            command = "\t\t<" + methodName +" xmlns=\"" + NAMESPACE + "\"> \n";
+            for(int i = 0;i<=params.size();i++)
+                command = command + "\t<" + paramType.get(i) + ">" + params.get(i) + "</" + paramType.get(i) + "> \n";
+            command = command + "</"+ methodName + ">";
+        }
+        else
+            command = "\t<" + methodName +" xmlns=\"" + NAMESPACE + "\"/> ";
         return SOAP_HEADER + command + SOAP_END;
     }
 
