@@ -1,7 +1,5 @@
 package com.zspirytus.dmdemo.JavaSource.WebServiceUtils;
 
-import android.util.Log;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -19,21 +17,38 @@ import java.util.regex.Pattern;
 
 public class WebServiceConnector {
 
+    public static final String METHOD_GETBASICINFOBYSNO = "getBasicInfoBySno";
+    public static final String METHOD_GETREPAIRBASICINFOBYSNO = "getRepairBasicInfoBySno ";
+    public static final String METHOD_GETRETURNLATELYBASICINFO = "getReturnLatelyBasicInfo";
+    public static final String METHOD_GETSLSBASICINFO = "getSLSBasicInfo";
+    public static final String METHOD_NEWREPAIRREPORT = "newRepairReport";
+    public static final String METHOD_NEWRETURNLATELY = "newReturnLately";
+    public static final String METHOD_NEWSTUDENTLEAVINGSCHOOL = "newStudentLeavingSchool";
+    public static final String METHOD_REGISTERACCOUNT = "registerAccount";
+    public static final String METHOD_UPDATEAVATAR = "updateAvatar";
+
+    public static final String PARAMTYPE_SNO = "Sno";
+    public static final String PARAMTYPE_ACCOUNT = "account";
+    public static final String PARAMTYPE_PWD = "pwd";
+    public static final String PARAMTYPE_LEAVEDATE = "leaveDate";
+    public static final String PARAMTYPE_BACKDATE = "backDate";
+    public static final String PARAMTYPE_REASON = "reason";
+    public static final String PARAMTYPE_REPAIRNO = "repairNo";
+    public static final String PARAMTYPE_REPAIRAREA = "repairArea";
+    public static final String PARAMTYPE_REPAIRPLACE = "repairPlace";
+    public static final String PARAMTYPE_REPAIRTYPE = "repairType";
+    public static final String PARAMTYPE_DETAIL = "detail";
+    public static final String PARAMTYPE_CONTACT = "contact";
+    public static final String PARAMTYPE_PHOTO = "photo";
+    public static final String PARAMTYPE_RNO = "Rno";
+    public static final String PARAMTYPE_RETURNTIME= "returnTime";
+
+    private static final String RESULT = "Result";
     private static final String TAG = "WebServiceConnector";
     private static final String WSDL_URI = "http://39.108.113.13/DMS.asmx?wsdl";
     private static final String NAMESPACE = "http://zspirytus.org/";
-    public static final String METHOD_GETBASICINFOBYSNO = "getBasicInfoBySno";
-    public static final String METHOD_GETSTUDENTBASICINFO = "getStudentBasicInfoResponse";
-    public static final String METHOD_REG = "Reg";
-    public static final String PARAM_SNO = "sno";
-
-    private static final String SOAP_HEADER = "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n" +
-            "<soap12:Envelope xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:soap12=\"http://www.w3.org/2003/05/soap-envelope\">\n" +
-            "  <soap12:Body>\n";
-    private static final String SOAP_END=
-            "\n  </soap12:Body>   \n" +
-            "</soap12:Envelope>  ";
-    private static final String RESULT = "Result";
+    private static final String RESPONSETYPE_STRING = "string";
+    private static final String RESPONSETYPE_BOOLEAN = "boolean";
 
     /**  发送SOAP请求信息
      *
@@ -64,8 +79,7 @@ public class WebServiceConnector {
             outStream.close();
             //获取数据
             InputStream inputStream = con.getInputStream();
-            Log.d(TAG,"Exception Test");
-            return getResult(inputStream,"string");
+            return getResult(inputStream,RESPONSETYPE_STRING);
         }catch (IOException e){
             return  null;
         }
@@ -80,6 +94,12 @@ public class WebServiceConnector {
      */
     private static String getRequset(String methodName,ArrayList<String> paramType,ArrayList<String> params){
         String command;
+        final String SOAP_HEADER = "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n" +
+                "<soap12:Envelope xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:soap12=\"http://www.w3.org/2003/05/soap-envelope\">\n" +
+                "  <soap12:Body>\n";
+        final String SOAP_END=
+                "\n  </soap12:Body>   \n" +
+                        "</soap12:Envelope>  ";
         if(paramType != null && params != null){
             command = "\t\t<" + methodName +" xmlns=\"" + NAMESPACE + "\"> \n";
             for(int i = 0;i<paramType.size();i++)
@@ -88,7 +108,6 @@ public class WebServiceConnector {
         }
         else
             command = "\t<" + methodName +" xmlns=\"" + NAMESPACE + "\"/> ";
-        Log.d(TAG,"SOAP request1:\n"+SOAP_HEADER + command + SOAP_END);
         return SOAP_HEADER + command + SOAP_END;
     }
 
@@ -116,7 +135,7 @@ public class WebServiceConnector {
                 e.printStackTrace();
             }
         }
-        Pattern forChar = Pattern.compile("<\"+responseType+\">(\\w+)</"+responseType+">");
+        Pattern forChar = Pattern.compile("<"+responseType+">(\\w+)</"+responseType+">");
         Matcher m = forChar.matcher(str.toString());
         String[] temp = {"","","",""};
         for(int i = 0;i < 3 && m.find();i++){
