@@ -9,6 +9,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.FragmentManager;
@@ -30,14 +31,19 @@ import com.zspirytus.dmdemo.Fragment.RepairFragment;
 import com.zspirytus.dmdemo.Fragment.Settings;
 import com.zspirytus.dmdemo.Interface.SetMyInfoAvatar;
 import com.zspirytus.dmdemo.Interface.SetUploadPicPath;
+import com.zspirytus.dmdemo.Interface.getStudentBasicInfoResponse;
 import com.zspirytus.dmdemo.JavaSource.ActivityManager;
 import com.zspirytus.dmdemo.JavaSource.FragmentCollector;
 import com.zspirytus.dmdemo.JavaSource.PhotoUtils;
+import com.zspirytus.dmdemo.JavaSource.WebServiceUtils.GetStudentBasicInfoBySno;
 import com.zspirytus.dmdemo.JavaSource.WebServiceUtils.WebServiceConnector;
 import com.zspirytus.dmdemo.R;
 import com.zspirytus.dmdemo.Reproduction.CircleImageView;
 
 import java.io.File;
+import java.util.ArrayList;
+
+import static com.zspirytus.dmdemo.Fragment.MyInfoFragment.GetThisFragment;
 
 public class MainActivity extends BaseActivity
         implements
@@ -76,6 +82,7 @@ public class MainActivity extends BaseActivity
     private CircleImageView cimg;
     private TextView repairPicDir;
 
+    private ArrayList<String> inform;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -83,6 +90,21 @@ public class MainActivity extends BaseActivity
         ActivityManager.addActivity(this);
         LoadPane();
         RestoreAvatar();
+        getInform("Sno","15251102203");
+    }
+
+    private void getInform(String paramType,String param){
+        getStudentBasicInfoBySno gs = new getStudentBasicInfoBySno();
+        gs.setListener(new getStudentBasicInfoResponse() {
+            @Override
+            public void getResult(ArrayList<String> result) {
+                Log.d(TAG,"lists Tests:\t"+result.size());
+                for(int i = 0;i<result.size();i++)
+                    Log.d(TAG,"lists Tests:\t"+result.get(i));
+                setDefaultFragment(mFragmentManager,result);
+            }
+        });
+        gs.execute(paramType,param);
     }
 
     @Override
@@ -134,7 +156,6 @@ public class MainActivity extends BaseActivity
         account.setText(mAccountVaule);
         mAvatar = headerView.findViewById(R.id.imageView);
         mAvatar.setImageResource(R.drawable.ic_account_circle_black_24dp);
-        setDefaultFragment(mFragmentManager);
     }
 
     @Override
@@ -272,8 +293,8 @@ public class MainActivity extends BaseActivity
         return true;
     }
 
-    public void setDefaultFragment(FragmentManager fm) {
-        mMInfoFragment = new MyInfoFragment();
+    public void setDefaultFragment(FragmentManager fm,ArrayList<String> strList) {
+        mMInfoFragment = GetThisFragment(strList);
         FragmentCollector.addFragment(mMInfoFragment);
         fm.beginTransaction().add(R.id.fragment_container, mMInfoFragment).show(mMInfoFragment).commit();
     }
@@ -283,6 +304,34 @@ public class MainActivity extends BaseActivity
         intent.putExtra(mAccountKey, account);
         ((Activity) context).finish();
         context.startActivity(intent);
+    }
+
+    class getStudentBasicInfoBySno extends AsyncTask<String, Integer, ArrayList<String>> {
+
+        private static final String TAG = "getStudentBasicInfoBySn";
+
+        public getStudentBasicInfoResponse response;
+
+        public void setListener(getStudentBasicInfoResponse response){
+            this.response = response;
+        }
+
+        @Override
+        protected ArrayList<String> doInBackground(String... params) {
+            ArrayList<String> paramType = new ArrayList<String>();
+            ArrayList<String> param = new ArrayList<String>();
+            paramType.clear();
+            param.clear();
+            paramType.add(params[0]);
+            param.add(params[1]);
+            return WebServiceConnector.executingMethod(WebServiceConnector.METHOD_GETBASICINFOBYSNO, paramType,param);
+        }
+
+        @Override
+        protected void onPostExecute(ArrayList<String> result) {
+            Log.d(TAG,"onPostExecute!!!");
+            response.getResult(result);
+        }
     }
 
 }

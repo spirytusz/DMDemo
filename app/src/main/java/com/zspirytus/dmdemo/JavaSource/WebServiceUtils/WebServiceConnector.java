@@ -1,11 +1,17 @@
 package com.zspirytus.dmdemo.JavaSource.WebServiceUtils;
 
+import android.util.Log;
+
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Created by ZSpirytus on 2017/11/3.
@@ -16,8 +22,8 @@ public class WebServiceConnector {
     private static final String TAG = "WebServiceConnector";
     private static final String WSDL_URI = "http://39.108.113.13/DMS.asmx?wsdl";
     private static final String NAMESPACE = "http://zspirytus.org/";
-    private static final String METHOD_GETBASICINFOBYSNO = "getBasicInfoBySno";
-    public static final String METHOD_GETSTUDENTBASICINFO = "getStudentBasicInfo";
+    public static final String METHOD_GETBASICINFOBYSNO = "getBasicInfoBySno";
+    public static final String METHOD_GETSTUDENTBASICINFO = "getStudentBasicInfoResponse";
     public static final String METHOD_REG = "Reg";
     public static final String PARAM_SNO = "sno";
 
@@ -27,8 +33,16 @@ public class WebServiceConnector {
     private static final String SOAP_END=
             "\n  </soap12:Body>   \n" +
             "</soap12:Envelope>  ";
+    private static final String RESULT = "Result";
 
-    public static InputStream executingMethod(String methodName, ArrayList<String> paramType,ArrayList<String> param) {
+    /**  发送SOAP请求信息
+     *
+     * @param methodName  方法名
+     * @param paramType   方法参数名
+     * @param param        方法参数值
+     * @return              封装在ArrayList中的结果
+     */
+    public static ArrayList<String> executingMethod(String methodName, ArrayList<String> paramType,ArrayList<String> param) {
         String request = getRequset(methodName, paramType,param);
         try{
             URL url = new URL(WSDL_URI);
@@ -48,26 +62,73 @@ public class WebServiceConnector {
             outStream.write (bytes);
             outStream.flush();
             outStream.close();
-
             //获取数据
             InputStream inputStream = con.getInputStream();
-            return inputStream;
+            Log.d(TAG,"Exception Test");
+            return getResult(inputStream,"string");
         }catch (IOException e){
             return  null;
         }
     }
 
+    /**  生成SOAP请求信息
+     *
+     * @param methodName  方法名
+     * @param paramType   方法参数名
+     * @param params       方法参数值
+     * @return              SOAP请求信息
+     */
     private static String getRequset(String methodName,ArrayList<String> paramType,ArrayList<String> params){
         String command;
-        if(paramType.size() != 0 && params.size() != 0){
+        if(paramType != null && params != null){
             command = "\t\t<" + methodName +" xmlns=\"" + NAMESPACE + "\"> \n";
-            for(int i = 0;i<=params.size();i++)
+            for(int i = 0;i<paramType.size();i++)
                 command = command + "\t<" + paramType.get(i) + ">" + params.get(i) + "</" + paramType.get(i) + "> \n";
             command = command + "</"+ methodName + ">";
         }
         else
             command = "\t<" + methodName +" xmlns=\"" + NAMESPACE + "\"/> ";
+        Log.d(TAG,"SOAP request1:\n"+SOAP_HEADER + command + SOAP_END);
         return SOAP_HEADER + command + SOAP_END;
+    }
+
+    /** 解析SOAP响应信息
+     *
+     * @param is 通过InputStream 封装的SOAP响应信息
+     * @return   查询或修改结果
+     */
+    private static ArrayList<String> getResult(InputStream is,String responseType){
+        ArrayList<String> list = new ArrayList<String>();
+        list.clear();
+        BufferedReader reader = new BufferedReader(new InputStreamReader(is));
+        StringBuilder str = new StringBuilder();
+        String line = null;
+        try {
+            while ((line = reader.readLine()) != null) {
+                str.append(line + "\n");
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                is.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        Pattern forChar = Pattern.compile("<\"+responseType+\">(\\w+)</"+responseType+">");
+        Matcher m = forChar.matcher(str.toString());
+        String[] temp = {"","","",""};
+        for(int i = 0;i < 3 && m.find();i++){
+            temp[i] = m.group(1);
+        }
+        while(m.find()){
+            temp[3] = temp[3] + m.group(1);
+        }
+        temp[3] = temp[3] + "班";
+        for(int i = 0;i<4;i++)
+            list.add(temp[i]);
+        return list;
     }
 
 }

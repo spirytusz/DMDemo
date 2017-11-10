@@ -4,11 +4,13 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AlertDialog;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -27,11 +29,13 @@ import com.zspirytus.dmdemo.R;
 import com.zspirytus.dmdemo.Reproduction.CircleImageView;
 import com.zspirytus.dmdemo.JavaSource.WebServiceUtils.*;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import static android.content.Context.MODE_PRIVATE;
 
@@ -52,6 +56,15 @@ public class MyInfoFragment extends Fragment{
     private CircleImageView mAvatar;
 
     private String[] item;
+    private ArrayList<String> inform;
+
+    public static MyInfoFragment GetThisFragment(Object...obj){
+        MyInfoFragment mFragment = new MyInfoFragment();
+        Bundle bundle = new Bundle();
+        bundle.putSerializable("obj", (Serializable) obj[0]);
+        mFragment.setArguments(bundle);
+        return mFragment;
+    }
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -76,6 +89,8 @@ public class MyInfoFragment extends Fragment{
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState){
         View view = inflater.inflate(R.layout.layout_myinfofragment,container,false);
+        Bundle bundle = getArguments();
+        inform = (ArrayList<String>) bundle.getSerializable("obj");
         LoadPane(view);
         RestoreAvatar();
         return  view;
@@ -121,19 +136,16 @@ public class MyInfoFragment extends Fragment{
         String[] str = {
                 getString(R.string.Student_Name),
                 getString(R.string.Student_ID),
-                getString(R.string.Student_Department),
+                getString(R.string.Student_College),
                 getString(R.string.Student_Class)
         };
-        item = new String[str.length];
-        GetStudentBasicInfoBySno gs = new GetStudentBasicInfoBySno();
-        gs.execute("15251102203");
         List<InfoItem> list = new ArrayList<InfoItem>();
         list.clear();
         InfoItem[] info = new InfoItem[str.length];
         for(int i=0;i<str.length;i++){
             info[i] = new InfoItem();
             info[i].setRowName(str[i]);
-            info[i].setRowElement(item[i]);
+            info[i].setRowElement(inform.get(i));
             list.add(info[i]);
         }
         return list;

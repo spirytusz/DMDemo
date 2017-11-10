@@ -1,60 +1,43 @@
 package com.zspirytus.dmdemo.JavaSource.WebServiceUtils;
 
+import android.app.ProgressDialog;
 import android.os.AsyncTask;
+import android.util.Log;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.util.ArrayList;
 
 /**
  * Created by ZSpirytus on 2017/11/4.
  */
 
-public class GetStudentBasicInfoBySno extends AsyncTask<String, Integer, InputStream> {
+public class GetStudentBasicInfoBySno extends AsyncTask<String, Integer, ArrayList<String>> {
 
     private static final String TAG = "GetStudentBasicInfoBySn";
-    InputStream is;
+    ArrayList<String> result;
 
     @Override
-    protected InputStream doInBackground(String... params) {
-        ArrayList<String> param = new ArrayList<String>();
+    protected ArrayList<String> doInBackground(String... params) {
         ArrayList<String> paramType = new ArrayList<String>();
-        param.clear();
+        ArrayList<String> param = new ArrayList<String>();
         paramType.clear();
-        param.add("15251102222");
-        paramType.add("sno");
-        param.add("ZSpirytus");
-        paramType.add("account");
-        param.add("zkw012300");
-        paramType.add("pwd");
-        return WebServiceConnector.executingMethod(WebServiceConnector.METHOD_REG, paramType, param);
+        param.clear();
+        paramType.add(params[0]);
+        param.add(params[1]);
+        return WebServiceConnector.executingMethod(WebServiceConnector.METHOD_GETBASICINFOBYSNO, paramType,param);
     }
 
     @Override
-    //此方法可以在主线程改变UI
-    protected void onPostExecute(InputStream result) {
-        is = result;
-        BufferedReader reader = new BufferedReader(new InputStreamReader(result));
-        StringBuilder str = new StringBuilder();
-        String line = null;
-        try {
-            while ((line = reader.readLine()) != null) {
-                str.append(line + "\n");
-                }
-            } catch (IOException e) {
-            e.printStackTrace();
-        } finally {
-            try {
-                result.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-        }
+    protected void onProgressUpdate(Integer...values){
+
     }
 
-    public InputStream getResult(){
-        return is;
+    @Override
+    protected void onPostExecute(ArrayList<String> result) {
+        super.onPostExecute(result);
+        this.result = result;
+    }
+
+    public ArrayList<String> getResult(){
+        return result;
     }
 }
