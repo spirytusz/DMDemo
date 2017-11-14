@@ -37,8 +37,9 @@
         </provider>
 
         <activity
-            android:name=".Activity.RepairScheduleActivity"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:name=".Activity.SubMainActivity"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity android:name=".Activity.SubLoginActivity"></activity>
     </application>
 
 </manifest>

@@ -1,5 +1,6 @@
 package com.zspirytus.dmdemo.Fragment;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -16,6 +17,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.zspirytus.dmdemo.Activity.LoginActivity;
+import com.zspirytus.dmdemo.JavaSource.ActivityManager;
 import com.zspirytus.dmdemo.JavaSource.FragmentCollector;
 import com.zspirytus.dmdemo.R;
 
@@ -25,13 +27,15 @@ import com.zspirytus.dmdemo.R;
  */
 
 public class Settings extends Fragment {
+    private Activity mParentActivity;
+
     private static final String TAG = "Settings";
     private static final String FRAGMENT_HIDDEN_STATUS = "FRAGMENT_HIDDEN_STATUS";
 
     private View view;
     private ListView listView;
 
-    @Override
+    /*@Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (savedInstanceState != null) {
@@ -49,13 +53,19 @@ public class Settings extends Fragment {
     @Override
     public void onSaveInstanceState(Bundle outState){
         outState.putBoolean(FRAGMENT_HIDDEN_STATUS,isHidden());
-    }
+    }*/
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState){
         view = inflater.inflate(R.layout.layout_settingsfragment,container,false);
         LoadPane(view);
         return view;
+    }
+
+    @Override
+    public void onAttach(Context context){
+        super.onAttach(context);
+        mParentActivity = (Activity) context;
     }
 
     @Override
@@ -66,11 +76,11 @@ public class Settings extends Fragment {
 
     public void LoadPane(View v){
         String[] mListViewItem = {
-                getActivity().getString(R.string.Switch_Account).toString(),
-                getActivity().getString(R.string.Delete_Account_Info).toString()
+                getString(R.string.Switch_Account).toString(),
+                getString(R.string.Delete_Account_Info).toString()
         };
         listView = v.findViewById(R.id.settingsfragment_listview);
-        ArrayAdapter<String> mListViewAdapter = new ArrayAdapter<String>(getActivity(),android.R.layout.simple_list_item_1,mListViewItem);
+        ArrayAdapter<String> mListViewAdapter = new ArrayAdapter<String>(mParentActivity,android.R.layout.simple_list_item_1,mListViewItem);
         listView.setAdapter(mListViewAdapter);
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -78,13 +88,13 @@ public class Settings extends Fragment {
                 String text = ((TextView)view).getText().toString();
                 switch (i){
                     case 0:
-                        getActivity().finish();
-                        LoginActivity.StartThisActivity(getActivity());
+                        ActivityManager.finishAll();
+                        LoginActivity.StartThisActivity(mParentActivity);
                         break;
                     case 1:
-                        SharedPreferences pref = getActivity().getSharedPreferences("data", Context.MODE_PRIVATE);
+                        SharedPreferences pref = mParentActivity.getSharedPreferences("data", Context.MODE_PRIVATE);
                         pref.edit().clear().commit();
-                        Toast.makeText(getActivity(),getString(R.string.Delete_Successfully),Toast.LENGTH_SHORT).show();
+                        Toast.makeText(mParentActivity,getString(R.string.Delete_Successfully),Toast.LENGTH_SHORT).show();
                 }
             }
         });

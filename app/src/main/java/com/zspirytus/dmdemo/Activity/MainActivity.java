@@ -8,11 +8,11 @@ import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.util.Log;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -20,6 +20,7 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -33,7 +34,7 @@ import com.zspirytus.dmdemo.Interface.getStudentBasicInfoResponse;
 import com.zspirytus.dmdemo.JavaSource.ActivityManager;
 import com.zspirytus.dmdemo.JavaSource.FragmentCollector;
 import com.zspirytus.dmdemo.JavaSource.PhotoUtils;
-import com.zspirytus.dmdemo.JavaSource.WebServiceUtils.GetStudentBasicInfoBySno;
+import com.zspirytus.dmdemo.JavaSource.WebServiceUtils.SyncTask.MyAsyncTask;
 import com.zspirytus.dmdemo.JavaSource.WebServiceUtils.WebServiceConnector;
 import com.zspirytus.dmdemo.R;
 import com.zspirytus.dmdemo.Reproduction.CircleImageView;
@@ -51,6 +52,10 @@ public class MainActivity extends BaseActivity
     private static final String mAccountKey = "Account";
     private static final String mAvatarKey = "Avatar";
     private static final String hasCustomAvatar = "CustomAvatar";
+    private static final String myInfoFragmentStatusKey = "myInfoFragmentStatusKey";
+    private static final String myRepairFragmentStatusKey = "myRepairFragmentStatusKey";
+    private static final String myELSFragmentStatusKey = "myELSFragmentStatusKey";
+    private static final String mySettingsFragmentStatusKey = "mySettingsFragmentStatusKey";
     private static final int REQ_CAMERA = 0x01;
     private static final int REQ_ALBUM = 0x02;
     private static final int REQ_CUT = 0x04;
@@ -68,6 +73,7 @@ public class MainActivity extends BaseActivity
     private CircleImageView mAvatar;
     private Toolbar toolbar;
     private ActionBarDrawerToggle toggle;
+    private ProgressBar mProgressBar;
 
     private String mAccountVaule;
     private File picName;
@@ -78,7 +84,6 @@ public class MainActivity extends BaseActivity
     private CircleImageView cimg;
     private TextView repairPicDir;
 
-    private ArrayList<String> inform;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -86,11 +91,52 @@ public class MainActivity extends BaseActivity
         ActivityManager.addActivity(this);
         LoadPane();
         RestoreAvatar();
-        getInform(WebServiceConnector.PARAMTYPE_SNO,"15251102203");
+        if( getSupportFragmentManager().findFragmentByTag(MyInfoFragment.class.getName()) == null)
+        {
+            Log.d(TAG,"TEST FRAGMENT1");
+            getInform(WebServiceConnector.PARAMTYPE_SNO,"15251102203");
+        } else {
+            mMInfoFragment = (MyInfoFragment) getSupportFragmentManager().findFragmentByTag(MyInfoFragment.class.getName());
+            FragmentCollector.HideAllFragment(mFragmentManager.beginTransaction());
+        }
+        if(getSupportFragmentManager().findFragmentByTag(RepairFragment.class.getName()) != null){
+            mRepairFragment = (RepairFragment) getSupportFragmentManager().findFragmentByTag(RepairFragment.class.getName());
+        }
+        if(getSupportFragmentManager().findFragmentByTag(ELSFragment.class.getName()) != null){
+            mELSchool = (ELSFragment) getSupportFragmentManager().findFragmentByTag(ELSFragment.class.getName());
+        }
+        if(getSupportFragmentManager().findFragmentByTag(Settings.class.getName()) != null){
+            mSettings = (Settings) getSupportFragmentManager().findFragmentByTag(Settings.class.getName());
+        }
     }
 
+    /*private void restoreFragmentStatus(){
+        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+        if((mMInfoFragment = (MyInfoFragment) mFragmentManager.findFragmentByTag(MyInfoFragment.class.getName())) == null){
+            mMInfoFragment = new MyInfoFragment();
+            FragmentCollector.addFragment(mMInfoFragment);
+            ft.add(R.id.fragment_container, mMInfoFragment,mMInfoFragment.getClass().getName());
+        }
+        if((mRepairFragment = (RepairFragment) mFragmentManager.findFragmentByTag(RepairFragment.class.getName())) == null){
+            mRepairFragment = new RepairFragment();
+            FragmentCollector.addFragment(mRepairFragment);
+            ft.add(R.id.fragment_container, mRepairFragment,mRepairFragment.getClass().getName());
+        }
+        if((mELSchool = (ELSFragment) mFragmentManager.findFragmentByTag(ELSFragment.class.getName())) == null){
+            mELSchool = new ELSFragment();
+            FragmentCollector.addFragment(mELSchool);
+            ft.add(R.id.fragment_container, mELSchool,mELSchool.getClass().getName());
+        }
+        if((mSettings = (Settings) mFragmentManager.findFragmentByTag(Settings.class.getName())) == null){
+            mSettings = new Settings();
+            FragmentCollector.addFragment(mSettings);
+            ft.add(R.id.fragment_container, mSettings,mSettings.getClass().getName());
+        }
+        ft.commitAllowingStateLoss();
+    }*/
+
     private void getInform(String paramType,String param){
-        GetStudentBasicInfoBySno gs = new GetStudentBasicInfoBySno();
+        MyAsyncTask gs = new MyAsyncTask(WebServiceConnector.METHOD_GETBASICINFOBYSNO);
         gs.setListener(new getStudentBasicInfoResponse() {
             @Override
             public void getResult(ArrayList<String> result) {
@@ -124,6 +170,8 @@ public class MainActivity extends BaseActivity
     }
 
     private void LoadPane() {
+        mProgressBar = (ProgressBar) findViewById(R.id.progressbar);
+        mProgressBar.setVisibility(View.GONE);
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -236,18 +284,13 @@ public class MainActivity extends BaseActivity
         int id = item.getItemId();
         FragmentTransaction ft = mFragmentManager.beginTransaction();
         if (id == R.id.nav_account) {
-            if (mMInfoFragment == null) {
-                mMInfoFragment = new MyInfoFragment();
-                FragmentCollector.addFragment(mMInfoFragment);
-                ft.add(R.id.fragment_container, mMInfoFragment);
-            }
             FragmentCollector.HideAllFragment(ft);
             ft.show(mMInfoFragment);
         } else if (id == R.id.nav_repair) {
             if (mRepairFragment == null) {
                 mRepairFragment = new RepairFragment();
                 FragmentCollector.addFragment(mRepairFragment);
-                ft.add(R.id.fragment_container, mRepairFragment);
+                ft.add(R.id.fragment_container, mRepairFragment,mRepairFragment.getClass().getName());
             }
             FragmentCollector.HideAllFragment(ft);
             ft.show(mRepairFragment);
@@ -255,7 +298,7 @@ public class MainActivity extends BaseActivity
             if (mELSchool == null) {
                 mELSchool = new ELSFragment();
                 FragmentCollector.addFragment(mELSchool);
-                ft.add(R.id.fragment_container, mELSchool);
+                ft.add(R.id.fragment_container, mELSchool,mELSchool.getClass().getName());
             }
             FragmentCollector.HideAllFragment(ft);
             ft.show(mELSchool);
@@ -263,7 +306,7 @@ public class MainActivity extends BaseActivity
             if (mSettings == null) {
                 mSettings = new Settings();
                 FragmentCollector.addFragment(mSettings);
-                ft.add(R.id.fragment_container, mSettings);
+                ft.add(R.id.fragment_container, mSettings,mSettings.getClass().getName());
             }
             FragmentCollector.HideAllFragment(ft);
             ft.show(mSettings);
@@ -273,15 +316,30 @@ public class MainActivity extends BaseActivity
 
         }
         ft.commitAllowingStateLoss();
+        Log.d("","MyInfoFragmentHiddenStatus:"+mMInfoFragment.isHidden());
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
 
+    public void initFragment(){
+        FragmentTransaction ft = mFragmentManager.beginTransaction();
+        mRepairFragment = new RepairFragment();
+        FragmentCollector.addFragment(mRepairFragment);
+        ft.add(R.id.fragment_container, mRepairFragment);
+        mELSchool = new ELSFragment();
+        FragmentCollector.addFragment(mELSchool);
+        ft.add(R.id.fragment_container, mELSchool);
+        mSettings = new Settings();
+        FragmentCollector.addFragment(mSettings);
+        ft.add(R.id.fragment_container, mSettings);
+        ft.commitAllowingStateLoss();
+    }
+
     public void setDefaultFragment(FragmentManager fm,ArrayList<String> strList) {
         mMInfoFragment = MyInfoFragment.GetThisFragment(strList);
         FragmentCollector.addFragment(mMInfoFragment);
-        fm.beginTransaction().add(R.id.fragment_container, mMInfoFragment).show(mMInfoFragment).commit();
+        fm.beginTransaction().add(R.id.fragment_container, mMInfoFragment, mMInfoFragment.getClass().getName()).show(mMInfoFragment).commit();
     }
 
     public static void StartThisActivity(Context context, String account) {

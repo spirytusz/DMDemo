@@ -1,6 +1,8 @@
 package com.zspirytus.dmdemo.Fragment;
 
+import android.app.Activity;
 import android.app.DatePickerDialog;
+import android.content.Context;
 import android.icu.util.Calendar;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -25,6 +27,8 @@ import com.zspirytus.dmdemo.R;
 
 public class ELSFragment extends Fragment {
 
+    private Activity mParentActivity;
+
     private static final String TAG = "ELSchool";
     private static final String FRAGMENT_HIDDEN_STATUS = "FRAGMENT_HIDDEN_STATUS";
 
@@ -34,7 +38,7 @@ public class ELSFragment extends Fragment {
     private EditText mReason;
     private Button mElsButton;
 
-    @Override
+    /*@Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (savedInstanceState != null) {
@@ -50,6 +54,11 @@ public class ELSFragment extends Fragment {
     }
 
     @Override
+    public void onSaveInstanceState(Bundle outState){
+        outState.putBoolean(FRAGMENT_HIDDEN_STATUS,isHidden());
+    }*/
+
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState){
         view = inflater.inflate(R.layout.layout_elsfragment,container,false);
         LoadPane(view);
@@ -57,8 +66,9 @@ public class ELSFragment extends Fragment {
     }
 
     @Override
-    public void onSaveInstanceState(Bundle outState){
-        outState.putBoolean(FRAGMENT_HIDDEN_STATUS,isHidden());
+    public void onAttach(Context context){
+        super.onAttach(context);
+        mParentActivity = (Activity) context;
     }
 
     @Override
@@ -74,7 +84,7 @@ public class ELSFragment extends Fragment {
             public void onClick(View view) {
                 Calendar c = Calendar.getInstance();
                 // 直接创建一个DatePickerDialog对话框实例，并将它显示出来
-                new DatePickerDialog(getActivity(),
+                new DatePickerDialog(mParentActivity,
                         // 绑定监听器
                         new DatePickerDialog.OnDateSetListener() {
 
@@ -100,7 +110,7 @@ public class ELSFragment extends Fragment {
             public void onClick(View view) {
                 Calendar c = Calendar.getInstance();
                 // 直接创建一个DatePickerDialog对话框实例，并将它显示出来
-                new DatePickerDialog(getActivity(),
+                new DatePickerDialog(mParentActivity,
                         // 绑定监听器
                         new DatePickerDialog.OnDateSetListener() {
 
@@ -130,6 +140,6 @@ public class ELSFragment extends Fragment {
     }
 
     public void SendMessage(String start,String end){
-        Toast.makeText(getActivity(),start+"\n"+end,Toast.LENGTH_SHORT).show();
+        Toast.makeText(mParentActivity,start+"\n"+end,Toast.LENGTH_SHORT).show();
     }
 }

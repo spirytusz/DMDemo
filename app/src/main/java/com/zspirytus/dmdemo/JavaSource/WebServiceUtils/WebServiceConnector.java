@@ -1,5 +1,10 @@
 package com.zspirytus.dmdemo.JavaSource.WebServiceUtils;
 
+import android.os.AsyncTask;
+
+import com.zspirytus.dmdemo.Interface.getStudentBasicInfoResponse;
+import com.zspirytus.dmdemo.JavaSource.WebServiceUtils.SyncTask.MyAsyncTask;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -26,6 +31,7 @@ public class WebServiceConnector {
     public static final String METHOD_NEWSTUDENTLEAVINGSCHOOL = "newStudentLeavingSchool";
     public static final String METHOD_REGISTERACCOUNT = "registerAccount";
     public static final String METHOD_UPDATEAVATAR = "updateAvatar";
+    public static final String METHOD_MODIFYPWD = "ModifyPassWord";
 
     public static final String PARAMTYPE_SNO = "Sno";
     public static final String PARAMTYPE_ACCOUNT = "account";
@@ -150,4 +156,23 @@ public class WebServiceConnector {
         return list;
     }
 
+    private boolean isBooleanResponse(String methodName){
+        return methodName == METHOD_NEWREPAIRREPORT
+                || methodName == METHOD_NEWRETURNLATELY
+                || methodName == METHOD_NEWSTUDENTLEAVINGSCHOOL
+                || methodName == METHOD_REGISTERACCOUNT
+                || methodName == METHOD_UPDATEAVATAR
+                || methodName == METHOD_MODIFYPWD;
+    }
+
+    public static void doTask(String methodName,ArrayList<String> paramType,ArrayList<String> params){
+        MyAsyncTask myAsyncTask = new MyAsyncTask(methodName);
+        myAsyncTask.setListener(new getStudentBasicInfoResponse() {
+            @Override
+            public void getResult(ArrayList<String> result) {
+
+            }
+        });
+        myAsyncTask.execute(paramType,params);
+    }
 }

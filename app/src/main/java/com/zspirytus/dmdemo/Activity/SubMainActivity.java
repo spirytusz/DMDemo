@@ -1,6 +1,5 @@
 package com.zspirytus.dmdemo.Activity;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -26,12 +25,20 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class RepairScheduleActivity extends AppCompatActivity {
+public class SubMainActivity extends AppCompatActivity {
+
+    private static final String TAG = "SubMainActivity";
+    private static final String titleKey = "titleKey";
+    private static final String typeKey = "typeKey";
+    private int i;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_repair_schedule);
+        Intent intent = getIntent();
+        i = intent.getIntExtra(typeKey,-1);
+        String title = intent.getStringExtra(titleKey);
         ActivityManager.addActivity(this);
         Toolbar toolbar = (Toolbar)findViewById(R.id.tb_toolbar);
         setSupportActionBar(toolbar);
@@ -42,7 +49,7 @@ public class RepairScheduleActivity extends AppCompatActivity {
                 finish();
             }
         });
-        toolbar.setTitle(R.string.Repair);
+        toolbar.setTitle(title);
         ListView listView = (ListView)findViewById(R.id.repairschedule_listview);
         listView.setAdapter(getAdapter());
     }
@@ -130,8 +137,10 @@ public class RepairScheduleActivity extends AppCompatActivity {
         return result;
     }
 
-    public static void StartThisActivity(Context context) {
-        Intent intent = new Intent(context, RepairScheduleActivity.class);
+    public static void StartThisActivity(Context context,final String title,final int i) {
+        Intent intent = new Intent(context, SubMainActivity.class);
+        intent.putExtra(titleKey,title);
+        intent.putExtra(typeKey,i);
         context.startActivity(intent);
     }
 }

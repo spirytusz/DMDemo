@@ -31,4 +31,8 @@ public class FragmentCollector {
             ft.hide(fragment);
         }
     }
+
+    public static final int getFragmentNum(){
+        return fragments.size();
+    }
 }

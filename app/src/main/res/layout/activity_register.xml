@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="36dp"
+        android:orientation="horizontal"
+        android:background="@color/colorWhite">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text = "@string/Student_ID"
+            android:textSize="16dp"/>
+
+        <EditText
+            android:id="@+id/edittext_reg_sno"
+            android:layout_width="0dp"
+            android:layout_height="36dp"
+            android:layout_weight="4.5"
+            android:background="@null"
+            android:maxLines="1"
+            android:digits="@string/rule_password"
+            android:gravity="center" />
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="0.8"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="36dp"
+        android:orientation="horizontal"
+        android:background="@color/colorWhite">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text = "@string/Account"
+            android:textSize="16dp"/>
+
+        <EditText
+            android:id="@+id/edittext_reg_account"
+            android:layout_width="0dp"
+            android:layout_height="36dp"
+            android:layout_weight="4.5"
+            android:background="@null"
+            android:maxLines="1"
+            android:digits="@string/rule_password"
+            android:gravity="center" />
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="0.8"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="36dp"
+        android:orientation="horizontal"
+        android:background="@color/colorWhite">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text = "@string/Pwd"
+            android:textSize="16dp"/>
+
+        <EditText
+            android:id="@+id/edittext_reg_pwd"
+            android:layout_width="0dp"
+            android:layout_height="36dp"
+            android:layout_weight="4.5"
+            android:background="@null"
+            android:maxLines="1"
+            android:digits="@string/rule_password"
+            android:gravity="center" />
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="0.8"/>
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="16dp"/>
+
+    <Button
+        android:id="@+id/button_reg"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:text = "@string/Reg"/>
+
+</LinearLayout>

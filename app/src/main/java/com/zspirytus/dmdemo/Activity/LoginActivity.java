@@ -148,14 +148,14 @@ public class LoginActivity extends BaseActivity {
         mForget.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Toast.makeText(activity,"mForget", Toast.LENGTH_SHORT).show();
+                SubLoginActivity.StartThisActivity(activity,2);
             }
         });
         mRegistration = (TextView) findViewById(R.id.new_member);
         mRegistration.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Toast.makeText(activity,"mRegistration",Toast.LENGTH_SHORT).show();
+                SubLoginActivity.StartThisActivity(activity,1);
             }
         });
     }

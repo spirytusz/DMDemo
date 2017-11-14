@@ -16,10 +16,11 @@
     <string name="Share">分享</string>
     <string name="Feedback">反馈</string>
     <string name="Account">账号</string>
-    <string name="Pwd">密码:</string>
+    <string name="Pwd">密码</string>
     <string name="Login">登录</string>
     <string name="Forget_my_Pwd">忘记密码?</string>
     <string name="New_Member">注册</string>
+    <string name="Modify_Pwd">修改密码</string>
     <string name="Remember">记住密码</string>
     <string name="Schedule">进度查询</string>
     <string name="Student_ID">学号</string>
@@ -71,6 +72,7 @@
     <string name="Delete_Successfully">删除成功！</string>
     <string name="Back_late">夜归处理</string>
     <string name="Student_College">院系</string>
+    <string name="Reg">注册</string>
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>

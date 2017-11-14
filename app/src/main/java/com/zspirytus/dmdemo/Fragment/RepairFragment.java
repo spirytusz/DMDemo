@@ -32,6 +32,8 @@ import com.zspirytus.dmdemo.R;
 
 public class RepairFragment extends Fragment {
 
+    private Activity mParentActivity;
+
     private static final String TAG = "RepairFragment";
     private static final String FRAGMENT_HIDDEN_STATUS = "FRAGMENT_HIDDEN_STATUS";
 
@@ -49,7 +51,7 @@ public class RepairFragment extends Fragment {
 
     private String outputDirectory;
 
-    @Override
+    /*@Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (savedInstanceState != null) {
@@ -67,7 +69,7 @@ public class RepairFragment extends Fragment {
     @Override
     public void onSaveInstanceState(Bundle outState){
         outState.putBoolean(FRAGMENT_HIDDEN_STATUS,isHidden());
-    }
+    }*/
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState){
@@ -79,6 +81,7 @@ public class RepairFragment extends Fragment {
     @Override
     public void onAttach(Context context){
         super.onAttach(context);
+        mParentActivity = (Activity) context;
         listener = (SetUploadPicPath)((Activity)context);
     }
 
@@ -90,22 +93,22 @@ public class RepairFragment extends Fragment {
 
     public void LoadPane(View v){
         final String[] mArea = {
-                getActivity().getString(R.string.Public_Area).toString(),
-                getActivity().getString(R.string.Living_Area).toString()
+                getString(R.string.Public_Area).toString(),
+                getString(R.string.Living_Area).toString()
         };
         final String[] mCategory = {
-                getActivity().getString(R.string.Electrician).toString(),
-                getActivity().getString(R.string.Hydraulic).toString(),
-                getActivity().getString(R.string.Woodworking).toString(),
-                getActivity().getString(R.string.Construction).toString(),
-                getActivity().getString(R.string.Equipment).toString(),
-                getActivity().getString(R.string.Other).toString()
+                getString(R.string.Electrician).toString(),
+                getString(R.string.Hydraulic).toString(),
+                getString(R.string.Woodworking).toString(),
+                getString(R.string.Construction).toString(),
+                getString(R.string.Equipment).toString(),
+                getString(R.string.Other).toString()
         };
         mRepairArea = v.findViewById(R.id.repair_select_area);
         mRepairArea.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());// 自定义对话框
+                AlertDialog.Builder builder = new AlertDialog.Builder(mParentActivity);// 自定义对话框
                 builder.setSingleChoiceItems(mArea, 0, new DialogInterface.OnClickListener() {// 2默认的选中
 
                     @Override
@@ -124,7 +127,7 @@ public class RepairFragment extends Fragment {
         mRepairCategory.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());// 自定义对话框
+                AlertDialog.Builder builder = new AlertDialog.Builder(mParentActivity);// 自定义对话框
                 builder.setSingleChoiceItems(mCategory, 0, new DialogInterface.OnClickListener() {// 2默认的选中
 
                     @Override
@@ -144,13 +147,13 @@ public class RepairFragment extends Fragment {
         mRepairPhoto.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-                builder.setTitle(getActivity().getString(R.string.By));
+                AlertDialog.Builder builder = new AlertDialog.Builder(mParentActivity);
+                builder.setTitle(mParentActivity.getString(R.string.By));
                 //    指定下拉列表的显示数据
                 final String[] mSelectItem = {
-                        getActivity().getString(R.string.By_Camera),
-                        getActivity().getString(R.string.By_Album),
-                        getActivity().getString(R.string.Cancel)
+                        getString(R.string.By_Camera),
+                        getString(R.string.By_Album),
+                        getString(R.string.Cancel)
                 };
                 //    设置一个下拉的列表选择项
                 builder.setItems(mSelectItem, new DialogInterface.OnClickListener()
