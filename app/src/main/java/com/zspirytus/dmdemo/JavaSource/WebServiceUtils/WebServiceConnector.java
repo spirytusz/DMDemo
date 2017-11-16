@@ -1,6 +1,7 @@
 package com.zspirytus.dmdemo.JavaSource.WebServiceUtils;
 
 import android.os.AsyncTask;
+import android.util.Log;
 
 import com.zspirytus.dmdemo.Interface.getStudentBasicInfoResponse;
 import com.zspirytus.dmdemo.JavaSource.WebServiceUtils.SyncTask.MyAsyncTask;
@@ -54,7 +55,6 @@ public class WebServiceConnector {
     private static final String WSDL_URI = "http://39.108.113.13/DMS.asmx?wsdl";
     private static final String NAMESPACE = "http://zspirytus.org/";
     private static final String RESPONSETYPE_STRING = "string";
-    private static final String RESPONSETYPE_BOOLEAN = "boolean";
 
     /**  发送SOAP请求信息
      *
@@ -83,9 +83,13 @@ public class WebServiceConnector {
             outStream.write (bytes);
             outStream.flush();
             outStream.close();
+
             //获取数据
             InputStream inputStream = con.getInputStream();
-            return getResult(inputStream,RESPONSETYPE_STRING);
+            if(isBooleanResponse(methodName))
+                return getResult(inputStream,methodName+RESULT);
+            else
+                return getResult(inputStream,RESPONSETYPE_STRING);
         }catch (IOException e){
             return  null;
         }
@@ -114,6 +118,7 @@ public class WebServiceConnector {
         }
         else
             command = "\t<" + methodName +" xmlns=\"" + NAMESPACE + "\"/> ";
+        Log.d(TAG,"request test:\n"+SOAP_HEADER + command + SOAP_END);
         return SOAP_HEADER + command + SOAP_END;
     }
 
@@ -141,38 +146,37 @@ public class WebServiceConnector {
                 e.printStackTrace();
             }
         }
-        Pattern forChar = Pattern.compile("<"+responseType+">(\\w+)</"+responseType+">");
-        Matcher m = forChar.matcher(str.toString());
-        String[] temp = {"","","",""};
-        for(int i = 0;i < 3 && m.find();i++){
-            temp[i] = m.group(1);
+        if(responseType == RESPONSETYPE_STRING){
+            Pattern forChar = Pattern.compile("<"+responseType+">(\\w+)</"+responseType+">");
+            Matcher m = forChar.matcher(str.toString());
+            while(m.find()){
+                list.add(m.group(1));
+            }
+        } else{
+            Pattern forChar = Pattern.compile("<"+responseType+">(\\w+)</"+responseType+">");
+            Matcher m = forChar.matcher(str.toString());
+            while(m.find()){
+                list.add(m.group(1));
+            }
         }
-        while(m.find()){
-            temp[3] = temp[3] + m.group(1);
+        if(responseType != RESPONSETYPE_STRING){
+            Log.d(TAG,"boresponse Test:\t"+responseType);
+            Log.d(TAG,"boresponse Test:\t"+list.get(0));
         }
-        temp[3] = temp[3] + "班";
-        for(int i = 0;i<4;i++)
-            list.add(temp[i]);
         return list;
     }
 
-    private boolean isBooleanResponse(String methodName){
+    /**  判断给定方法的返回值类型是否为boolean型
+     *
+     * @param methodName 方法名
+     * @return 返回值类型是否为boolean型
+     */
+    private static boolean isBooleanResponse(String methodName){
         return methodName == METHOD_NEWREPAIRREPORT
                 || methodName == METHOD_NEWRETURNLATELY
                 || methodName == METHOD_NEWSTUDENTLEAVINGSCHOOL
                 || methodName == METHOD_REGISTERACCOUNT
                 || methodName == METHOD_UPDATEAVATAR
                 || methodName == METHOD_MODIFYPWD;
-    }
-
-    public static void doTask(String methodName,ArrayList<String> paramType,ArrayList<String> params){
-        MyAsyncTask myAsyncTask = new MyAsyncTask(methodName);
-        myAsyncTask.setListener(new getStudentBasicInfoResponse() {
-            @Override
-            public void getResult(ArrayList<String> result) {
-
-            }
-        });
-        myAsyncTask.execute(paramType,params);
     }
 }

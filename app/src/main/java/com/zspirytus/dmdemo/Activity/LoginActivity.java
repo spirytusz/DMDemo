@@ -18,13 +18,10 @@ import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.zspirytus.dmdemo.JavaSource.ActivityManager;
 import com.zspirytus.dmdemo.JavaSource.PhotoUtils;
 import com.zspirytus.dmdemo.R;
-
-import java.io.File;
 
 public class LoginActivity extends BaseActivity {
 
@@ -169,7 +166,7 @@ public class LoginActivity extends BaseActivity {
     }
 
     public void RestoreEditArea(){
-        SharedPreferences pref = getSharedPreferences("data",MODE_PRIVATE);
+        SharedPreferences pref = getSharedPreferences("data",Context.MODE_PRIVATE);
         boolean isRemember = pref.getBoolean(isRememberKey,false);
         if(isRemember){
             mCheckBox.setChecked(true);
@@ -182,7 +179,7 @@ public class LoginActivity extends BaseActivity {
     }
 
     public void clear(){
-        SharedPreferences pref = getSharedPreferences("data",MODE_PRIVATE);
+        SharedPreferences pref = getSharedPreferences("data",Context.MODE_PRIVATE);
         String oldAccount = pref.getString(mAccountKey,"");
         String newAccount = mAccount.getText().toString();
         boolean isNewAccount = !oldAccount.equals(newAccount);
@@ -195,7 +192,7 @@ public class LoginActivity extends BaseActivity {
         clear();
         String account = mAccount.getText().toString();
         String pwd = mPwd.getText().toString();
-        SharedPreferences.Editor editor = getSharedPreferences("data",MODE_PRIVATE).edit();
+        SharedPreferences.Editor editor = getSharedPreferences("data",Context.MODE_PRIVATE).edit();
         editor.putString(mAccountKey,account);
         editor.putString(mPwdKey,pwd);
         editor.putBoolean(isRememberKey,true);

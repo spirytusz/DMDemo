@@ -7,6 +7,7 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -43,6 +44,11 @@ public class MyInfoFragment extends Fragment{
 
     private static final String mAvatarKey = "Avatar";
     private static final String FRAGMENT_HIDDEN_STATUS = "FRAGMENT_HIDDEN_STATUS";
+    private static final String SNO = "Sno";
+    private static final String SNAME = "Sname";
+    private static final String SCOLLEGE = "Scollege";
+    private static final String SDEPT = "Sdept";
+    private static final String INFO_FILENAME = "StudentInfo";
 
     private SetMyInfoAvatar setAvatar;
 
@@ -54,12 +60,26 @@ public class MyInfoFragment extends Fragment{
     private ArrayList<String> inform;
     private ProgressBar mProgressBar;
 
-    public static MyInfoFragment GetThisFragment(Object...obj){
+    public static MyInfoFragment GetThisFragment(Context context,Object...obj){
         MyInfoFragment mFragment = new MyInfoFragment();
+        saveStudentInfo(context,(ArrayList<String>) obj[0]);
         Bundle bundle = new Bundle();
-        bundle.putSerializable("obj", (Serializable) obj[0]);
+        bundle.putSerializable("obj", (Serializable) (ArrayList<String>) obj[0]);
         mFragment.setArguments(bundle);
         return mFragment;
+    }
+
+    public static ArrayList<String> FormatList(ArrayList<String> oldList){
+        ArrayList<String> list = new ArrayList<String>();
+        list.clear();
+        String[] oldListToString = new String[5];
+        for(int i =0;i<5;i++){
+            oldListToString[i] = oldList.get(i);
+        }
+        for(int i = 0;i<3;i++)
+            list.add(oldListToString[i]);
+        list.add(oldListToString[3]+oldListToString[4]+"班");
+        return list;
     }
 
     @Override
@@ -90,6 +110,46 @@ public class MyInfoFragment extends Fragment{
         String avatar = pref.getString(mAvatarKey,"");
         if(!avatar.equals(""))
             mAvatar.setImageBitmap(PhotoUtils.getBitmapbyString(avatar));
+    }
+
+    /**
+     *  保存学生信息，减少不必要的访问数据库次数
+     * @param context 上下文
+     * @param list     封装成ArrayList<String>的查询数据库获得的结果
+     */
+    private static void saveStudentInfo(Context context,ArrayList<String> list){
+        SharedPreferences.Editor editor = context.getSharedPreferences(INFO_FILENAME,Context.MODE_PRIVATE).edit();
+        editor.putString(SNO,list.get(0));
+        Log.d("","list contain:\t"+list.get(0));
+        editor.putString(SNAME,list.get(1));
+        Log.d("","list contain:\t"+list.get(1));
+        editor.putString(SCOLLEGE,list.get(2));
+        Log.d("","list contain:\t"+list.get(2));
+        editor.putString(SDEPT,list.get(3));
+        Log.d("","list contain:\t"+list.get(3));
+        editor.apply();
+    }
+
+    /**
+     *   获取保存了的学生信息
+     * @param activity  上下文
+     * @return            保存的学生信息
+     */
+    public static ArrayList<String> getStudentInfobyLocalFile(Activity activity){
+        ArrayList<String> list = new ArrayList<String>();
+        list.clear();
+        SharedPreferences pref = activity.getSharedPreferences(INFO_FILENAME,Context.MODE_PRIVATE);
+        String sno = pref.getString(SNO,"");
+        String sname = pref.getString(SNAME,"");
+        String scollege = pref.getString(SCOLLEGE,"");
+        String sdept = pref.getString(SDEPT,"");
+        if(sno.equals("") || sname.equals("") || scollege.equals("") || sdept.equals(""))
+            return null;
+        list.add(sno);
+        list.add(sname);
+        list.add(scollege);
+        list.add(sdept);
+        return list;
     }
 
     private SimpleAdapter getAdapter(){
@@ -219,5 +279,3 @@ public class MyInfoFragment extends Fragment{
         });
     }
 }
-
-

@@ -30,6 +30,7 @@ import com.zspirytus.dmdemo.Fragment.RepairFragment;
 import com.zspirytus.dmdemo.Fragment.Settings;
 import com.zspirytus.dmdemo.Interface.SetMyInfoAvatar;
 import com.zspirytus.dmdemo.Interface.SetUploadPicPath;
+import com.zspirytus.dmdemo.Interface.getBooleanTypeResponse;
 import com.zspirytus.dmdemo.Interface.getStudentBasicInfoResponse;
 import com.zspirytus.dmdemo.JavaSource.ActivityManager;
 import com.zspirytus.dmdemo.JavaSource.FragmentCollector;
@@ -93,8 +94,12 @@ public class MainActivity extends BaseActivity
         RestoreAvatar();
         if( getSupportFragmentManager().findFragmentByTag(MyInfoFragment.class.getName()) == null)
         {
-            Log.d(TAG,"TEST FRAGMENT1");
-            getInform(WebServiceConnector.PARAMTYPE_SNO,"15251102203");
+            ArrayList<String> list = MyInfoFragment.getStudentInfobyLocalFile(this);
+            Log.d(TAG,"list is null?\t"+Boolean.toString(list == null));
+            if(list != null)
+                getInform(WebServiceConnector.PARAMTYPE_SNO,"15251102203");
+            else
+                setDefaultFragment(getSupportFragmentManager(),list);
         } else {
             mMInfoFragment = (MyInfoFragment) getSupportFragmentManager().findFragmentByTag(MyInfoFragment.class.getName());
             FragmentCollector.HideAllFragment(mFragmentManager.beginTransaction());
@@ -136,10 +141,11 @@ public class MainActivity extends BaseActivity
     }*/
 
     private void getInform(String paramType,String param){
-        MyAsyncTask gs = new MyAsyncTask(WebServiceConnector.METHOD_GETBASICINFOBYSNO);
+        MyAsyncTask<getStudentBasicInfoResponse> gs = new MyAsyncTask<getStudentBasicInfoResponse>(this,WebServiceConnector.METHOD_GETBASICINFOBYSNO,mProgressBar);
         gs.setListener(new getStudentBasicInfoResponse() {
             @Override
             public void getResult(ArrayList<String> result) {
+                result = MyInfoFragment.FormatList(result);
                 setDefaultFragment(mFragmentManager,result);
             }
         });
@@ -152,6 +158,16 @@ public class MainActivity extends BaseActivity
         gs.execute(list1,list2);
     }
 
+    public void doThis(ArrayList<String> list1,ArrayList<String> list2){
+        MyAsyncTask<getBooleanTypeResponse> myAsyncTask = new MyAsyncTask<getBooleanTypeResponse>(this,WebServiceConnector.METHOD_NEWREPAIRREPORT);
+        myAsyncTask.setListener(new getBooleanTypeResponse() {
+            @Override
+            public void showDialog(ArrayList<String> result) {
+
+            }
+        });
+        myAsyncTask.execute(list1,list2);
+    }
     @Override
     public void setUploadPicPath(TextView textView, int by) {
         repairPicDir = textView;
@@ -337,7 +353,7 @@ public class MainActivity extends BaseActivity
     }
 
     public void setDefaultFragment(FragmentManager fm,ArrayList<String> strList) {
-        mMInfoFragment = MyInfoFragment.GetThisFragment(strList);
+        mMInfoFragment = MyInfoFragment.GetThisFragment(this,strList);
         FragmentCollector.addFragment(mMInfoFragment);
         fm.beginTransaction().add(R.id.fragment_container, mMInfoFragment, mMInfoFragment.getClass().getName()).show(mMInfoFragment).commit();
     }
