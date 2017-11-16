@@ -2,6 +2,7 @@ package com.zspirytus.dmdemo.Activity;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
@@ -9,19 +10,27 @@ import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
+import android.support.v7.app.AlertDialog;
 import android.text.Editable;
 import android.text.InputType;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.zspirytus.dmdemo.Interface.getSnobyAccountResponse;
 import com.zspirytus.dmdemo.JavaSource.ActivityManager;
 import com.zspirytus.dmdemo.JavaSource.PhotoUtils;
+import com.zspirytus.dmdemo.JavaSource.WebServiceUtils.SyncTask.MyAsyncTask;
+import com.zspirytus.dmdemo.JavaSource.WebServiceUtils.WebServiceConnector;
 import com.zspirytus.dmdemo.R;
+
+import java.util.ArrayList;
 
 public class LoginActivity extends BaseActivity {
 
@@ -128,7 +137,7 @@ public class LoginActivity extends BaseActivity {
             public void onClick(View view) {
                 mAccountValue = mAccount.getText().toString();
                 mPwdValue = mPwd.getText().toString();
-                if(Check(mAccountValue,mPwdValue)&&!isEmpty(mAccount,mPwd)){
+                if(!isEmpty(mAccount,mPwd)){
                     if(mCheckBox.isChecked()){
                         RememberIt();
                     }else{
@@ -136,9 +145,8 @@ public class LoginActivity extends BaseActivity {
                         editor.putBoolean(isRememberKey,false);
                         editor.apply();
                     }
-                    MainActivity.StartThisActivity(activity,mAccountValue);
+                    StartNextActivity(mAccount.getText().toString(),mPwd.getText().toString());
                 }
-
             }
         });
         mForget = (TextView) findViewById(R.id.forget_pwd);
@@ -199,8 +207,35 @@ public class LoginActivity extends BaseActivity {
         editor.apply();
     }
 
-    public boolean Check(String Account,String Pwd){
-        return true;
+    private void StartNextActivity(String Account,String Pwd){
+        MyAsyncTask<getSnobyAccountResponse> myAsyncTask = new MyAsyncTask<getSnobyAccountResponse>(this, WebServiceConnector.METHOD_GETSNOBYACCOUNT);
+        myAsyncTask.setListener(new getSnobyAccountResponse() {
+            @Override
+            public void getSno(ArrayList<String> result) {
+                Log.d("","result size Test:\t"+result.size());
+                if(result.size() > 0)
+                    MainActivity.StartThisActivity(activity,result.get(0));
+                else
+                    Toast.makeText(activity,"账号密码错误...",Toast.LENGTH_SHORT).show();
+            }
+        });
+        myAsyncTask.execute(getParamType(),getInput());
+    }
+
+    private ArrayList<String> getParamType(){
+        ArrayList<String> paramType = new ArrayList<>();
+        paramType.clear();
+        paramType.add(WebServiceConnector.PARAMTYPE_ACCOUNT);
+        paramType.add(WebServiceConnector.PARAMTYPE_PWD);
+        return paramType;
+    }
+
+    private ArrayList<String> getInput(){
+        ArrayList<String> input = new ArrayList<>();
+        input.clear();
+        input.add(mAccount.getText().toString());
+        input.add(mPwd.getText().toString());
+        return input;
     }
 
     public boolean isEmpty(EditText et1,EditText et2){

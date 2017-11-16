@@ -7,6 +7,7 @@ import android.view.View;
 import android.widget.ProgressBar;
 
 import com.zspirytus.dmdemo.Interface.getBooleanTypeResponse;
+import com.zspirytus.dmdemo.Interface.getSnobyAccountResponse;
 import com.zspirytus.dmdemo.Interface.getStudentBasicInfoResponse;
 import com.zspirytus.dmdemo.JavaSource.WebServiceUtils.WebServiceConnector;
 
@@ -68,7 +69,6 @@ public class MyAsyncTask<T> extends AsyncTask<ArrayList<String>, Integer, ArrayL
             mProgressBar.setVisibility(View.GONE);
         else {
             mProgressDialog.dismiss();
-
         }
     }
 
@@ -82,6 +82,9 @@ public class MyAsyncTask<T> extends AsyncTask<ArrayList<String>, Integer, ArrayL
                 break;
             case  WebServiceConnector.METHOD_NEWSTUDENTLEAVINGSCHOOL:
                 ((getBooleanTypeResponse)response).showDialog(result);
+                break;
+            case WebServiceConnector.METHOD_GETSNOBYACCOUNT:
+                ((getSnobyAccountResponse)response).getSno(result);
                 break;
         }
     }

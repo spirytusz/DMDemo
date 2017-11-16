@@ -10,6 +10,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AlertDialog;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -47,12 +48,12 @@ public class ELSFragment extends Fragment {
     private TextView mEndTime;
     private EditText mReason;
     private Button mElsButton;
-    private String mStartYear;
-    private String mStartMonth;
-    private String mStartDay;
-    private String mEndYear;
-    private String mEndMonth;
-    private String mEndDay;
+    private int mStartYear;
+    private int mStartMonth;
+    private int mStartDay;
+    private int mEndYear;
+    private int mEndMonth;
+    private int mEndDay;
 
     /*@Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -75,25 +76,25 @@ public class ELSFragment extends Fragment {
     }*/
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState){
-        view = inflater.inflate(R.layout.layout_elsfragment,container,false);
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        view = inflater.inflate(R.layout.layout_elsfragment, container, false);
         LoadPane(view);
         return view;
     }
 
     @Override
-    public void onAttach(Context context){
+    public void onAttach(Context context) {
         super.onAttach(context);
         mParentActivity = (Activity) context;
     }
 
     @Override
-    public void onDestroyView(){
+    public void onDestroyView() {
         FragmentCollector.removeFragment(this);
         super.onDestroyView();
     }
 
-    public void LoadPane(View v){
+    public void LoadPane(View v) {
         mStartTime = v.findViewById(R.id.els_start_time);
         mStartTime.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -106,14 +107,14 @@ public class ELSFragment extends Fragment {
 
                             @Override
                             public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
-                                String month = ""+ (monthOfYear + 1);
-                                String day = ""+dayOfMonth;
-                                if(monthOfYear<10)
+                                String month = "" + (monthOfYear + 1);
+                                String day = "" + dayOfMonth;
+                                if (monthOfYear < 10)
                                     month = "0" + month;
-                                if(dayOfMonth<10)
+                                if (dayOfMonth < 10)
                                     day = "0" + day;
-                                mStartTime.setText( year + " - " + month + " - " + day );
-                                getStartDate(year+"",month,day);
+                                mStartTime.setText(year + " - " + month + " - " + day);
+                                setStartDate(year, monthOfYear + 1, dayOfMonth);
                             }
                         }
                         // 设置初始日期
@@ -133,14 +134,14 @@ public class ELSFragment extends Fragment {
 
                             @Override
                             public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
-                                String month = ""+ (monthOfYear + 1);
-                                String day = ""+dayOfMonth;
-                                if(monthOfYear<10)
+                                String month = "" + (monthOfYear + 1);
+                                String day = "" + dayOfMonth;
+                                if (monthOfYear < 10)
                                     month = "0" + month;
-                                if(dayOfMonth<10)
+                                if (dayOfMonth < 10)
                                     day = "0" + day;
-                                mEndTime.setText( year + " - " + month + " - " + day );
-                                getEndDate(year+"",month,day);
+                                mEndTime.setText(year + " - " + month + " - " + day);
+                                setEndDate(year, monthOfYear + 1, dayOfMonth);
                             }
                         }
                         // 设置初始日期
@@ -153,18 +154,30 @@ public class ELSFragment extends Fragment {
         mElsButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                SendMessage("15251102224");
+                if (isInputlegal()) {
+                    SendMessage("15251102226");
+                } else {
+                    AlertDialog.Builder dialog = new AlertDialog.Builder(mParentActivity);
+                    dialog.setTitle("提示");
+                    dialog.setMessage("输入值为空或违反约束");
+                    dialog.setPositiveButton("好", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                        }
+                    });
+                    dialog.show();
+                }
             }
         });
     }
 
-    public void SendMessage(String sno){
-        MyAsyncTask<getBooleanTypeResponse> myAsyncTask = new MyAsyncTask<getBooleanTypeResponse>(mParentActivity,WebServiceConnector.METHOD_NEWSTUDENTLEAVINGSCHOOL);
+    public void SendMessage(String sno) {
+        MyAsyncTask<getBooleanTypeResponse> myAsyncTask = new MyAsyncTask<getBooleanTypeResponse>(mParentActivity, WebServiceConnector.METHOD_NEWSTUDENTLEAVINGSCHOOL);
         myAsyncTask.setListener(new getBooleanTypeResponse() {
             @Override
             public void showDialog(ArrayList<String> result) {
                 String FormatResult = "";
-                if(result.get(0).equals("true"))
+                if (result.get(0).equals("true"))
                     FormatResult = "成功";
                 else
                     FormatResult = "失败";
@@ -173,31 +186,32 @@ public class ELSFragment extends Fragment {
                 dialog.setMessage(FormatResult);
                 dialog.setPositiveButton("好", new DialogInterface.OnClickListener() {
                     @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {}
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                    }
                 });
                 dialog.show();
             }
         });
-        myAsyncTask.execute(getParmType(),getInput(sno));
+        myAsyncTask.execute(getParmType(), getInput(sno));
     }
 
-    private ArrayList<String> getEndDate(){
-        ArrayList<String> end = new ArrayList<>();
+    private ArrayList<Integer> getEndDate() {
+        ArrayList<Integer> end = new ArrayList<>();
         end.clear();
         end.add(mEndYear);
         end.add(mEndMonth);
         end.add(mEndDay);
-        return  end;
+        return end;
     }
 
-    private void getEndDate(String year,String month,String day){
+    private void setEndDate(int year, int month, int day) {
         mEndYear = year;
         mEndMonth = month;
         mEndDay = day;
     }
 
-    private ArrayList<String> getStartDate(){
-        ArrayList<String> start = new ArrayList<>();
+    private ArrayList<Integer> getStartDate() {
+        ArrayList<Integer> start = new ArrayList<>();
         start.clear();
         start.add(mStartYear);
         start.add(mStartMonth);
@@ -205,47 +219,35 @@ public class ELSFragment extends Fragment {
         return start;
     }
 
-    private void getStartDate(String year,String month,String day){
+    private void setStartDate(int year, int month, int day) {
         mStartYear = year;
         mStartMonth = month;
         mStartDay = day;
     }
 
-    private boolean isInputlegal(ArrayList<String> start,ArrayList<String> end){
-        boolean islegal = false;
+    private boolean isInputlegal() {
+        String start = mStartTime.getText().toString();
+        String end = mEndTime.getText().toString();
+        String reason = mReason.getText().toString();
+        if(start.equals(getString(R.string.Start_Time)) || end.equals(getString(R.string.End_Time)) || reason.equals(""))
+            return  false;
         Calendar c = Calendar.getInstance();
-        int nowYear = c.get(Calendar.YEAR);
-        int nowMonth = c.get(Calendar.MONTH);
-        int nowDay = c.get(Calendar.DAY_OF_MONTH);
-        int startYear = Integer.parseInt(start.get(0));
-        int startMonth = Integer.parseInt(start.get(1));
-        int startDay = Integer.parseInt(start.get(3));
-        int endYear = Integer.parseInt(end.get(0));
-        int endMonth = Integer.parseInt(end.get(1));
-        int endDay = Integer.parseInt(end.get(3));
-        return islegal;
+        ArrayList<Integer> nowDate = new ArrayList<>();
+        nowDate.clear();
+        nowDate.add(c.get(Calendar.YEAR));
+        nowDate.add(c.get(Calendar.MONTH));
+        nowDate.add(c.get(Calendar.DAY_OF_MONTH));
+        return isDateOneBigger(getStartDate(), nowDate) && isDateOneBigger(getEndDate(), getStartDate());
     }
 
-    public static boolean isDateOneBigger(String str1, String str2) {
-        boolean isBigger = false;
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-        Date dt1 = null;
-        Date dt2 = null;
-        try {
-            dt1 = sdf.parse(str1);
-            dt2 = sdf.parse(str2);
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-        if (dt1.getTime() > dt2.getTime()) {
-            isBigger = true;
-        } else if (dt1.getTime() < dt2.getTime()) {
-            isBigger = false;
-        }
-        return isBigger;
+    private boolean isDateOneBigger(ArrayList<Integer> date1, ArrayList<Integer> date2) {
+        for (int i = 0; i < date1.size(); i++)
+            if (date1.get(i) > date2.get(i))
+                return true;
+        return false;
     }
 
-    private ArrayList<String> getParmType(){
+    private ArrayList<String> getParmType() {
         ArrayList<String> paramType = new ArrayList<>();
         paramType.clear();
         paramType.add(WebServiceConnector.PARAMTYPE_SNO);
@@ -255,12 +257,12 @@ public class ELSFragment extends Fragment {
         return paramType;
     }
 
-    private ArrayList<String> getInput(String sno){
+    private ArrayList<String> getInput(String sno) {
         ArrayList<String> input = new ArrayList<>();
         input.clear();
         input.add(sno);
-        input.add(mStartYear+"-"+mStartMonth+"-"+mStartDay);
-        input.add(mEndYear+"-"+mEndMonth+"-"+mEndDay);
+        input.add(mStartYear + "-" + mStartMonth + "-" + mStartDay);
+        input.add(mEndYear + "-" + mEndMonth + "-" + mEndDay);
         input.add(mReason.getText().toString());
         return input;
     }
