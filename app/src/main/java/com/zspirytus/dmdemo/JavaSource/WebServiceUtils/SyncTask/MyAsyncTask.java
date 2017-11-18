@@ -3,10 +3,12 @@ package com.zspirytus.dmdemo.JavaSource.WebServiceUtils.SyncTask;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.AsyncTask;
+import android.util.Log;
 import android.view.View;
 import android.widget.ProgressBar;
 
 import com.zspirytus.dmdemo.Interface.getBooleanTypeResponse;
+import com.zspirytus.dmdemo.Interface.getModRegResponse;
 import com.zspirytus.dmdemo.Interface.getSnobyAccountResponse;
 import com.zspirytus.dmdemo.Interface.getStudentBasicInfoResponse;
 import com.zspirytus.dmdemo.JavaSource.WebServiceUtils.WebServiceConnector;
@@ -86,6 +88,15 @@ public class MyAsyncTask<T> extends AsyncTask<ArrayList<String>, Integer, ArrayL
             case WebServiceConnector.METHOD_GETSNOBYACCOUNT:
                 ((getSnobyAccountResponse)response).getSno(result);
                 break;
+            case WebServiceConnector.METHOD_MODIFYPWD:
+                ((getModRegResponse)response).getResult(result);
+                break;
+            case WebServiceConnector.METHOD_REGISTERACCOUNT:
+                ((getModRegResponse)response).getResult(result);
+                break;
         }
+        Log.d(TAG,"onPostExecute Test:\t"+methodName);
+        if(result != null)
+            Log.d(TAG,"onPostExecute's result Test:\t"+result.size());
     }
 }

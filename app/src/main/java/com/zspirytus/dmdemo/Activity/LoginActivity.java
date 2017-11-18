@@ -38,7 +38,9 @@ public class LoginActivity extends BaseActivity {
     private static final String mAccountKey = "Account";
     private static final String mPwdKey = "PassWord";
     private static final String mAvatarKey = "Avatar";
+    private  static final String mSnoKey = "Sno";
     private static final String isExitKey = "isExit";
+    private  static final String AccountInfoFileName = "accountInfo";
     private final Activity activity = this;
 
     private ImageView mAvatar;
@@ -63,18 +65,16 @@ public class LoginActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
         ActivityManager.addActivity(this);
-        pref = getSharedPreferences("data",MODE_PRIVATE);
+        pref = getSharedPreferences(AccountInfoFileName,MODE_PRIVATE);
         LoadPane();
         RestoreEditArea();
     }
 
     private void skip(){
-        SharedPreferences pref = getSharedPreferences("data",MODE_PRIVATE);
-        String account = pref.getString(mAccountKey,"");
-        String pwd = pref.getString(mPwdKey,"");
-        boolean isLegal = check(account,pwd);
-        if(isLegal)
-            MainActivity.StartThisActivity(this,account);
+        SharedPreferences pref = getSharedPreferences(AccountInfoFileName,MODE_PRIVATE);
+        String sno = pref.getString(mSnoKey,"");
+        if(!sno.equals(""))
+            MainActivity.StartThisActivity(this,sno);
     }
 
     private boolean check(String account,String pwd){
@@ -141,7 +141,7 @@ public class LoginActivity extends BaseActivity {
                     if(mCheckBox.isChecked()){
                         RememberIt();
                     }else{
-                        SharedPreferences.Editor editor = getSharedPreferences("data",MODE_PRIVATE).edit();
+                        SharedPreferences.Editor editor = getSharedPreferences(AccountInfoFileName,MODE_PRIVATE).edit();
                         editor.putBoolean(isRememberKey,false);
                         editor.apply();
                     }
@@ -173,8 +173,8 @@ public class LoginActivity extends BaseActivity {
         }
     }
 
-    public void RestoreEditArea(){
-        SharedPreferences pref = getSharedPreferences("data",Context.MODE_PRIVATE);
+    private void RestoreEditArea(){
+        SharedPreferences pref = getSharedPreferences(AccountInfoFileName,Context.MODE_PRIVATE);
         boolean isRemember = pref.getBoolean(isRememberKey,false);
         if(isRemember){
             mCheckBox.setChecked(true);
@@ -186,8 +186,8 @@ public class LoginActivity extends BaseActivity {
         }
     }
 
-    public void clear(){
-        SharedPreferences pref = getSharedPreferences("data",Context.MODE_PRIVATE);
+    private void clear(){
+        SharedPreferences pref = getSharedPreferences(AccountInfoFileName,Context.MODE_PRIVATE);
         String oldAccount = pref.getString(mAccountKey,"");
         String newAccount = mAccount.getText().toString();
         boolean isNewAccount = !oldAccount.equals(newAccount);
@@ -196,25 +196,41 @@ public class LoginActivity extends BaseActivity {
         }
     }
 
-    public void RememberIt(){
+    private void RememberIt(){
         clear();
         String account = mAccount.getText().toString();
         String pwd = mPwd.getText().toString();
-        SharedPreferences.Editor editor = getSharedPreferences("data",Context.MODE_PRIVATE).edit();
+        SharedPreferences.Editor editor = getSharedPreferences(AccountInfoFileName,Context.MODE_PRIVATE).edit();
         editor.putString(mAccountKey,account);
         editor.putString(mPwdKey,pwd);
         editor.putBoolean(isRememberKey,true);
         editor.apply();
     }
 
+    private void RememberSno(String Sno){
+        SharedPreferences.Editor editor = getSharedPreferences(AccountInfoFileName,Context.MODE_PRIVATE).edit();
+        editor.putString(mSnoKey,Sno);
+        editor.apply();
+    }
+
     private void StartNextActivity(String Account,String Pwd){
+        SharedPreferences pref = getSharedPreferences(AccountInfoFileName,Context.MODE_PRIVATE);
+        String account = pref.getString(mAccountKey,"");
+        if(account.equals(Account)){
+            String sno = pref.getString(mSnoKey,"");
+            if(!sno.equals("")){
+                MainActivity.StartThisActivity(activity,sno);
+                return;
+            }
+        }
         MyAsyncTask<getSnobyAccountResponse> myAsyncTask = new MyAsyncTask<getSnobyAccountResponse>(this, WebServiceConnector.METHOD_GETSNOBYACCOUNT);
         myAsyncTask.setListener(new getSnobyAccountResponse() {
             @Override
             public void getSno(ArrayList<String> result) {
-                Log.d("","result size Test:\t"+result.size());
-                if(result.size() > 0)
+                if(result.size() > 0) {
+                    RememberSno(result.get(0));
                     MainActivity.StartThisActivity(activity,result.get(0));
+                }
                 else
                     Toast.makeText(activity,"账号密码错误...",Toast.LENGTH_SHORT).show();
             }
@@ -238,7 +254,7 @@ public class LoginActivity extends BaseActivity {
         return input;
     }
 
-    public boolean isEmpty(EditText et1,EditText et2){
+    private boolean isEmpty(EditText et1,EditText et2){
         return et1.getText().toString().isEmpty()||et2.getText().toString().isEmpty();
     }
 

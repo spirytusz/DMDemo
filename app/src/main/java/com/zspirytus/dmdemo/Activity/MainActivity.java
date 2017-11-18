@@ -13,6 +13,7 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -50,7 +51,7 @@ public class MainActivity extends BaseActivity
         SetUploadPicPath {
 
     private static final String TAG = "MainActivity";
-    private static final String mAccountKey = "Account";
+    private static final String mSnoKey = "Sno";
     private static final String mAvatarKey = "Avatar";
     private static final String hasCustomAvatar = "CustomAvatar";
     private static final String myInfoFragmentStatusKey = "myInfoFragmentStatusKey";
@@ -70,13 +71,14 @@ public class MainActivity extends BaseActivity
     private RepairFragment mRepairFragment;
     private ELSFragment mELSchool;
     private Settings mSettings;
-    private TextView account;
+    private TextView mSno;
+    private TextView mName;
     private CircleImageView mAvatar;
     private Toolbar toolbar;
     private ActionBarDrawerToggle toggle;
     private ProgressBar mProgressBar;
 
-    private String mAccountVaule;
+    private String mSnoVaule;
     private File picName;
     private Uri picUri;
     private boolean isAlbum = false;
@@ -84,11 +86,13 @@ public class MainActivity extends BaseActivity
 
     private CircleImageView cimg;
     private TextView repairPicDir;
+    private long mPressBackTime = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        Intent intent = getIntent();
         ActivityManager.addActivity(this);
         LoadPane();
         RestoreAvatar();
@@ -97,9 +101,11 @@ public class MainActivity extends BaseActivity
             ArrayList<String> list = MyInfoFragment.getStudentInfobyLocalFile(this);
             Log.d(TAG,"list is null?\t"+Boolean.toString(list == null));
             if(list != null)
-                getInform(WebServiceConnector.PARAMTYPE_SNO,"15251102203");
-            else
+                getInform(WebServiceConnector.PARAMTYPE_SNO,mSnoVaule);
+            else {
                 setDefaultFragment(getSupportFragmentManager(),list);
+                mName.setText(list.get(1));
+            }
         } else {
             mMInfoFragment = (MyInfoFragment) getSupportFragmentManager().findFragmentByTag(MyInfoFragment.class.getName());
             FragmentCollector.HideAllFragment(mFragmentManager.beginTransaction());
@@ -147,6 +153,7 @@ public class MainActivity extends BaseActivity
             public void getResult(ArrayList<String> result) {
                 result = MyInfoFragment.FormatList(result);
                 setDefaultFragment(mFragmentManager,result);
+                mName.setText(result.get(1));
             }
         });
         ArrayList<String> list1 = new ArrayList<>();
@@ -200,10 +207,11 @@ public class MainActivity extends BaseActivity
         navigationView.setNavigationItemSelectedListener(this);
 
         mFragmentManager = getSupportFragmentManager();
-        mAccountVaule = getIntent().getStringExtra(mAccountKey);
+        mSnoVaule = getIntent().getStringExtra(mSnoKey);
         View headerView = navigationView.getHeaderView(0);
-        account = headerView.findViewById(R.id.side_account);
-        account.setText(mAccountVaule);
+        mSno = headerView.findViewById(R.id.side_sno);
+        mSno.setText(mSnoVaule);
+        mName  = headerView.findViewById(R.id.side_name);
         mAvatar = headerView.findViewById(R.id.imageView);
         mAvatar.setImageResource(R.drawable.ic_account_circle_black_24dp);
     }
@@ -293,6 +301,20 @@ public class MainActivity extends BaseActivity
         }
     }
 
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+
+        if (keyCode == KeyEvent.KEYCODE_BACK && event.getRepeatCount() == 0) {
+            if(System.currentTimeMillis() - mPressBackTime > 1000){
+                Toast.makeText(this,"再按一次退出程序",Toast.LENGTH_SHORT).show();
+            } else {
+                finish();
+            }
+            return true;
+        }
+        return super.onKeyDown(keyCode, event);
+    }
+
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
@@ -358,9 +380,9 @@ public class MainActivity extends BaseActivity
         fm.beginTransaction().add(R.id.fragment_container, mMInfoFragment, mMInfoFragment.getClass().getName()).show(mMInfoFragment).commit();
     }
 
-    public static void StartThisActivity(Context context, String account) {
+    public static void StartThisActivity(Context context, String Sno) {
         Intent intent = new Intent(context, MainActivity.class);
-        intent.putExtra(mAccountKey, account);
+        intent.putExtra(mSnoKey, Sno);
         ((Activity) context).finish();
         context.startActivity(intent);
     }

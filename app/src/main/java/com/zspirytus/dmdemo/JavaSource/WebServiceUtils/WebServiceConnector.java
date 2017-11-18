@@ -32,7 +32,7 @@ public class WebServiceConnector {
     public static final String METHOD_NEWSTUDENTLEAVINGSCHOOL = "newStudentLeavingSchool";
     public static final String METHOD_REGISTERACCOUNT = "registerAccount";
     public static final String METHOD_UPDATEAVATAR = "updateAvatar";
-    public static final String METHOD_MODIFYPWD = "ModifyPassWord";
+    public static final String METHOD_MODIFYPWD = "ModifyPwd";
     public static final String METHOD_GETSNOBYACCOUNT = "getSnobyAccount";
 
     public static final String PARAMTYPE_SNO = "Sno";
@@ -140,6 +140,7 @@ public class WebServiceConnector {
             while ((line = reader.readLine()) != null) {
                 str.append(line + "\n");
             }
+            Log.d(TAG,"response test:\t"+str);
         } catch (IOException e) {
             e.printStackTrace();
         } finally {
@@ -153,10 +154,6 @@ public class WebServiceConnector {
         Matcher m = forChar.matcher(str.toString());
         while (m.find()) {
             list.add(m.group(1));
-        }
-        if (responseType != RESPONSETYPE_STRING) {
-            Log.d(TAG, "boresponse Test:\t" + responseType);
-            Log.d(TAG, "boresponse Test:\t" + list.get(0));
         }
         return list;
     }
