@@ -94,6 +94,9 @@ public class MyAsyncTask<T> extends AsyncTask<ArrayList<String>, Integer, ArrayL
             case WebServiceConnector.METHOD_REGISTERACCOUNT:
                 ((getModRegResponse)response).getResult(result);
                 break;
+            case WebServiceConnector.METHOD_UPDATEAVATAR:
+                ((getBooleanTypeResponse)response).showDialog(result);
+                break;
         }
         Log.d(TAG,"onPostExecute Test:\t"+methodName);
         if(result != null)

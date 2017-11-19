@@ -66,6 +66,8 @@ public class MainActivity extends BaseActivity
     private static final int BY_CAMERA = 1;
     private static final int BY_ALBUM = 2;
 
+    private final Activity activity = this;
+
     private FragmentManager mFragmentManager;
     private MyInfoFragment mMInfoFragment;
     private RepairFragment mRepairFragment;
@@ -79,7 +81,6 @@ public class MainActivity extends BaseActivity
     private ProgressBar mProgressBar;
 
     private String mSnoVaule;
-    private File picName;
     private Uri picUri;
     private boolean isAlbum = false;
     private boolean isRepairPicDir = false;
@@ -92,7 +93,6 @@ public class MainActivity extends BaseActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        Intent intent = getIntent();
         ActivityManager.addActivity(this);
         LoadPane();
         RestoreAvatar();
@@ -100,7 +100,7 @@ public class MainActivity extends BaseActivity
         {
             ArrayList<String> list = MyInfoFragment.getStudentInfobyLocalFile(this);
             Log.d(TAG,"list is null?\t"+Boolean.toString(list == null));
-            if(list != null)
+            if(list == null)
                 getInform(WebServiceConnector.PARAMTYPE_SNO,mSnoVaule);
             else {
                 setDefaultFragment(getSupportFragmentManager(),list);
@@ -175,6 +175,7 @@ public class MainActivity extends BaseActivity
         });
         myAsyncTask.execute(list1,list2);
     }
+
     @Override
     public void setUploadPicPath(TextView textView, int by) {
         repairPicDir = textView;
@@ -263,6 +264,9 @@ public class MainActivity extends BaseActivity
         if (resultCode == RESULT_OK) {
             switch (requestCode) {
                 case REQ_CAMERA:
+                    //picUri = PhotoUtils.saveCompressBitmap(this,picUri);
+                    if(picUri == null)
+                        return;
                     if (isRepairPicDir) {
                         repairPicDir.setText(PhotoUtils.picName.getAbsolutePath());
                         break;
@@ -275,16 +279,17 @@ public class MainActivity extends BaseActivity
                     break;
                 case REQ_CUT:
                     Bitmap bitmap = BitmapFactory.decodeFile(PhotoUtils.cropPicName.getAbsolutePath());
+                    bitmap = PhotoUtils.CompressBitmap(bitmap);
                     String a = PhotoUtils.convertIconToString(bitmap);
                     PhotoUtils.saveAvatar(this, bitmap);
                     cimg.setImageBitmap(bitmap);
                     mAvatar.setImageBitmap(bitmap);
-                    if (isAlbum)
+                   /* if (isAlbum)
                         PhotoUtils.cropPicName.delete();
                     else {
                         PhotoUtils.picName.delete();
-                        PhotoUtils.cropPicName.delete();
-                    }
+                    }*/
+                    UpdateAvatar();
                     break;
             }
         }
@@ -378,6 +383,43 @@ public class MainActivity extends BaseActivity
         mMInfoFragment = MyInfoFragment.GetThisFragment(this,strList);
         FragmentCollector.addFragment(mMInfoFragment);
         fm.beginTransaction().add(R.id.fragment_container, mMInfoFragment, mMInfoFragment.getClass().getName()).show(mMInfoFragment).commit();
+    }
+
+    private void UpdateAvatar(){
+        MyAsyncTask<getBooleanTypeResponse> myAsyncTask = new MyAsyncTask<getBooleanTypeResponse>(this,WebServiceConnector.METHOD_UPDATEAVATAR);
+        myAsyncTask.setListener(new getBooleanTypeResponse() {
+            @Override
+            public void showDialog(ArrayList<String> result) {
+                if(result.size() > 0 && result.get(0).equals("true")){
+                    Toast.makeText(activity,"修改成功！",Toast.LENGTH_SHORT).show();
+                }
+                else {
+                    Toast.makeText(activity,"修改失败！",Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+        myAsyncTask.execute(getParamType(),getInput());
+    }
+
+    private ArrayList<String> getParamType(){
+        ArrayList<String> paramType = new ArrayList<>();
+        paramType.clear();
+        paramType.add(WebServiceConnector.PARAMTYPE_SNO);
+        paramType.add(WebServiceConnector.PARAMTYPE_PHOTO);
+        return paramType;
+    }
+
+    private ArrayList<String> getInput(){
+        ArrayList<String> input = new ArrayList<>();
+        input.clear();
+        String sno = getIntent().getStringExtra(mSnoKey);
+        Bitmap oldBitmap = BitmapFactory.decodeFile(PhotoUtils.cropPicName.getAbsolutePath());
+        Bitmap newBitmap = PhotoUtils.CompressBitmap(oldBitmap);
+        String photo = PhotoUtils.convertIconToString(newBitmap);
+        Log.d("","photo test:\t"+photo);
+        input.add(sno);
+        input.add(photo);
+        return input;
     }
 
     public static void StartThisActivity(Context context, String Sno) {

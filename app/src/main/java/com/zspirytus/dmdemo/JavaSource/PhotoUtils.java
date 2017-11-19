@@ -18,6 +18,7 @@ import android.support.v4.content.ContextCompat;
 import android.support.v4.content.FileProvider;
 import android.support.v7.app.AlertDialog;
 import android.util.Base64;
+import android.util.Log;
 
 import com.zspirytus.dmdemo.R;
 
@@ -26,6 +27,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 
 import static android.content.Context.MODE_PRIVATE;
 
@@ -43,7 +45,7 @@ public class PhotoUtils {
     private static final int REQ_PERMISSION_FOR_CAMERA = 0x10;
     private static final int REQ_PERMISSION_FOR_ALBUM = 0x20;
 
-    /**
+    /** 申请权限并打开相机
      *
      * @param activity 调用该方法的活动
      * @return 权限已赋予，返回照片Uri；权限未赋予，返回null
@@ -87,7 +89,7 @@ public class PhotoUtils {
         return null;
     }
 
-    /**
+    /** 申请权限并打开相册
      *
      * @param activity 调用该方法的活动
      */
@@ -125,7 +127,7 @@ public class PhotoUtils {
         }
     }
 
-    /**
+    /**  打开相机拍照拍照
      *
      * @param activity 调用该方法的活动
      * @return 返回拍照所得的照片的Uri
@@ -140,7 +142,7 @@ public class PhotoUtils {
         return picUri;
     }
 
-    /**
+    /**  打开相册选择图片
      *
      * @param activity 调用该方法的活动
      */
@@ -150,7 +152,7 @@ public class PhotoUtils {
         activity.startActivityForResult(intent, REQ_ALBUM);
     }
 
-    /**
+    /**  截取图片
      *
      * @param activity 调用该方法的活动
      * @param picUri 需要裁剪的图片的Uri
@@ -208,14 +210,14 @@ public class PhotoUtils {
         return Base64.encodeToString(appicon, Base64.DEFAULT);
     }
 
-    /** 压缩图片
+    /**  压缩图片
      *
      * @param bitmap 需要压缩的图片
      * @return 压缩完成的图片
      */
     public static Bitmap CompressBitmap(Bitmap bitmap){
         Matrix matrix = new Matrix();
-        matrix.setScale(0.5f, 0.5f);
+        matrix.setScale(0.5f,0.5f);
         Bitmap newBitmap = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(),
                 bitmap.getHeight(), matrix, true);
         return newBitmap;
@@ -236,6 +238,25 @@ public class PhotoUtils {
             e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
+        }
+    }
+
+    public static Uri saveCompressBitmap(Context context,Uri bitmapUri){
+        try{
+            InputStream input = context.getContentResolver().openInputStream(bitmapUri);
+            Log.d("","inputStream Test:\t"+Boolean.toString(input == null));
+            Log.d("","inputStream Test:\t"+input);
+            input.close();
+            Bitmap oldBitmap = BitmapFactory.decodeStream(input);
+            Bitmap newBitmap = CompressBitmap(oldBitmap);
+            saveNewBitmap(picName,newBitmap);
+            return FileProvider.getUriForFile(context, "com.zspirytus.dmdemo.Activity.MainActivity.fileprovider", picName);
+        }catch (FileNotFoundException fne){
+            fne.printStackTrace();
+            return null;
+        } catch (IOException ie){
+            ie.printStackTrace();
+            return null;
         }
     }
 

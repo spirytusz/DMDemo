@@ -176,8 +176,9 @@ public class ELSFragment extends Fragment {
         myAsyncTask.setListener(new getBooleanTypeResponse() {
             @Override
             public void showDialog(ArrayList<String> result) {
+                final boolean isSuccess = result.get(0).equals("true");
                 String FormatResult = "";
-                if (result.get(0).equals("true"))
+                if (isSuccess)
                     FormatResult = "成功";
                 else
                     FormatResult = "失败";
@@ -187,6 +188,11 @@ public class ELSFragment extends Fragment {
                 dialog.setPositiveButton("好", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
+                        if(isSuccess){
+                            mStartTime.setText("");
+                            mEndTime.setText("");
+                            mReason.setText("");
+                        }
                     }
                 });
                 dialog.show();

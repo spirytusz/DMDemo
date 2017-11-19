@@ -197,8 +197,9 @@ public class RepairFragment extends Fragment {
         myAsyncTask.setListener(new getBooleanTypeResponse() {
             @Override
             public void showDialog(ArrayList<String> result) {
+                final boolean isSuccess = result.get(0).equals("true");
                 String FormatResult = "";
-                if(result.get(0).equals("true"))
+                if(isSuccess)
                     FormatResult = "成功";
                 else
                     FormatResult = "失败";
@@ -207,7 +208,16 @@ public class RepairFragment extends Fragment {
                 dialog.setMessage(FormatResult);
                 dialog.setPositiveButton("好", new DialogInterface.OnClickListener() {
                     @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {}
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        if(isSuccess){
+                            mRepairArea.setText("");
+                            mRepairPlace.setText("");
+                            mRepairType.setText("");
+                            mRepairDetail.setText("");
+                            mRepairContact.setText("");
+                            mRepairPhoto.setText("");
+                        }
+                    }
                 });
                 dialog.show();
             }
