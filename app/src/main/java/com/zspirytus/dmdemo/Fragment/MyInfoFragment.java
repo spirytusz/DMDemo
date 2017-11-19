@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -17,12 +18,15 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.SimpleAdapter;
+import android.widget.Toast;
 
 import com.zspirytus.dmdemo.Activity.SubMainActivity;
 import com.zspirytus.dmdemo.Interface.SetMyInfoAvatar;
+import com.zspirytus.dmdemo.Interface.getAvatarResponse;
 import com.zspirytus.dmdemo.JavaSource.FragmentCollector;
 import com.zspirytus.dmdemo.JavaSource.InfoItem;
 import com.zspirytus.dmdemo.JavaSource.PhotoUtils;
+import com.zspirytus.dmdemo.JavaSource.WebServiceUtils.SyncTask.MyAsyncTask;
 import com.zspirytus.dmdemo.JavaSource.WebServiceUtils.WebServiceConnector;
 import com.zspirytus.dmdemo.R;
 import com.zspirytus.dmdemo.Reproduction.CircleImageView;
@@ -90,7 +94,6 @@ public class MyInfoFragment extends Fragment{
         Bundle bundle = getArguments();
         inform = (ArrayList<String>) bundle.getSerializable("obj");
         LoadPane(view);
-        RestoreAvatar();
         return  view;
     }
 
@@ -112,6 +115,38 @@ public class MyInfoFragment extends Fragment{
         String avatar = pref.getString(mAvatarKey,"");
         if(!avatar.equals(""))
             mAvatar.setImageBitmap(PhotoUtils.getBitmapbyString(avatar));
+    }
+
+    private void RestoreAvatarFromDatabase(){
+        MyAsyncTask<getAvatarResponse> myAsyncTask = new MyAsyncTask<getAvatarResponse>(mParentActivity,WebServiceConnector.METHOD_GETAVATAR,mProgressBar);
+        myAsyncTask.setListener(new getAvatarResponse() {
+            @Override
+            public void getAvatar(ArrayList<String> result) {
+                if(result.size() > 0 && !result.get(0).equals("")){
+                    Bitmap bitmap = PhotoUtils.convertStringToIcon(result.get(0));
+                    mAvatar.setImageBitmap(bitmap);
+                } else {
+                    Toast.makeText(mParentActivity,"从数据库获取头像失败！",Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+        myAsyncTask.execute(getParamType(),getInput());
+    }
+
+    private ArrayList<String> getParamType(){
+        ArrayList<String> paramType = new ArrayList<>();
+        paramType.clear();
+        paramType.add(WebServiceConnector.PARAMTYPE_SNO);
+        return paramType;
+    }
+
+    private ArrayList<String> getInput(){
+        ArrayList<String> input = new ArrayList<>();
+        input.clear();
+        Bundle bundle = getArguments();
+        ArrayList<String> list = (ArrayList<String>)bundle.getSerializable("obj");
+        input.add(list.get(0));
+        return input;
     }
 
     /**
@@ -209,6 +244,8 @@ public class MyInfoFragment extends Fragment{
     }
 
     public void LoadPane(View v){
+        mProgressBar = v.findViewById(R.id.myinfofragment_progressbar);
+        mProgressBar.setVisibility(View.GONE);
         String[] mInfoItem = {
                 getString(R.string.Student_Name).toString(),
                 getString(R.string.Student_ID).toString(),
@@ -257,6 +294,7 @@ public class MyInfoFragment extends Fragment{
                 builder.show();
             }
         });
+        RestoreAvatarFromDatabase();
         mInfo = v.findViewById(R.id.layout_minfo_lisview_top);
         mSchedule = v.findViewById(R.id.layout_minfo_lisview_bottom);
         ArrayAdapter<String> mInfoAdapter = new ArrayAdapter<String>(mParentActivity,android.R.layout.simple_list_item_1,mInfoItem);

@@ -34,6 +34,7 @@ public class WebServiceConnector {
     public static final String METHOD_UPDATEAVATAR = "updateAvatar";
     public static final String METHOD_MODIFYPWD = "ModifyPwd";
     public static final String METHOD_GETSNOBYACCOUNT = "getSnobyAccount";
+    public static final String METHOD_GETAVATAR = "getAvatar";
 
     public static final String PARAMTYPE_SNO = "Sno";
     public static final String PARAMTYPE_ACCOUNT = "account";
@@ -150,9 +151,30 @@ public class WebServiceConnector {
                 e.printStackTrace();
             }
         }
+        //Log.d("","ifTest:\n"+Boolean.toString(responseType == METHOD_GETAVATAR+RESULT)+"\t"+responseType+"\t"+METHOD_GETAVATAR+RESULT);
+        if(responseType.equals(METHOD_GETAVATAR+RESULT)){
+            final String temp1 =
+                    "<?xml version=\"1.0\" encoding=\"utf-8\"?>" +
+                            "<soap:Envelope xmlns:soap=\"http://www.w3.org/2003/05/soap-envelope\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\">" +
+                            "<soap:Body>" +
+                            "<getAvatarResponse xmlns=\"http://zspirytus.org/\">" +
+                            "<getAvatarResult>";
+            final String temp2 = "</getAvatarResult>" +
+                    "</getAvatarResponse>" +
+                    "</soap:Body>" +
+                    "</soap:Envelope>";
+            String strResult = str.toString();
+            strResult = strResult.replace(temp1,"");
+            strResult = strResult.replace(temp2,"");
+            list.add(strResult);
+            Log.d("","strResultTest:\n"+strResult);
+            return list;
+        }
         Pattern forChar = Pattern.compile("<" + responseType + ">(\\w+)</" + responseType + ">");
         Matcher m = forChar.matcher(str.toString());
         while (m.find()) {
+            String a = m.group(1);
+            Log.d(TAG,"myResponse Test:\n"+a);
             list.add(m.group(1));
         }
         return list;
@@ -171,6 +193,7 @@ public class WebServiceConnector {
                 || methodName == METHOD_REGISTERACCOUNT
                 || methodName == METHOD_UPDATEAVATAR
                 || methodName == METHOD_MODIFYPWD
-                || methodName == METHOD_GETSNOBYACCOUNT;
+                || methodName == METHOD_GETSNOBYACCOUNT
+                || methodName == METHOD_GETAVATAR;
     }
 }

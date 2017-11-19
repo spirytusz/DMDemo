@@ -7,6 +7,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.ProgressBar;
 
+import com.zspirytus.dmdemo.Interface.getAvatarResponse;
 import com.zspirytus.dmdemo.Interface.getBooleanTypeResponse;
 import com.zspirytus.dmdemo.Interface.getModRegResponse;
 import com.zspirytus.dmdemo.Interface.getSnobyAccountResponse;
@@ -97,6 +98,8 @@ public class MyAsyncTask<T> extends AsyncTask<ArrayList<String>, Integer, ArrayL
             case WebServiceConnector.METHOD_UPDATEAVATAR:
                 ((getBooleanTypeResponse)response).showDialog(result);
                 break;
+            case WebServiceConnector.METHOD_GETAVATAR:
+                ((getAvatarResponse)response).getAvatar(result);
         }
         Log.d(TAG,"onPostExecute Test:\t"+methodName);
         if(result != null)

@@ -87,7 +87,7 @@ public class MainActivity extends BaseActivity
 
     private CircleImageView cimg;
     private TextView repairPicDir;
-    private long mPressBackTime = 0;
+    private long mPreviousPressBackTime = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -279,17 +279,16 @@ public class MainActivity extends BaseActivity
                     break;
                 case REQ_CUT:
                     Bitmap bitmap = BitmapFactory.decodeFile(PhotoUtils.cropPicName.getAbsolutePath());
-                    bitmap = PhotoUtils.CompressBitmap(bitmap);
-                    String a = PhotoUtils.convertIconToString(bitmap);
+                    bitmap = PhotoUtils.CompressBitmap(bitmap,(int)PhotoUtils.cropPicName.length());
                     PhotoUtils.saveAvatar(this, bitmap);
                     cimg.setImageBitmap(bitmap);
                     mAvatar.setImageBitmap(bitmap);
-                   /* if (isAlbum)
+                    UpdateAvatar();
+                    if (isAlbum)
                         PhotoUtils.cropPicName.delete();
                     else {
                         PhotoUtils.picName.delete();
-                    }*/
-                    UpdateAvatar();
+                    }
                     break;
             }
         }
@@ -308,10 +307,11 @@ public class MainActivity extends BaseActivity
 
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
-
         if (keyCode == KeyEvent.KEYCODE_BACK && event.getRepeatCount() == 0) {
-            if(System.currentTimeMillis() - mPressBackTime > 1000){
+            long mLastPressBackTime = System.currentTimeMillis();
+            if(mLastPressBackTime - mPreviousPressBackTime > 1000){
                 Toast.makeText(this,"再按一次退出程序",Toast.LENGTH_SHORT).show();
+                mPreviousPressBackTime = mLastPressBackTime;
             } else {
                 finish();
             }
@@ -414,9 +414,8 @@ public class MainActivity extends BaseActivity
         input.clear();
         String sno = getIntent().getStringExtra(mSnoKey);
         Bitmap oldBitmap = BitmapFactory.decodeFile(PhotoUtils.cropPicName.getAbsolutePath());
-        Bitmap newBitmap = PhotoUtils.CompressBitmap(oldBitmap);
+        Bitmap newBitmap = PhotoUtils.CompressBitmap(oldBitmap,(int)PhotoUtils.cropPicName.length());
         String photo = PhotoUtils.convertIconToString(newBitmap);
-        Log.d("","photo test:\t"+photo);
         input.add(sno);
         input.add(photo);
         return input;

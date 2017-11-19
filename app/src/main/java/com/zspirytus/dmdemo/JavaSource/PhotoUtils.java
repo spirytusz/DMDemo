@@ -210,14 +210,43 @@ public class PhotoUtils {
         return Base64.encodeToString(appicon, Base64.DEFAULT);
     }
 
+    /**  String to Bitmap
+     *
+     * @param str  String型图片
+     * @return     Bitmap型图片
+     */
+    public static Bitmap convertStringToIcon(String str)
+    {
+        Bitmap bitmap = null;
+        try
+        {
+            byte[] bitmapArray;
+            bitmapArray = Base64.decode(str, Base64.DEFAULT);
+            bitmap =
+                    BitmapFactory.decodeByteArray(bitmapArray, 0,
+                            bitmapArray.length);
+            return bitmap;
+        }
+        catch (Exception e)
+        {
+            return null;
+        }
+    }
+
     /**  压缩图片
      *
      * @param bitmap 需要压缩的图片
+     * @param photoSize   图片大小
      * @return 压缩完成的图片
      */
-    public static Bitmap CompressBitmap(Bitmap bitmap){
+    public static Bitmap CompressBitmap(Bitmap bitmap,int photoSize){
+        int maxSize = 1024*384;
+        Log.d("","Size Test:\t"+(bitmap.getByteCount()/1024)+"KB");
+        if(photoSize <= maxSize)
+            return bitmap;
+        float inSampleSize = (float)maxSize/(float) photoSize;
         Matrix matrix = new Matrix();
-        matrix.setScale(0.5f,0.5f);
+        matrix.setScale(inSampleSize,inSampleSize);
         Bitmap newBitmap = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(),
                 bitmap.getHeight(), matrix, true);
         return newBitmap;
@@ -231,7 +260,7 @@ public class PhotoUtils {
     public static void saveNewBitmap(File file,Bitmap bm){
         try {
             FileOutputStream out = new FileOutputStream(file);
-            bm.compress(Bitmap.CompressFormat.PNG, 90, out);
+            bm.compress(Bitmap.CompressFormat.JPEG, 90, out);
             out.flush();
             out.close();
         } catch (FileNotFoundException e) {
@@ -248,7 +277,7 @@ public class PhotoUtils {
             Log.d("","inputStream Test:\t"+input);
             input.close();
             Bitmap oldBitmap = BitmapFactory.decodeStream(input);
-            Bitmap newBitmap = CompressBitmap(oldBitmap);
+            Bitmap newBitmap = CompressBitmap(oldBitmap,2);
             saveNewBitmap(picName,newBitmap);
             return FileProvider.getUriForFile(context, "com.zspirytus.dmdemo.Activity.MainActivity.fileprovider", picName);
         }catch (FileNotFoundException fne){
