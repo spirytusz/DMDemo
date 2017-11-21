@@ -50,6 +50,8 @@ public class MainActivity extends BaseActivity
         SetMyInfoAvatar,
         SetUploadPicPath {
 
+    public CircleImageView mAvatar;
+
     private static final String TAG = "MainActivity";
     private static final String mSnoKey = "Sno";
     private static final String mAvatarKey = "Avatar";
@@ -75,7 +77,6 @@ public class MainActivity extends BaseActivity
     private Settings mSettings;
     private TextView mSno;
     private TextView mName;
-    private CircleImageView mAvatar;
     private Toolbar toolbar;
     private ActionBarDrawerToggle toggle;
     private ProgressBar mProgressBar;
@@ -98,8 +99,8 @@ public class MainActivity extends BaseActivity
         RestoreAvatar();
         if( getSupportFragmentManager().findFragmentByTag(MyInfoFragment.class.getName()) == null)
         {
-            ArrayList<String> list = MyInfoFragment.getStudentInfobyLocalFile(this);
-            Log.d(TAG,"list is null?\t"+Boolean.toString(list == null));
+            String Sno = getIntent().getStringExtra(mSnoKey);
+            ArrayList<String> list = MyInfoFragment.getStudentInfobyLocalFile(this,Sno);
             if(list == null)
                 getInform(WebServiceConnector.PARAMTYPE_SNO,mSnoVaule);
             else {

@@ -20,6 +20,7 @@ import android.widget.ProgressBar;
 import android.widget.SimpleAdapter;
 import android.widget.Toast;
 
+import com.zspirytus.dmdemo.Activity.MainActivity;
 import com.zspirytus.dmdemo.Activity.SubMainActivity;
 import com.zspirytus.dmdemo.Interface.SetMyInfoAvatar;
 import com.zspirytus.dmdemo.Interface.getAvatarResponse;
@@ -122,9 +123,12 @@ public class MyInfoFragment extends Fragment{
         myAsyncTask.setListener(new getAvatarResponse() {
             @Override
             public void getAvatar(ArrayList<String> result) {
-                if(result.size() > 0 && !result.get(0).equals("")){
+                if(result.size() > 0){
                     Bitmap bitmap = PhotoUtils.convertStringToIcon(result.get(0));
                     mAvatar.setImageBitmap(bitmap);
+                    ((MainActivity)mParentActivity).mAvatar.setImageBitmap(bitmap);
+                } else if(result.get(0).equals("")){
+                    mAvatar.setImageResource(R.drawable.ic_account_circle_black_24dp);
                 } else {
                     Toast.makeText(mParentActivity,"从数据库获取头像失败！",Toast.LENGTH_SHORT).show();
                 }
@@ -172,9 +176,7 @@ public class MyInfoFragment extends Fragment{
      * @param activity  上下文
      * @return            保存的学生信息
      */
-    public static ArrayList<String> getStudentInfobyLocalFile(Activity activity){
-        ArrayList<String> list = new ArrayList<String>();
-        list.clear();
+    public static ArrayList<String> getStudentInfobyLocalFile(Activity activity,String Sno){
         SharedPreferences pref = activity.getSharedPreferences(INFO_FILENAME,Context.MODE_PRIVATE);
         String sno = pref.getString(SNO,"");
         String sname = pref.getString(SNAME,"");
@@ -182,6 +184,10 @@ public class MyInfoFragment extends Fragment{
         String sdept = pref.getString(SDEPT,"");
         if(sno.equals("") || sname.equals("") || scollege.equals("") || sdept.equals(""))
             return null;
+        if(!sno.equals(Sno))
+            return null;
+        ArrayList<String> list = new ArrayList<String>();
+        list.clear();
         list.add(sno);
         list.add(sname);
         list.add(scollege);
