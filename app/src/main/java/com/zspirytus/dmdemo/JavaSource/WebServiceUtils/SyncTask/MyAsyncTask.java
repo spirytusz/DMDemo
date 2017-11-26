@@ -80,12 +80,6 @@ public class MyAsyncTask<T> extends AsyncTask<ArrayList<String>, Integer, ArrayL
             case WebServiceConnector.METHOD_GETBASICINFOBYSNO:
                 ((getStudentBasicInfoResponse)response).getResult(result);
                 break;
-            case WebServiceConnector.METHOD_NEWREPAIRREPORT:
-                ((getBooleanTypeResponse)response).showDialog(result);
-                break;
-            case  WebServiceConnector.METHOD_NEWSTUDENTLEAVINGSCHOOL:
-                ((getBooleanTypeResponse)response).showDialog(result);
-                break;
             case WebServiceConnector.METHOD_GETSNOBYACCOUNT:
                 ((getSnobyAccountResponse)response).getSno(result);
                 break;
@@ -95,11 +89,21 @@ public class MyAsyncTask<T> extends AsyncTask<ArrayList<String>, Integer, ArrayL
             case WebServiceConnector.METHOD_REGISTERACCOUNT:
                 ((getModRegResponse)response).getResult(result);
                 break;
+            case WebServiceConnector.METHOD_GETAVATAR:
+                ((getAvatarResponse)response).getAvatar(result);
+                break;
+            case WebServiceConnector.METHOD_NEWRETURNLATELY:
+                ((getBooleanTypeResponse)response).showDialog(result);
+                break;
+            case WebServiceConnector.METHOD_NEWREPAIRREPORT:
+                ((getBooleanTypeResponse)response).showDialog(result);
+                break;
+            case  WebServiceConnector.METHOD_NEWSTUDENTLEAVINGSCHOOL:
+                ((getBooleanTypeResponse)response).showDialog(result);
+                break;
             case WebServiceConnector.METHOD_UPDATEAVATAR:
                 ((getBooleanTypeResponse)response).showDialog(result);
                 break;
-            case WebServiceConnector.METHOD_GETAVATAR:
-                ((getAvatarResponse)response).getAvatar(result);
         }
         Log.d(TAG,"onPostExecute Test:\t"+methodName);
         if(result != null)

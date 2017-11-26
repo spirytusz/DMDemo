@@ -89,15 +89,24 @@ public class Settings extends Fragment {
                 switch (i){
                     case 0:
                         ActivityManager.finishAll();
+                        clearAccountInfo();
                         LoginActivity.StartThisActivity(mParentActivity);
                         break;
                     case 1:
-                        SharedPreferences pref = mParentActivity.getSharedPreferences("data", Context.MODE_PRIVATE);
-                        pref.edit().clear().commit();
+                        clearAccountInfo();
                         Toast.makeText(mParentActivity,getString(R.string.Delete_Successfully),Toast.LENGTH_SHORT).show();
                 }
             }
         });
+    }
+
+    private void clearAccountInfo(){
+        SharedPreferences pref1 = mParentActivity.getSharedPreferences("data", Context.MODE_PRIVATE);
+        pref1.edit().clear().commit();
+        SharedPreferences pref2 = mParentActivity.getSharedPreferences("StudentInfo", Context.MODE_PRIVATE);
+        pref2.edit().clear().commit();
+        SharedPreferences pref3 = mParentActivity.getSharedPreferences("accountInfo", Context.MODE_PRIVATE);
+        pref3.edit().clear().commit();
     }
 }
 

@@ -186,6 +186,8 @@ public class MyInfoFragment extends Fragment{
             return null;
         if(!sno.equals(Sno))
             return null;
+        Log.d("","sno equals Sno?"+Boolean.toString(sno.equals(Sno)));
+        Log.d("","sno equals Sno?\t"+sno+"\t"+Sno);
         ArrayList<String> list = new ArrayList<String>();
         list.clear();
         list.add(sno);
