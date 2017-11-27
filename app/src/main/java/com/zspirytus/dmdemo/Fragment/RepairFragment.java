@@ -18,6 +18,7 @@ import android.widget.TextView;
 
 import com.zspirytus.dmdemo.Interface.SetUploadPicPath;
 import com.zspirytus.dmdemo.Interface.getBooleanTypeResponse;
+import com.zspirytus.dmdemo.JavaSource.DialogUtils;
 import com.zspirytus.dmdemo.JavaSource.FragmentCollector;
 import com.zspirytus.dmdemo.JavaSource.PhotoUtils;
 import com.zspirytus.dmdemo.JavaSource.WebServiceUtils.SyncTask.MyAsyncTask;
@@ -38,6 +39,7 @@ public class RepairFragment extends Fragment {
 
     private static final String TAG = "RepairFragment";
     private static final String FRAGMENT_HIDDEN_STATUS = "FRAGMENT_HIDDEN_STATUS";
+    private static final String mSnoKey = "Sno";
 
     private View view;
     private TextView mRepairArea;
@@ -187,49 +189,36 @@ public class RepairFragment extends Fragment {
         mRepairSend.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                SendMessage("15251102224");
+                SendMessage();
             }
         });
     }
 
-    private void SendMessage(String sno){
+    private void SendMessage(){
         MyAsyncTask<getBooleanTypeResponse> myAsyncTask = new MyAsyncTask<getBooleanTypeResponse>(mParentActivity,WebServiceConnector.METHOD_NEWREPAIRREPORT);
         myAsyncTask.setListener(new getBooleanTypeResponse() {
             @Override
             public void showDialog(ArrayList<String> result) {
                 final boolean isSuccess = result.get(0).equals("true");
-                String FormatResult = "";
-                if(isSuccess)
-                    FormatResult = "成功";
-                else
-                    FormatResult = "失败";
-                AlertDialog.Builder dialog = new AlertDialog.Builder(mParentActivity);
-                dialog.setTitle("提示");
-                dialog.setMessage(FormatResult);
-                dialog.setPositiveButton("好", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        if(isSuccess){
-                            mRepairArea.setText("");
-                            mRepairPlace.setText("");
-                            mRepairType.setText("");
-                            mRepairDetail.setText("");
-                            mRepairContact.setText("");
-                            mRepairPhoto.setText("");
-                        }
-                    }
-                });
-                dialog.show();
+                DialogUtils.showResultDialog(mParentActivity,isSuccess);
+                if(isSuccess){
+                    mRepairArea.setText("");
+                    mRepairPlace.setText("");
+                    mRepairType.setText("");
+                    mRepairDetail.setText("");
+                    mRepairContact.setText("");
+                    mRepairPhoto.setText("");
+                }
             }
         });
-        SimpleDateFormat formator = new SimpleDateFormat("yyMMddHHmmss");
-        Date curDate =  new Date(System.currentTimeMillis());
-        String time = formator.format(curDate);
-        Log.d(TAG,"Time test:\n"+time);
-        myAsyncTask.execute(getParamType(),getInput(sno,time));
+        myAsyncTask.execute(getParamType(),getInput());
     }
 
-    private ArrayList<String> getInput(String sno,String repairNo){
+    private ArrayList<String> getInput(){
+        SimpleDateFormat formator = new SimpleDateFormat("yyMMddHHmmss");
+        Date curDate =  new Date(System.currentTimeMillis());
+        String Sno = getArguments().getString(mSnoKey);
+        String repairNo = formator.format(curDate);
         String area = mRepairArea.getText().toString();
         String type = mRepairType.getText().toString();
         String dir = mRepairPhoto.getText().toString();
@@ -240,7 +229,7 @@ public class RepairFragment extends Fragment {
              bitmap = null;
         ArrayList<String> input = new ArrayList<String>();
         input.clear();
-        input.add(sno);
+        input.add(Sno);
         input.add(repairNo);
         if(area.equals(getString(R.string.Public_Area)))
             input.add("0");
@@ -290,6 +279,14 @@ public class RepairFragment extends Fragment {
         paraType.add(WebServiceConnector.PARAMTYPE_CONTACT);
         paraType.add(WebServiceConnector.PARAMTYPE_PHOTO);
         return paraType;
+    }
+
+    public static RepairFragment GetThisFragment(String Sno){
+        RepairFragment rf = new RepairFragment();
+        Bundle bundle = new Bundle();
+        bundle.putString(mSnoKey,Sno);
+        rf.setArguments(bundle);
+        return  rf;
     }
 }
 

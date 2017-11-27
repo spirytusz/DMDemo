@@ -329,7 +329,7 @@ public class MainActivity extends BaseActivity
             Log.d("","itemName:"+"account");
         } else if (id == R.id.nav_repair) {
             if (mRepairFragment == null) {
-                mRepairFragment = new RepairFragment();
+                mRepairFragment = RepairFragment.GetThisFragment(mSnoVaule);
                 FragmentCollector.addFragment(mRepairFragment);
                 ft.add(R.id.fragment_container, mRepairFragment,mRepairFragment.getClass().getName());
             }
@@ -338,7 +338,7 @@ public class MainActivity extends BaseActivity
             Log.d("","itemName:"+"repair");
         } else if (id == R.id.nav_els) {
             if (mELSchool == null) {
-                mELSchool = new ELSFragment();
+                mELSchool = ELSFragment.GetThisFragment(mSnoVaule);
                 FragmentCollector.addFragment(mELSchool);
                 ft.add(R.id.fragment_container, mELSchool,mELSchool.getClass().getName());
             }
@@ -365,7 +365,7 @@ public class MainActivity extends BaseActivity
             Log.d("","itemName:"+"about");
         } else if (id == R.id.nav_backLate) {
             if(mBackLateFragment == null){
-                mBackLateFragment = new BackLateFragment();
+                mBackLateFragment = BackLateFragment.GetThisFragment(mSnoVaule);
                 FragmentCollector.addFragment(mBackLateFragment);
                 ft.add(R.id.fragment_container,mBackLateFragment);
             }

@@ -1,8 +1,11 @@
 package com.zspirytus.dmdemo.Fragment;
 
 import android.app.Activity;
+import android.app.DatePickerDialog;
+import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.icu.util.Calendar;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
@@ -10,9 +13,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.TextView;
+import android.widget.TimePicker;
 
 import com.zspirytus.dmdemo.Interface.getBooleanTypeResponse;
+import com.zspirytus.dmdemo.JavaSource.DialogUtils;
 import com.zspirytus.dmdemo.JavaSource.WebServiceUtils.SyncTask.MyAsyncTask;
 import com.zspirytus.dmdemo.JavaSource.WebServiceUtils.WebServiceConnector;
 import com.zspirytus.dmdemo.R;
@@ -31,7 +38,7 @@ public class BackLateFragment extends Fragment {
     private static final String mSnoKey = "Sno";
     private Activity mParentActivity;
 
-    private EditText mReturnTime;
+    private TextView mReturnTime;
     private EditText mReason;
     private Button mButton;
 
@@ -50,6 +57,12 @@ public class BackLateFragment extends Fragment {
 
     private void LoadPane(View view){
         mReturnTime = view.findViewById(R.id.blf_returnTime);
+        mReturnTime.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                DialogUtils.TimePicker(mParentActivity,mReturnTime);
+            }
+        });
         mReason = view.findViewById(R.id.blf_reason);
         mButton = view.findViewById(R.id.blf_button);
         mButton.setOnClickListener(new View.OnClickListener() {
@@ -98,16 +111,16 @@ public class BackLateFragment extends Fragment {
     private ArrayList<String> getInput(){
         ArrayList<String> input = new ArrayList<>();
         input.clear();
-        Bundle bundle = new Bundle();
+        Bundle bundle = getArguments();
         String Sno = bundle.getString(mSnoKey);
         String Rno = getRno();
         String returnTime = mReturnTime.getText().toString();
         String reason = mReason.getText().toString();
         if(
-            Sno != null && !Sno.equals("") &&
-            Rno != null && !Rno.equals("") &&
-            returnTime != null && !returnTime.equals("") &&
-            reason != null && !reason.equals("")){
+            Sno != null && !Sno.equals("")
+            && Rno != null && !Rno.equals("")
+            && returnTime != null && !returnTime.equals("")
+            && reason != null && !reason.equals("")){
             input.add(Sno);
             input.add(Rno);
             input.add(returnTime);

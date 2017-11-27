@@ -17,7 +17,7 @@
             android:gravity="center"
             android:text="@string/Return_Time" />
 
-        <EditText
+        <TextView
             android:id="@+id/blf_returnTime"
             android:layout_width="0dp"
             android:layout_height="match_parent"

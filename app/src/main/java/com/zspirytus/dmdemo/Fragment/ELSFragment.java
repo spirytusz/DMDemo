@@ -21,6 +21,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.zspirytus.dmdemo.Interface.getBooleanTypeResponse;
+import com.zspirytus.dmdemo.JavaSource.DialogUtils;
 import com.zspirytus.dmdemo.JavaSource.FragmentCollector;
 import com.zspirytus.dmdemo.JavaSource.WebServiceUtils.SyncTask.MyAsyncTask;
 import com.zspirytus.dmdemo.JavaSource.WebServiceUtils.WebServiceConnector;
@@ -42,6 +43,7 @@ public class ELSFragment extends Fragment {
 
     private static final String TAG = "ELSchool";
     private static final String FRAGMENT_HIDDEN_STATUS = "FRAGMENT_HIDDEN_STATUS";
+    private static final String mSnoKey = "Sno";
 
     private View view;
     private TextView mStartTime;
@@ -155,50 +157,29 @@ public class ELSFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 if (isInputlegal()) {
-                    SendMessage("15251102226");
+                    SendMessage();
                 } else {
-                    AlertDialog.Builder dialog = new AlertDialog.Builder(mParentActivity);
-                    dialog.setTitle("提示");
-                    dialog.setMessage("输入值为空或违反约束");
-                    dialog.setPositiveButton("好", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialogInterface, int i) {
-                        }
-                    });
-                    dialog.show();
+                    DialogUtils.showNegativeTipsDialog(mParentActivity);
                 }
             }
         });
     }
 
-    public void SendMessage(String sno) {
+    public void SendMessage() {
         MyAsyncTask<getBooleanTypeResponse> myAsyncTask = new MyAsyncTask<getBooleanTypeResponse>(mParentActivity, WebServiceConnector.METHOD_NEWSTUDENTLEAVINGSCHOOL);
         myAsyncTask.setListener(new getBooleanTypeResponse() {
             @Override
             public void showDialog(ArrayList<String> result) {
                 final boolean isSuccess = result.get(0).equals("true");
-                String FormatResult = "";
-                if (isSuccess)
-                    FormatResult = "成功";
-                else
-                    FormatResult = "失败";
-                AlertDialog.Builder dialog = new AlertDialog.Builder(mParentActivity);
-                dialog.setTitle("提示");
-                dialog.setMessage(FormatResult);
-                dialog.setPositiveButton("好", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        if(isSuccess){
-                            mStartTime.setText("");
-                            mEndTime.setText("");
-                            mReason.setText("");
-                        }
-                    }
-                });
-                dialog.show();
+                DialogUtils.showResultDialog(mParentActivity,isSuccess);
+                if(isSuccess){
+                    mStartTime.setText("");
+                    mEndTime.setText("");
+                    mReason.setText("");
+                }
             }
         });
-        myAsyncTask.execute(getParmType(), getInput(sno));
+        myAsyncTask.execute(getParamType(), getInput());
     }
 
     private ArrayList<Integer> getEndDate() {
@@ -253,7 +234,7 @@ public class ELSFragment extends Fragment {
         return false;
     }
 
-    private ArrayList<String> getParmType() {
+    private ArrayList<String> getParamType() {
         ArrayList<String> paramType = new ArrayList<>();
         paramType.clear();
         paramType.add(WebServiceConnector.PARAMTYPE_SNO);
@@ -263,13 +244,22 @@ public class ELSFragment extends Fragment {
         return paramType;
     }
 
-    private ArrayList<String> getInput(String sno) {
+    private ArrayList<String> getInput() {
         ArrayList<String> input = new ArrayList<>();
         input.clear();
-        input.add(sno);
+        String Sno = getArguments().getString(mSnoKey);
+        input.add(Sno);
         input.add(mStartYear + "-" + mStartMonth + "-" + mStartDay);
         input.add(mEndYear + "-" + mEndMonth + "-" + mEndDay);
         input.add(mReason.getText().toString());
         return input;
+    }
+
+    public static ELSFragment GetThisFragment(String Sno){
+        ELSFragment els = new ELSFragment();
+        Bundle bundle = new Bundle();
+        bundle.putSerializable(mSnoKey,Sno);
+        els.setArguments(bundle);
+        return els;
     }
 }
