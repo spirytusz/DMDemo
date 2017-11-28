@@ -3,6 +3,8 @@ package com.zspirytus.dmdemo.JavaSource.Utils;
 import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
+import android.content.ContentResolver;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.icu.util.Calendar;
 import android.support.v7.app.AlertDialog;
@@ -18,6 +20,14 @@ public class DialogUtil {
 
     public static void TimePicker(Activity activity, final TextView textView){
         Calendar c = Calendar.getInstance();
+        int hour;
+        int minute;
+        if(is24((Context)activity)){
+            hour = c.get(Calendar.HOUR_OF_DAY);
+        } else {
+            hour = c.get(Calendar.HOUR);
+        }
+        minute = c.get(Calendar.MINUTE);
         // 直接创建一个TimePickerDialog对话框实例，并将它显示出来
         new TimePickerDialog(activity,
                 // 绑定监听器
@@ -41,7 +51,7 @@ public class DialogUtil {
                     }
                 },
                 // 设置初始时间
-                c.get(Calendar.HOUR), c.get(Calendar.MINUTE),true).show();
+                hour, minute,true).show();
     }
 
     public static void DatePicker(Activity activity,final TextView textView){
@@ -96,5 +106,14 @@ public class DialogUtil {
             }
         });
         dialog.show();
+    }
+
+    private static boolean is24(Context context){
+        ContentResolver mResolver= context.getContentResolver();
+        String timeFormat = android.provider.Settings.System.getString(mResolver,android.provider.Settings.System.TIME_12_24);
+        if(timeFormat.equals("24"))
+            return true;
+        else
+            return false;
     }
 }

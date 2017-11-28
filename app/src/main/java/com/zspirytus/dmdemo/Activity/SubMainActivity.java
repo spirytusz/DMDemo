@@ -13,6 +13,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.SimpleAdapter;
 
 import com.zspirytus.dmdemo.JavaSource.ActivityManager;
@@ -31,6 +32,7 @@ public class SubMainActivity extends AppCompatActivity {
     private static final String titleKey = "titleKey";
     private static final String typeKey = "typeKey";
     private int i;
+    private ProgressBar mProgressBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,8 +40,13 @@ public class SubMainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_repair_schedule);
         Intent intent = getIntent();
         i = intent.getIntExtra(typeKey,-1);
-        String title = intent.getStringExtra(titleKey);
         ActivityManager.addActivity(this);
+        LoadPane();
+    }
+
+    public void LoadPane(){
+        Intent intent = getIntent();
+        String title = intent.getStringExtra(titleKey);
         Toolbar toolbar = (Toolbar)findViewById(R.id.tb_toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -52,6 +59,8 @@ public class SubMainActivity extends AppCompatActivity {
         toolbar.setTitle(title);
         ListView listView = (ListView)findViewById(R.id.repairschedule_listview);
         listView.setAdapter(getAdapter());
+        mProgressBar = (ProgressBar) findViewById(R.id.submainactivity_progressbar);
+        mProgressBar.setVisibility(View.GONE);
     }
 
     @Override

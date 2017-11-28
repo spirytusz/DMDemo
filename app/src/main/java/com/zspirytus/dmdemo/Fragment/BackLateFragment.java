@@ -6,6 +6,7 @@ import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,6 +22,7 @@ import com.zspirytus.dmdemo.R;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 
 /**
@@ -38,24 +40,24 @@ public class BackLateFragment extends Fragment {
     private Button mButton;
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState){
-        View view = inflater.inflate(R.layout.layout_backlatefragment,container,false);
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.layout_backlatefragment, container, false);
         LoadPane(view);
         return view;
     }
 
     @Override
-    public void onAttach(Context context){
+    public void onAttach(Context context) {
         super.onAttach(context);
         mParentActivity = (Activity) context;
     }
 
-    private void LoadPane(View view){
+    private void LoadPane(View view) {
         mReturnTime = view.findViewById(R.id.blf_returnTime);
         mReturnTime.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                DialogUtil.TimePicker(mParentActivity,mReturnTime);
+                DialogUtil.TimePicker(mParentActivity, mReturnTime);
             }
         });
         mReason = view.findViewById(R.id.blf_reason);
@@ -63,37 +65,33 @@ public class BackLateFragment extends Fragment {
         mButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                MyAsyncTask<getBooleanTypeResponse> myAsyncTask = new MyAsyncTask<getBooleanTypeResponse>(mParentActivity,WebServiceConnector.METHOD_NEWRETURNLATELY);
-                myAsyncTask.setListener(new getBooleanTypeResponse() {
-                    @Override
-                    public void showDialog(ArrayList<String> result) {
-                        final boolean isSuccess = result.get(0).equals("true");
-                        String FormatResult = "";
-                        if (isSuccess)
-                            FormatResult = "成功";
-                        else
-                            FormatResult = "失败";
-                        AlertDialog.Builder dialog = new AlertDialog.Builder(mParentActivity);
-                        dialog.setTitle("提示");
-                        dialog.setMessage(FormatResult);
-                        dialog.setPositiveButton("好", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialogInterface, int i) {
-                                if(isSuccess){
-                                    mReturnTime.setText("");
-                                    mReason.setText("");
-                                }
-                            }
-                        });
-                        dialog.show();
-                    }
-                });
-                myAsyncTask.execute(getParamType(),getInput());
+                getmReturnTime();
+                if (!isInputLegal()) {
+                    DialogUtil.showNegativeTipsDialog(mParentActivity);
+                    return;
+                }
+                SendMessage();
             }
         });
     }
 
-    private ArrayList<String> getParamType(){
+    private void SendMessage() {
+        MyAsyncTask<getBooleanTypeResponse> myAsyncTask = new MyAsyncTask<getBooleanTypeResponse>(mParentActivity, WebServiceConnector.METHOD_NEWRETURNLATELY);
+        myAsyncTask.setListener(new getBooleanTypeResponse() {
+            @Override
+            public void showDialog(ArrayList<String> result) {
+                final boolean isSuccess = result.get(0).equals("true");
+                DialogUtil.showResultDialog(mParentActivity, isSuccess);
+                if (isSuccess) {
+                    mReturnTime.setText("");
+                    mReason.setText("");
+                }
+            }
+        });
+        myAsyncTask.execute(getParamType(), getInput());
+    }
+
+    private ArrayList<String> getParamType() {
         ArrayList<String> param = new ArrayList<>();
         param.clear();
         param.add(WebServiceConnector.PARAMTYPE_SNO);
@@ -103,7 +101,7 @@ public class BackLateFragment extends Fragment {
         return param;
     }
 
-    private ArrayList<String> getInput(){
+    private ArrayList<String> getInput() {
         ArrayList<String> input = new ArrayList<>();
         input.clear();
         Bundle bundle = getArguments();
@@ -111,11 +109,11 @@ public class BackLateFragment extends Fragment {
         String Rno = getRno();
         String returnTime = mReturnTime.getText().toString();
         String reason = mReason.getText().toString();
-        if(
-            Sno != null && !Sno.equals("")
-            && Rno != null && !Rno.equals("")
-            && returnTime != null && !returnTime.equals("")
-            && reason != null && !reason.equals("")){
+        if (
+                Sno != null && !Sno.equals("")
+                        && Rno != null && !Rno.equals("")
+                        && returnTime != null && !returnTime.equals("")
+                        && reason != null && !reason.equals("")) {
             input.add(Sno);
             input.add(Rno);
             input.add(returnTime);
@@ -126,17 +124,42 @@ public class BackLateFragment extends Fragment {
         return input;
     }
 
-    private String getRno(){
+    private boolean isInputLegal() {
+        if (mReason.getText().toString().equals(""))
+            return false;
+        ArrayList<Integer> inputTime = getmReturnTime();
+        Calendar c = Calendar.getInstance();
+        int nowMinute = c.get(Calendar.HOUR_OF_DAY) * 60 + c.get(Calendar.MINUTE);
+        int inputMinute = inputTime.get(0) * 60 + inputTime.get(1);
+        if (nowMinute >= inputMinute)
+            return false;
+        return true;
+    }
+
+    private ArrayList<Integer> getmReturnTime() {
+        char[] c = mReturnTime.getText().toString().toCharArray();
+        String hour = c[0] + "" + c[1] + "";
+        String minute = c[3] + "" + c[4] + "";
+        ArrayList<Integer> time = new ArrayList<>();
+        time.clear();
+        time.add(Integer.parseInt(hour));
+        time.add(Integer.parseInt(minute));
+        for(int i = 0;i<time.size();i++)
+            Log.d("","Input Time Test:\t"+time.get(i));
+        return time;
+    }
+
+    private String getRno() {
         SimpleDateFormat formator = new SimpleDateFormat("ddHHmmssSSS");
-        Date curDate =  new Date(System.currentTimeMillis());
+        Date curDate = new Date(System.currentTimeMillis());
         String Rno = formator.format(curDate);
         return Rno;
     }
 
-    public static BackLateFragment GetThisFragment(String Sno){
+    public static BackLateFragment GetThisFragment(String Sno) {
         BackLateFragment blf = new BackLateFragment();
         Bundle bundle = new Bundle();
-        bundle.putString(mSnoKey,Sno);
+        bundle.putString(mSnoKey, Sno);
         blf.setArguments(bundle);
         return blf;
     }
