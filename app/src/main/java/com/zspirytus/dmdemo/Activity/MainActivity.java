@@ -37,14 +37,12 @@ import com.zspirytus.dmdemo.Interface.getBooleanTypeResponse;
 import com.zspirytus.dmdemo.Interface.getStudentBasicInfoResponse;
 import com.zspirytus.dmdemo.JavaSource.ActivityManager;
 import com.zspirytus.dmdemo.JavaSource.FragmentCollector;
-import com.zspirytus.dmdemo.JavaSource.PhotoUtils;
+import com.zspirytus.dmdemo.JavaSource.Utils.PhotoUtil;
 import com.zspirytus.dmdemo.JavaSource.WebServiceUtils.SyncTask.MyAsyncTask;
 import com.zspirytus.dmdemo.JavaSource.WebServiceUtils.WebServiceConnector;
 import com.zspirytus.dmdemo.R;
 import com.zspirytus.dmdemo.Reproduction.CircleImageView;
 
-import java.io.File;
-import java.nio.channels.AlreadyBoundException;
 import java.util.ArrayList;
 
 public class MainActivity extends BaseActivity
@@ -99,6 +97,7 @@ public class MainActivity extends BaseActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        //PhotoUtil.saveCompressFile(PhotoUtil.picName,50);
         ActivityManager.addActivity(this);
         LoadPane();
         RestoreAvatar();
@@ -173,21 +172,11 @@ public class MainActivity extends BaseActivity
         gs.execute(list1,list2);
     }
 
-    @Override
-    public void setUploadPicPath(TextView textView, int by) {
-        repairPicDir = textView;
-        isRepairPicDir = true;
-        if (by == BY_CAMERA)
-            picUri = PhotoUtils.applyPermissionForCamera(this);
-        else if (by == BY_ALBUM)
-            PhotoUtils.applyPermissionForAlbum(this);
-    }
-
     public void RestoreAvatar() {
         SharedPreferences pref = getSharedPreferences("data", MODE_PRIVATE);
         String avatar = pref.getString(mAvatarKey, "");
         if (!avatar.equals(""))
-            mAvatar.setImageBitmap(PhotoUtils.getBitmapbyString(avatar));
+            mAvatar.setImageBitmap(PhotoUtil.getBitmapbyString(avatar));
     }
 
     private void LoadPane() {
@@ -221,7 +210,7 @@ public class MainActivity extends BaseActivity
         switch (requestCode) {
             case REQ_PERMISSION_FOR_CAMERA:
                 if (grantResults[0] == PackageManager.PERMISSION_GRANTED)
-                    picUri = PhotoUtils.useCamera(this);
+                    picUri = PhotoUtil.useCamera(this);
                 else {
                     // 没有获取到权限，重新请求
                     if (true) {
@@ -232,7 +221,7 @@ public class MainActivity extends BaseActivity
                 break;
             case REQ_PERMISSION_FOR_ALBUM:
                 if (grantResults[0] == PackageManager.PERMISSION_GRANTED)
-                    PhotoUtils.selectFromAlbum(this);
+                    PhotoUtil.selectFromAlbum(this);
                 else {
                     // 没有获取到权限，重新请求
                     if (true) {
@@ -247,12 +236,22 @@ public class MainActivity extends BaseActivity
     @Override
     public void setAvatar(CircleImageView img, int by) {
         if (by == BY_CAMERA)
-            picUri = PhotoUtils.applyPermissionForCamera(this);
+            picUri = PhotoUtil.applyPermissionForCamera(this);
         else if (by == BY_ALBUM) {
-            PhotoUtils.applyPermissionForAlbum(this);
+            PhotoUtil.applyPermissionForAlbum(this);
             isAlbum = true;
         }
         cimg = img;
+    }
+
+    @Override
+    public void setUploadPicPath(TextView textView, int by) {
+        repairPicDir = textView;
+        isRepairPicDir = true;
+        if (by == BY_CAMERA)
+            picUri = PhotoUtil.applyPermissionForCamera(this);
+        else if (by == BY_ALBUM)
+            PhotoUtil.applyPermissionForAlbum(this);
     }
 
     @Override
@@ -261,30 +260,33 @@ public class MainActivity extends BaseActivity
         if (resultCode == RESULT_OK) {
             switch (requestCode) {
                 case REQ_CAMERA:
-                    //picUri = PhotoUtils.saveCompressBitmap(this,picUri);
+                    //picUri = PhotoUtil.saveCompressBitmap(this,picUri);
                     if(picUri == null)
                         return;
                     if (isRepairPicDir) {
-                        repairPicDir.setText(PhotoUtils.picName.getAbsolutePath());
+                        repairPicDir.setText(PhotoUtil.picName.getAbsolutePath());
                         break;
                     }
-                    PhotoUtils.cropPicture(this, picUri);
+                    PhotoUtil.cropPicture(this, picUri);
                     break;
                 case REQ_ALBUM:
                     picUri = data.getData();
-                    PhotoUtils.cropPicture(this, picUri);
+                    PhotoUtil.cropPicture(this, picUri);
                     break;
                 case REQ_CUT:
-                    Bitmap bitmap = BitmapFactory.decodeFile(PhotoUtils.cropPicName.getAbsolutePath());
-                    bitmap = PhotoUtils.CompressBitmap(bitmap,(int)PhotoUtils.cropPicName.length());
-                    PhotoUtils.saveAvatar(this, bitmap);
-                    cimg.setImageBitmap(bitmap);
-                    mAvatar.setImageBitmap(bitmap);
-                    UpdateAvatar();
+                    Bitmap bitmap = BitmapFactory.decodeFile(PhotoUtil.cropPicName.getAbsolutePath());
+                    bitmap = PhotoUtil.CompressBitmap(bitmap,(int) PhotoUtil.cropPicName.length());
+                    if(!isRepairPicDir){
+                        cimg.setImageBitmap(bitmap);
+                        mAvatar.setImageBitmap(bitmap);
+                        UpdateAvatar();
+                    } else {
+                        repairPicDir.setText(PhotoUtil.compressFileName.getAbsolutePath());
+                    }
                     if (isAlbum)
-                        PhotoUtils.cropPicName.delete();
+                        PhotoUtil.cropPicName.delete();
                     else {
-                        PhotoUtils.picName.delete();
+                        PhotoUtil.picName.delete();
                     }
                     break;
             }
@@ -434,9 +436,9 @@ public class MainActivity extends BaseActivity
         ArrayList<String> input = new ArrayList<>();
         input.clear();
         String sno = getIntent().getStringExtra(mSnoKey);
-        Bitmap oldBitmap = BitmapFactory.decodeFile(PhotoUtils.cropPicName.getAbsolutePath());
-        Bitmap newBitmap = PhotoUtils.CompressBitmap(oldBitmap,(int)PhotoUtils.cropPicName.length());
-        String photo = PhotoUtils.convertIconToString(newBitmap);
+        Bitmap oldBitmap = BitmapFactory.decodeFile(PhotoUtil.cropPicName.getAbsolutePath());
+        Bitmap newBitmap = PhotoUtil.CompressBitmap(oldBitmap,(int) PhotoUtil.cropPicName.length());
+        String photo = PhotoUtil.convertIconToString(newBitmap);
         input.add(sno);
         input.add(photo);
         return input;

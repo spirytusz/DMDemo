@@ -3,14 +3,9 @@ package com.zspirytus.dmdemo.Fragment;
 import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.icu.util.Calendar;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentTransaction;
-import android.support.v7.app.AlertDialog;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,19 +13,15 @@ import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.zspirytus.dmdemo.Interface.getBooleanTypeResponse;
-import com.zspirytus.dmdemo.JavaSource.DialogUtils;
+import com.zspirytus.dmdemo.JavaSource.Utils.DialogUtil;
 import com.zspirytus.dmdemo.JavaSource.FragmentCollector;
 import com.zspirytus.dmdemo.JavaSource.WebServiceUtils.SyncTask.MyAsyncTask;
 import com.zspirytus.dmdemo.JavaSource.WebServiceUtils.WebServiceConnector;
 import com.zspirytus.dmdemo.R;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 
 
 /**
@@ -159,7 +150,7 @@ public class ELSFragment extends Fragment {
                 if (isInputlegal()) {
                     SendMessage();
                 } else {
-                    DialogUtils.showNegativeTipsDialog(mParentActivity);
+                    DialogUtil.showNegativeTipsDialog(mParentActivity);
                 }
             }
         });
@@ -171,7 +162,7 @@ public class ELSFragment extends Fragment {
             @Override
             public void showDialog(ArrayList<String> result) {
                 final boolean isSuccess = result.get(0).equals("true");
-                DialogUtils.showResultDialog(mParentActivity,isSuccess);
+                DialogUtil.showResultDialog(mParentActivity,isSuccess);
                 if(isSuccess){
                     mStartTime.setText("");
                     mEndTime.setText("");

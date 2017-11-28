@@ -1,4 +1,4 @@
-package com.zspirytus.dmdemo.JavaSource;
+package com.zspirytus.dmdemo.JavaSource.Utils;
 
 import android.Manifest;
 import android.app.Activity;
@@ -10,6 +10,7 @@ import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
+import android.media.ExifInterface;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Environment;
@@ -24,10 +25,12 @@ import com.zspirytus.dmdemo.R;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 
 import static android.content.Context.MODE_PRIVATE;
 
@@ -35,10 +38,12 @@ import static android.content.Context.MODE_PRIVATE;
  * Created by ZSpirytus on 2017/10/15.
  */
 
-public class PhotoUtils {
+public class PhotoUtil {
 
     public static final File picName = new File(Environment.getExternalStorageDirectory().getAbsolutePath()+ "/dmdemo/" + "temp.jpg");
     public static final File cropPicName = new File(Environment.getExternalStorageDirectory().getAbsolutePath()+"/dmdemo/crop.jpg");
+    public static final File compressFileName = new File(Environment.getExternalStorageDirectory().getAbsolutePath()+"/dmdemo/compress.jpg");
+    private static final String TAG = "PhotoUtil";
     private static final int REQ_CAMERA = 0x01;
     private static final int REQ_ALBUM = 0x02;
     private static final int REQ_CUT = 0x04;
@@ -252,40 +257,122 @@ public class PhotoUtils {
         return newBitmap;
     }
 
-    /** 保存Bitmap图片到手机
-     *
-     * @param file 保存路径
-     * @param bm 需要保存的图片
-     */
-    public static void saveNewBitmap(File file,Bitmap bm){
-        try {
-            FileOutputStream out = new FileOutputStream(file);
-            bm.compress(Bitmap.CompressFormat.JPEG, 90, out);
-            out.flush();
-            out.close();
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
+    public static void saveCompressFile(File file,int quality){
+        Bitmap old = BitmapFactory.decodeFile(file.getAbsolutePath());
+        Log.d("","old size:\t"+old.getByteCount()/1024+"KB");
+        Bitmap bitmap = getThumbnails(file.getAbsolutePath());
+        Log.d("","old size:\t"+bitmap.getByteCount()/1024+"KB");
+        Log.d("","old size:\t"+convertIconToString(bitmap).length()/1024+"KB");
+        int degree = readPictureDegree(file.getAbsolutePath());
+        if(degree != 0){
+            rotateBitmap(bitmap,degree);
+        }
+        FileOutputStream fos = null;
+        try{
+            if(!compressFileName.exists()){
+                compressFileName.getParentFile().mkdirs();
+            } else {
+                compressFileName.delete();
+            }
+            fos = new FileOutputStream(compressFileName);
+            bitmap.compress(Bitmap.CompressFormat.JPEG, quality, fos);
+        } catch (FileNotFoundException e){
+            Log.d(TAG,"Compress Failed!");
         }
     }
 
-    public static Uri saveCompressBitmap(Context context,Uri bitmapUri){
+    private static Bitmap getThumbnails(String path){
+        BitmapFactory.Options options = new BitmapFactory.Options();
+        options.inJustDecodeBounds = true;
+        BitmapFactory.decodeFile(path, options);
+        options.inSampleSize = calculateInSampleSize(options, 480, 800);
+        options.inJustDecodeBounds = false;
+        return BitmapFactory.decodeFile(path, options);
+    }
+
+    /**
+     * 获取照片角度
+     * @param path
+     * @return
+     */
+    private static int readPictureDegree(String path) {
+        int degree = 0;
+        try {
+            ExifInterface exifInterface = new ExifInterface(path);
+            int orientation = exifInterface.getAttributeInt(
+                    ExifInterface.TAG_ORIENTATION,
+                    ExifInterface.ORIENTATION_NORMAL);
+            switch (orientation) {
+                case ExifInterface.ORIENTATION_ROTATE_90:
+                    degree = 90;
+                    break;
+                case ExifInterface.ORIENTATION_ROTATE_180:
+                    degree = 180;
+                    break;
+                case ExifInterface.ORIENTATION_ROTATE_270:
+                    degree = 270;
+                    break;
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return degree;
+    }
+
+    /**
+     * 旋转照片
+     * @param bitmap
+     * @param degress
+     * @return
+     */
+    private static Bitmap rotateBitmap(Bitmap bitmap,int degress) {
+        if (bitmap != null) {
+            Matrix m = new Matrix();
+            m.postRotate(degress);
+            bitmap = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(),
+                    bitmap.getHeight(), m, true);
+            return bitmap;
+        }
+        return bitmap;
+    }
+
+    private static int calculateInSampleSize(BitmapFactory.Options options,
+                                            int reqWidth, int reqHeight) {
+        final int height = options.outHeight;
+        final int width = options.outWidth;
+        int inSampleSize = 1;
+        if (height > reqHeight || width > reqWidth) {
+            final int heightRatio = Math.round((float) height / (float) reqHeight);
+            final int widthRatio = Math.round((float) width / (float) reqWidth);
+            inSampleSize = heightRatio < widthRatio ? heightRatio : widthRatio;
+        }
+        return inSampleSize;
+    }
+
+    public static void savePic(File file){
+        OutputStream os = null;
+        InputStream in = null;
+        byte[] b = new byte[1024];
+        int len = 0;
         try{
-            InputStream input = context.getContentResolver().openInputStream(bitmapUri);
-            Log.d("","inputStream Test:\t"+Boolean.toString(input == null));
-            Log.d("","inputStream Test:\t"+input);
-            input.close();
-            Bitmap oldBitmap = BitmapFactory.decodeStream(input);
-            Bitmap newBitmap = CompressBitmap(oldBitmap,2);
-            saveNewBitmap(picName,newBitmap);
-            return FileProvider.getUriForFile(context, "com.zspirytus.dmdemo.Activity.MainActivity.fileprovider", picName);
-        }catch (FileNotFoundException fne){
-            fne.printStackTrace();
-            return null;
-        } catch (IOException ie){
-            ie.printStackTrace();
-            return null;
+            Log.d("","Compress beginning");
+            in = new FileInputStream(file);
+            os = new FileOutputStream(compressFileName);
+            while((len = in.read(b)) != -1){
+                os.write(b,0,len);
+            }
+            Log.d("","Compress Successfully");
+        }catch (FileNotFoundException e){
+
+        }catch (IOException e){
+
+        }finally{
+            try{
+                os.close();
+                in.close();
+            }catch (Exception e){
+
+            }
         }
     }
 
@@ -296,7 +383,7 @@ public class PhotoUtils {
      */
     public static void saveAvatar(Context context, Bitmap bitmap){
         SharedPreferences.Editor editor = context.getSharedPreferences("data",MODE_PRIVATE).edit();
-        editor.putString("Avatar",PhotoUtils.convertIconToString(bitmap));
+        editor.putString("Avatar", PhotoUtil.convertIconToString(bitmap));
         editor.apply();
     }
 }

@@ -2,7 +2,6 @@ package com.zspirytus.dmdemo.Activity;
 
 import android.app.Activity;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
@@ -10,11 +9,9 @@ import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
-import android.support.v7.app.AlertDialog;
 import android.text.Editable;
 import android.text.InputType;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
@@ -25,7 +22,7 @@ import android.widget.Toast;
 
 import com.zspirytus.dmdemo.Interface.getSnobyAccountResponse;
 import com.zspirytus.dmdemo.JavaSource.ActivityManager;
-import com.zspirytus.dmdemo.JavaSource.PhotoUtils;
+import com.zspirytus.dmdemo.JavaSource.Utils.PhotoUtil;
 import com.zspirytus.dmdemo.JavaSource.WebServiceUtils.SyncTask.MyAsyncTask;
 import com.zspirytus.dmdemo.JavaSource.WebServiceUtils.WebServiceConnector;
 import com.zspirytus.dmdemo.R;
@@ -108,7 +105,7 @@ public class LoginActivity extends BaseActivity {
                 }
                 else if(!account.equals("")){
                     if(!pref.getString(mAvatarKey,"").equals("")){
-                        Bitmap bitmap = PhotoUtils.getBitmapbyString(pref.getString(mAvatarKey,""));
+                        Bitmap bitmap = PhotoUtil.getBitmapbyString(pref.getString(mAvatarKey,""));
                         mAvatar.setImageBitmap(bitmap);
                     }
                 }
@@ -181,7 +178,7 @@ public class LoginActivity extends BaseActivity {
             mAccount.setText(pref.getString(mAccountKey,""));
             mPwd.setText(pref.getString(mPwdKey,""));
             if(!pref.getString(mAvatarKey,"").equals("")){
-                mAvatar.setImageBitmap(PhotoUtils.getBitmapbyString(pref.getString(mAvatarKey,"")));
+                mAvatar.setImageBitmap(PhotoUtil.getBitmapbyString(pref.getString(mAvatarKey,"")));
             }
         }
     }

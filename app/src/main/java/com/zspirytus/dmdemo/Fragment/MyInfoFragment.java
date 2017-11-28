@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
@@ -26,7 +25,7 @@ import com.zspirytus.dmdemo.Interface.SetMyInfoAvatar;
 import com.zspirytus.dmdemo.Interface.getAvatarResponse;
 import com.zspirytus.dmdemo.JavaSource.FragmentCollector;
 import com.zspirytus.dmdemo.JavaSource.InfoItem;
-import com.zspirytus.dmdemo.JavaSource.PhotoUtils;
+import com.zspirytus.dmdemo.JavaSource.Utils.PhotoUtil;
 import com.zspirytus.dmdemo.JavaSource.WebServiceUtils.SyncTask.MyAsyncTask;
 import com.zspirytus.dmdemo.JavaSource.WebServiceUtils.WebServiceConnector;
 import com.zspirytus.dmdemo.R;
@@ -62,8 +61,6 @@ public class MyInfoFragment extends Fragment{
     private ListView mInfo;
     private ListView mSchedule;
     private CircleImageView mAvatar;
-
-    private String[] item;
     private ArrayList<String> inform;
     private ProgressBar mProgressBar;
 
@@ -115,7 +112,7 @@ public class MyInfoFragment extends Fragment{
         SharedPreferences pref = mParentActivity.getSharedPreferences("data",Context.MODE_PRIVATE);
         String avatar = pref.getString(mAvatarKey,"");
         if(!avatar.equals(""))
-            mAvatar.setImageBitmap(PhotoUtils.getBitmapbyString(avatar));
+            mAvatar.setImageBitmap(PhotoUtil.getBitmapbyString(avatar));
     }
 
     private void RestoreAvatarFromDatabase(){
@@ -124,7 +121,7 @@ public class MyInfoFragment extends Fragment{
             @Override
             public void getAvatar(ArrayList<String> result) {
                 if(result.size() > 0){
-                    Bitmap bitmap = PhotoUtils.convertStringToIcon(result.get(0));
+                    Bitmap bitmap = PhotoUtil.convertStringToIcon(result.get(0));
                     mAvatar.setImageBitmap(bitmap);
                     ((MainActivity)mParentActivity).mAvatar.setImageBitmap(bitmap);
                 } else if(result.get(0).equals("")){

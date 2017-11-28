@@ -18,9 +18,9 @@ import android.widget.TextView;
 
 import com.zspirytus.dmdemo.Interface.SetUploadPicPath;
 import com.zspirytus.dmdemo.Interface.getBooleanTypeResponse;
-import com.zspirytus.dmdemo.JavaSource.DialogUtils;
+import com.zspirytus.dmdemo.JavaSource.Utils.DialogUtil;
 import com.zspirytus.dmdemo.JavaSource.FragmentCollector;
-import com.zspirytus.dmdemo.JavaSource.PhotoUtils;
+import com.zspirytus.dmdemo.JavaSource.Utils.PhotoUtil;
 import com.zspirytus.dmdemo.JavaSource.WebServiceUtils.SyncTask.MyAsyncTask;
 import com.zspirytus.dmdemo.JavaSource.WebServiceUtils.WebServiceConnector;
 import com.zspirytus.dmdemo.R;
@@ -189,6 +189,10 @@ public class RepairFragment extends Fragment {
         mRepairSend.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                if(!isInputlegal()){
+                    DialogUtil.showNegativeTipsDialog(mParentActivity);
+                    return;
+                }
                 SendMessage();
             }
         });
@@ -200,7 +204,7 @@ public class RepairFragment extends Fragment {
             @Override
             public void showDialog(ArrayList<String> result) {
                 final boolean isSuccess = result.get(0).equals("true");
-                DialogUtils.showResultDialog(mParentActivity,isSuccess);
+                DialogUtil.showResultDialog(mParentActivity,isSuccess);
                 if(isSuccess){
                     mRepairArea.setText("");
                     mRepairPlace.setText("");
@@ -220,11 +224,19 @@ public class RepairFragment extends Fragment {
         String Sno = getArguments().getString(mSnoKey);
         String repairNo = formator.format(curDate);
         String area = mRepairArea.getText().toString();
+        String place = mRepairPlace.getText().toString();
         String type = mRepairType.getText().toString();
+        String detail = mRepairDetail.getText().toString();
+        String contact = mRepairContact.getText().toString();
         String dir = mRepairPhoto.getText().toString();
+        if(area.equals("") || place.equals("") || type.equals("") || detail.equals("") || contact.equals("") || dir.equals("")){
+            return null;
+        }
         Bitmap bitmap;
-        if(!dir.equals(getString(R.string.Add_Your_Photo)))
+        if(!dir.equals(getString(R.string.Add_Your_Photo))){
             bitmap = BitmapFactory.decodeFile(dir);
+            bitmap = PhotoUtil.CompressBitmap(bitmap,4);
+        }
         else
              bitmap = null;
         ArrayList<String> input = new ArrayList<String>();
@@ -235,8 +247,8 @@ public class RepairFragment extends Fragment {
             input.add("0");
         else
             input.add("1");
-        input.add(mRepairPlace.getText().toString());
-        switch (mRepairType.getText().toString()){
+        input.add(place);
+        switch (type){
             case "电工类":
                 input.add("0x000");
                 break;
@@ -260,8 +272,11 @@ public class RepairFragment extends Fragment {
         }
         input.add(mRepairDetail.getText().toString());
         input.add(mRepairContact.getText().toString());
-        if(bitmap!=null)
-            input.add(PhotoUtils.convertIconToString(bitmap));
+        if(bitmap!=null){
+            String photo = PhotoUtil.convertIconToString(bitmap);
+            input.add(photo);
+            Log.d("","String length:\t"+photo.length()/1024+"KB");
+        }
         else
             input.add("0");
         return input;
@@ -281,6 +296,17 @@ public class RepairFragment extends Fragment {
         return paraType;
     }
 
+    private boolean isInputlegal(){
+        String area = mRepairArea.getText().toString();
+        String place = mRepairPlace.getText().toString();
+        String type = mRepairType.getText().toString();
+        String detail = mRepairDetail.getText().toString();
+        String contact = mRepairContact.getText().toString();
+        if(area.equals("") || place.equals("") || type.equals("") || detail.equals("") || contact.equals("")){
+            return false;
+        }
+        return true;
+    }
     public static RepairFragment GetThisFragment(String Sno){
         RepairFragment rf = new RepairFragment();
         Bundle bundle = new Bundle();

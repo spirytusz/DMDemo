@@ -1,4 +1,4 @@
-package com.zspirytus.dmdemo.JavaSource;
+package com.zspirytus.dmdemo.JavaSource.Utils;
 
 import android.app.Activity;
 import android.app.DatePickerDialog;
@@ -14,7 +14,7 @@ import android.widget.TimePicker;
  * Created by ZSpirytus on 2017/11/27.
  */
 
-public class DialogUtils {
+public class DialogUtil {
 
     public static void TimePicker(Activity activity, final TextView textView){
         Calendar c = Calendar.getInstance();
