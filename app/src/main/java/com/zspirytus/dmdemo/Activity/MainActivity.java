@@ -37,6 +37,7 @@ import com.zspirytus.dmdemo.Interface.getBooleanTypeResponse;
 import com.zspirytus.dmdemo.Interface.getStudentBasicInfoResponse;
 import com.zspirytus.dmdemo.JavaSource.ActivityManager;
 import com.zspirytus.dmdemo.JavaSource.FragmentCollector;
+import com.zspirytus.dmdemo.JavaSource.Utils.DialogUtil;
 import com.zspirytus.dmdemo.JavaSource.Utils.PhotoUtil;
 import com.zspirytus.dmdemo.JavaSource.WebServiceUtils.SyncTask.MyAsyncTask;
 import com.zspirytus.dmdemo.JavaSource.WebServiceUtils.WebServiceConnector;
@@ -68,6 +69,8 @@ public class MainActivity extends BaseActivity
     private static final int REQ_PERMISSION_FOR_ALBUM = 0x20;
     private static final int BY_CAMERA = 1;
     private static final int BY_ALBUM = 2;
+    private static final int AVATAR_QUALITY = 50;
+    private static final int REPAIRPHOTO_QUALITY = 70;
 
     private final Activity activity = this;
 
@@ -97,7 +100,6 @@ public class MainActivity extends BaseActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        //PhotoUtil.saveCompressFile(PhotoUtil.picName,50);
         ActivityManager.addActivity(this);
         LoadPane();
         RestoreAvatar();
@@ -260,34 +262,54 @@ public class MainActivity extends BaseActivity
         if (resultCode == RESULT_OK) {
             switch (requestCode) {
                 case REQ_CAMERA:
-                    //picUri = PhotoUtil.saveCompressBitmap(this,picUri);
+                    //拍照回调
                     if(picUri == null)
                         return;
                     if (isRepairPicDir) {
-                        repairPicDir.setText(PhotoUtil.picName.getAbsolutePath());
+                        //是否为报修照片
+                        PhotoUtil.saveCompressFile(PhotoUtil.picName,REPAIRPHOTO_QUALITY);
+                        repairPicDir.setText(PhotoUtil.compressFileName.getAbsolutePath());
                         break;
                     }
                     PhotoUtil.cropPicture(this, picUri);
                     break;
                 case REQ_ALBUM:
+                    //相册回调
                     picUri = data.getData();
                     PhotoUtil.cropPicture(this, picUri);
                     break;
                 case REQ_CUT:
-                    Bitmap bitmap = BitmapFactory.decodeFile(PhotoUtil.cropPicName.getAbsolutePath());
-                    bitmap = PhotoUtil.CompressBitmap(bitmap,(int) PhotoUtil.cropPicName.length());
+                    //压缩图片文件
                     if(!isRepairPicDir){
+                        //不是报修图片，设置头像
+                        PhotoUtil.saveCompressFile(PhotoUtil.cropPicName,AVATAR_QUALITY);
+                        Bitmap bitmap = BitmapFactory.decodeFile(PhotoUtil.cropPicName.getAbsolutePath());
                         cimg.setImageBitmap(bitmap);
                         mAvatar.setImageBitmap(bitmap);
                         UpdateAvatar();
                     } else {
+                        PhotoUtil.saveCompressFile(PhotoUtil.cropPicName,REPAIRPHOTO_QUALITY);
                         repairPicDir.setText(PhotoUtil.compressFileName.getAbsolutePath());
                     }
-                    if (isAlbum)
-                        PhotoUtil.cropPicName.delete();
-                    else {
+                    //删除临时文件
+                    if(PhotoUtil.picName.exists())
                         PhotoUtil.picName.delete();
+                    if(PhotoUtil.cropPicName.exists())
+                        PhotoUtil.cropPicName.delete();
+                    /*if (isAlbum) {
+                        if(PhotoUtil.cropPicName.exists())
+                            PhotoUtil.cropPicName.delete();
+                        if(PhotoUtil.compressFileName.exists())
+                            PhotoUtil.compressFileName.delete();
                     }
+                    else if(!isRepairPicDir){
+                        if(PhotoUtil.picName.exists())
+                            PhotoUtil.picName.delete();
+                        if(PhotoUtil.cropPicName.exists())
+                            PhotoUtil.cropPicName.delete();
+                        if(PhotoUtil.compressFileName.exists())
+                            PhotoUtil.compressFileName.delete();
+                    }*/
                     break;
             }
         }
@@ -413,6 +435,10 @@ public class MainActivity extends BaseActivity
         myAsyncTask.setListener(new getBooleanTypeResponse() {
             @Override
             public void showDialog(ArrayList<String> result) {
+                if(result == null){
+                    DialogUtil.showNegativeTipsDialog(activity,"请求失败！");
+                    return;
+                }
                 if(result.size() > 0 && result.get(0).equals("true")){
                     Toast.makeText(activity,"修改成功！",Toast.LENGTH_SHORT).show();
                 }
@@ -436,9 +462,7 @@ public class MainActivity extends BaseActivity
         ArrayList<String> input = new ArrayList<>();
         input.clear();
         String sno = getIntent().getStringExtra(mSnoKey);
-        Bitmap oldBitmap = BitmapFactory.decodeFile(PhotoUtil.cropPicName.getAbsolutePath());
-        Bitmap newBitmap = PhotoUtil.CompressBitmap(oldBitmap,(int) PhotoUtil.cropPicName.length());
-        String photo = PhotoUtil.convertIconToString(newBitmap);
+        String photo = PhotoUtil.convertFileToString(PhotoUtil.compressFileName);
         input.add(sno);
         input.add(photo);
         return input;

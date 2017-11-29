@@ -25,8 +25,10 @@ import com.zspirytus.dmdemo.JavaSource.WebServiceUtils.SyncTask.MyAsyncTask;
 import com.zspirytus.dmdemo.JavaSource.WebServiceUtils.WebServiceConnector;
 import com.zspirytus.dmdemo.R;
 
+import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 
 /**
@@ -189,7 +191,7 @@ public class RepairFragment extends Fragment {
         mRepairSend.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(!isInputlegal()){
+                if(!isInputLegal()){
                     DialogUtil.showNegativeTipsDialog(mParentActivity);
                     return;
                 }
@@ -203,6 +205,10 @@ public class RepairFragment extends Fragment {
         myAsyncTask.setListener(new getBooleanTypeResponse() {
             @Override
             public void showDialog(ArrayList<String> result) {
+                if(result == null||result.size() == 0){
+                    DialogUtil.showNegativeTipsDialog(mParentActivity,"请求失败");
+                    return;
+                }
                 final boolean isSuccess = result.get(0).equals("true");
                 DialogUtil.showResultDialog(mParentActivity,isSuccess);
                 if(isSuccess){
@@ -219,7 +225,8 @@ public class RepairFragment extends Fragment {
     }
 
     private ArrayList<String> getInput(){
-        SimpleDateFormat formator = new SimpleDateFormat("yyMMddHHmmss");
+        SimpleDateFormat formator = new SimpleDateFormat("ddHHmmssSSS");
+        SimpleDateFormat f = new SimpleDateFormat("yyyy-MM-dd");
         Date curDate =  new Date(System.currentTimeMillis());
         String Sno = getArguments().getString(mSnoKey);
         String repairNo = formator.format(curDate);
@@ -229,16 +236,12 @@ public class RepairFragment extends Fragment {
         String detail = mRepairDetail.getText().toString();
         String contact = mRepairContact.getText().toString();
         String dir = mRepairPhoto.getText().toString();
-        if(area.equals("") || place.equals("") || type.equals("") || detail.equals("") || contact.equals("") || dir.equals("")){
-            return null;
-        }
-        Bitmap bitmap;
+        File photoFile;
         if(!dir.equals(getString(R.string.Add_Your_Photo))){
-            bitmap = BitmapFactory.decodeFile(dir);
-            bitmap = PhotoUtil.CompressBitmap(bitmap,4);
+            photoFile = new File(dir);
         }
         else
-             bitmap = null;
+             photoFile = null;
         ArrayList<String> input = new ArrayList<String>();
         input.clear();
         input.add(Sno);
@@ -272,13 +275,15 @@ public class RepairFragment extends Fragment {
         }
         input.add(mRepairDetail.getText().toString());
         input.add(mRepairContact.getText().toString());
-        if(bitmap!=null){
-            String photo = PhotoUtil.convertIconToString(bitmap);
+        if(photoFile!=null){
+            String photo = PhotoUtil.convertFileToString(photoFile);
             input.add(photo);
             Log.d("","String length:\t"+photo.length()/1024+"KB");
         }
         else
-            input.add("0");
+            input.add("000");
+        Calendar c = Calendar.getInstance();
+        input.add(c.get(Calendar.YEAR)+"-"+c.get(Calendar.MONTH)+"-"+"30");
         return input;
     }
 
@@ -293,10 +298,11 @@ public class RepairFragment extends Fragment {
         paraType.add(WebServiceConnector.PARAMTYPE_DETAIL);
         paraType.add(WebServiceConnector.PARAMTYPE_CONTACT);
         paraType.add(WebServiceConnector.PARAMTYPE_PHOTO);
+        paraType.add(WebServiceConnector.PARAMTYPE_REPORTDATE);
         return paraType;
     }
 
-    private boolean isInputlegal(){
+    private boolean isInputLegal(){
         String area = mRepairArea.getText().toString();
         String place = mRepairPlace.getText().toString();
         String type = mRepairType.getText().toString();

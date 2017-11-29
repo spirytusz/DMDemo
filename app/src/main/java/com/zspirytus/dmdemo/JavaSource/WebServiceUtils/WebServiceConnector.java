@@ -1,10 +1,6 @@
 package com.zspirytus.dmdemo.JavaSource.WebServiceUtils;
 
-import android.os.AsyncTask;
 import android.util.Log;
-
-import com.zspirytus.dmdemo.Interface.getStudentBasicInfoResponse;
-import com.zspirytus.dmdemo.JavaSource.WebServiceUtils.SyncTask.MyAsyncTask;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -51,6 +47,7 @@ public class WebServiceConnector {
     public static final String PARAMTYPE_PHOTO = "photo";
     public static final String PARAMTYPE_RNO = "Rno";
     public static final String PARAMTYPE_RETURNTIME = "returnTime";
+    public static final String PARAMTYPE_REPORTDATE = "reportDate";
 
     private static final String RESULT = "Result";
     private static final String TAG = "WebServiceConnector";
@@ -87,13 +84,19 @@ public class WebServiceConnector {
             outStream.flush();
             outStream.close();
 
+            Log.d("","con test:"+Boolean.toString(con == null));
             //获取数据
             InputStream inputStream = con.getInputStream();
-            if (isSingleResponse(methodName))
+            if (isSingleResponse(methodName)){
+                Log.d("","con test:rhearhear"+Boolean.toString(inputStream == null));
                 return getResult(inputStream, methodName + RESULT);
-            else
+            }
+            else{
+                Log.d("","con test:rhearhear"+Boolean.toString(inputStream == null));
                 return getResult(inputStream, RESPONSETYPE_STRING);
+            }
         } catch (IOException e) {
+            Log.d("","IOEXCEPTION!");
             return null;
         }
     }
@@ -121,7 +124,7 @@ public class WebServiceConnector {
             command = command + "</" + methodName + ">";
         } else
             command = "\t<" + methodName + " xmlns=\"" + NAMESPACE + "\"/> ";
-        Log.d(TAG, "request test:\n" + SOAP_HEADER + command + SOAP_END);
+        Log.d(TAG, "Request test:\n" + command);
         return SOAP_HEADER + command + SOAP_END;
     }
 
@@ -133,7 +136,62 @@ public class WebServiceConnector {
      */
     private static ArrayList<String> getResult(InputStream is, String responseType) {
         ArrayList<String> list = new ArrayList<String>();
+        Log.d(TAG,"list Test:\t"+responseType);
         list.clear();
+        String str = InputStreamToString(is);
+        String method = METHOD_GETAVATAR;
+        /*if(responseType.equals(method+RESULT)){
+            final String temp1 =
+                    "<?xml version=\"1.0\" encoding=\"utf-8\"?>" +
+                            "<soap:Envelope xmlns:soap=\"http://www.w3.org/2003/05/soap-envelope\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\">" +
+                            "<soap:Body>" +
+                            "<"+method+"Response xmlns=\"http://zspirytus.org/\">" +
+                            "<"+method+"Result>";
+            final String temp2 = "</"+method+"Result>" +
+                    "</"+method+"Response>" +
+                    "</soap:Body>" +
+                    "</soap:Envelope>";
+            String strResult = str.toString();
+            strResult = strResult.replace(temp1,"");
+            strResult = strResult.replace(temp2,"");
+            list.add(strResult);
+            Log.d("","strResultTestddd:\n"+strResult);
+            return list;
+        }*/
+        if(responseType.equals(method+RESULT))
+            return getPhotoResult(str,method);
+        if(responseType.equals(METHOD_NEWREPAIRREPORT+RESULT))
+            return getPhotoResult(str,METHOD_NEWREPAIRREPORT);
+        Pattern forChar = Pattern.compile("<" + responseType + ">(\\w+)</" + responseType + ">");
+        Matcher m = forChar.matcher(str.toString());
+        while (m.find()) {
+            String a = m.group(1);
+            Log.d(TAG,"list Test:\t"+a);
+            list.add(m.group(1));
+        }
+        return list;
+    }
+
+    private static ArrayList<String> getPhotoResult(String str, String methodName){
+        final String temp1 =
+                "<?xml version=\"1.0\" encoding=\"utf-8\"?>" +
+                        "<soap:Envelope xmlns:soap=\"http://www.w3.org/2003/05/soap-envelope\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\">" +
+                        "<soap:Body>" +
+                        "<"+methodName+"Response xmlns=\"http://zspirytus.org/\">" +
+                        "<"+methodName+"Result>";
+        final String temp2 = "</"+methodName+"Result>" +
+                "</"+methodName+"Response>" +
+                "</soap:Body>" +
+                "</soap:Envelope>";
+        ArrayList<String> list = new ArrayList<String>();
+        list.clear();
+        str = str.replace(temp1,"");
+        str = str.replace(temp2,"");
+        list.add(str);
+        return list;
+    }
+
+    private static String InputStreamToString(InputStream is){
         BufferedReader reader = new BufferedReader(new InputStreamReader(is));
         StringBuilder str = new StringBuilder();
         String line = null;
@@ -141,43 +199,16 @@ public class WebServiceConnector {
             while ((line = reader.readLine()) != null) {
                 str.append(line + "\n");
             }
-            Log.d(TAG,"response test:\t"+str);
+            Log.d(TAG,"Response test:\t"+str);
+            return str.toString();
         } catch (IOException e) {
+            Log.d(TAG,"getResult occur an IOException");
             e.printStackTrace();
-        } finally {
-            try {
-                is.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            return null;
+        } catch (Exception e){
+            Log.d(TAG,"getResult occur an Exception");
+            return null;
         }
-        //Log.d("","ifTest:\n"+Boolean.toString(responseType == METHOD_GETAVATAR+RESULT)+"\t"+responseType+"\t"+METHOD_GETAVATAR+RESULT);
-        if(responseType.equals(METHOD_GETAVATAR+RESULT)){
-            final String temp1 =
-                    "<?xml version=\"1.0\" encoding=\"utf-8\"?>" +
-                            "<soap:Envelope xmlns:soap=\"http://www.w3.org/2003/05/soap-envelope\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\">" +
-                            "<soap:Body>" +
-                            "<getAvatarResponse xmlns=\"http://zspirytus.org/\">" +
-                            "<getAvatarResult>";
-            final String temp2 = "</getAvatarResult>" +
-                    "</getAvatarResponse>" +
-                    "</soap:Body>" +
-                    "</soap:Envelope>";
-            String strResult = str.toString();
-            strResult = strResult.replace(temp1,"");
-            strResult = strResult.replace(temp2,"");
-            list.add(strResult);
-            Log.d("","strResultTest:\n"+strResult);
-            return list;
-        }
-        Pattern forChar = Pattern.compile("<" + responseType + ">(\\w+)</" + responseType + ">");
-        Matcher m = forChar.matcher(str.toString());
-        while (m.find()) {
-            String a = m.group(1);
-            Log.d(TAG,"myResponse Test:\n"+a);
-            list.add(m.group(1));
-        }
-        return list;
     }
 
     /**

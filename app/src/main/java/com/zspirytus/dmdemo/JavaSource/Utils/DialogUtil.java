@@ -108,6 +108,18 @@ public class DialogUtil {
         dialog.show();
     }
 
+    public static void showNegativeTipsDialog(Activity activity,String errorMessage){
+        AlertDialog.Builder dialog = new AlertDialog.Builder(activity);
+        dialog.setTitle("提示");
+        dialog.setMessage(errorMessage);
+        dialog.setPositiveButton("好", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+            }
+        });
+        dialog.show();
+    }
+
     private static boolean is24(Context context){
         ContentResolver mResolver= context.getContentResolver();
         String timeFormat = android.provider.Settings.System.getString(mResolver,android.provider.Settings.System.TIME_12_24);

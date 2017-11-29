@@ -54,6 +54,7 @@ public class MyAsyncTask<T> extends AsyncTask<ArrayList<String>, Integer, ArrayL
             mProgressDialog = new ProgressDialog(context);
             mProgressDialog.setTitle("Send");
             mProgressDialog.setMessage("Sending...");
+            mProgressDialog.setCancelable(false);
             mProgressDialog.show();
         }
     }
@@ -62,7 +63,9 @@ public class MyAsyncTask<T> extends AsyncTask<ArrayList<String>, Integer, ArrayL
     protected ArrayList<String> doInBackground(ArrayList<String>... params) {
         ArrayList<String> paramType = params[0];
         ArrayList<String> param = params[1];
-        return WebServiceConnector.executingMethod(methodName, paramType,param);
+        ArrayList<String> result = WebServiceConnector.executingMethod(methodName, paramType,param);
+        Log.d(TAG,"AsyncTask doInBackground Test:\t"+Boolean.toString(result == null));
+        return result;
     }
 
     @Override
