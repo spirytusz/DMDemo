@@ -87,13 +87,14 @@ public class WebServiceConnector {
             Log.d("","con test:"+Boolean.toString(con == null));
             //获取数据
             InputStream inputStream = con.getInputStream();
+            String str = InputStreamToString(inputStream);
             if (isSingleResponse(methodName)){
                 Log.d("","con test:rhearhear"+Boolean.toString(inputStream == null));
-                return getResult(inputStream, methodName + RESULT);
+                return getResult(str, methodName + RESULT);
             }
             else{
                 Log.d("","con test:rhearhear"+Boolean.toString(inputStream == null));
-                return getResult(inputStream, RESPONSETYPE_STRING);
+                return getResult(str, RESPONSETYPE_STRING);
             }
         } catch (IOException e) {
             Log.d("","IOEXCEPTION!");
@@ -131,33 +132,13 @@ public class WebServiceConnector {
     /**
      * 解析SOAP响应信息
      *
-     * @param is 通过InputStream 封装的SOAP响应信息
      * @return 查询或修改结果
      */
-    private static ArrayList<String> getResult(InputStream is, String responseType) {
+    private static ArrayList<String> getResult(String str, String responseType) {
         ArrayList<String> list = new ArrayList<String>();
         Log.d(TAG,"list Test:\t"+responseType);
         list.clear();
-        String str = InputStreamToString(is);
         String method = METHOD_GETAVATAR;
-        /*if(responseType.equals(method+RESULT)){
-            final String temp1 =
-                    "<?xml version=\"1.0\" encoding=\"utf-8\"?>" +
-                            "<soap:Envelope xmlns:soap=\"http://www.w3.org/2003/05/soap-envelope\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\">" +
-                            "<soap:Body>" +
-                            "<"+method+"Response xmlns=\"http://zspirytus.org/\">" +
-                            "<"+method+"Result>";
-            final String temp2 = "</"+method+"Result>" +
-                    "</"+method+"Response>" +
-                    "</soap:Body>" +
-                    "</soap:Envelope>";
-            String strResult = str.toString();
-            strResult = strResult.replace(temp1,"");
-            strResult = strResult.replace(temp2,"");
-            list.add(strResult);
-            Log.d("","strResultTestddd:\n"+strResult);
-            return list;
-        }*/
         if(responseType.equals(method+RESULT))
             return getPhotoResult(str,method);
         if(responseType.equals(METHOD_NEWREPAIRREPORT+RESULT))
@@ -191,6 +172,11 @@ public class WebServiceConnector {
         return list;
     }
 
+    /**
+     * InputStream To String
+     * @param is InputStream
+     * @return String
+     */
     private static String InputStreamToString(InputStream is){
         BufferedReader reader = new BufferedReader(new InputStreamReader(is));
         StringBuilder str = new StringBuilder();

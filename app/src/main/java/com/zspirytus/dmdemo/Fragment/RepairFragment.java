@@ -206,10 +206,10 @@ public class RepairFragment extends Fragment {
             @Override
             public void showDialog(ArrayList<String> result) {
                 if(result == null||result.size() == 0){
-                    DialogUtil.showNegativeTipsDialog(mParentActivity,"请求失败");
+                    DialogUtil.showNegativeTipsDialog(mParentActivity,"响应失败");
                     return;
                 }
-                final boolean isSuccess = result.get(0).equals("true");
+                boolean isSuccess = result.get(0).replaceAll("\r|\n|\t","").equals("true");
                 DialogUtil.showResultDialog(mParentActivity,isSuccess);
                 if(isSuccess){
                     mRepairArea.setText("");
@@ -236,6 +236,8 @@ public class RepairFragment extends Fragment {
         String detail = mRepairDetail.getText().toString();
         String contact = mRepairContact.getText().toString();
         String dir = mRepairPhoto.getText().toString();
+        Log.d(TAG,"InputTest:\t Sno    "+Sno);
+        Log.d(TAG,"InputTest:\t repairNo    "+repairNo);
         File photoFile;
         if(!dir.equals(getString(R.string.Add_Your_Photo))){
             photoFile = new File(dir);
@@ -246,35 +248,47 @@ public class RepairFragment extends Fragment {
         input.clear();
         input.add(Sno);
         input.add(repairNo);
-        if(area.equals(getString(R.string.Public_Area)))
+        if(area.equals(getString(R.string.Public_Area))){
             input.add("0");
-        else
+            Log.d(TAG,"InputTest:\t area    "+"0");
+        }
+        else{
             input.add("1");
+            Log.d(TAG,"InputTest:\t area    "+"1");
+        }
         input.add(place);
+        Log.d(TAG,"InputTest:\t place    "+place);
         switch (type){
             case "电工类":
                 input.add("0x000");
+                Log.d(TAG,"InputTest:\t type    "+"0x000");
                 break;
             case "水工类":
                 input.add("0x001");
+                Log.d(TAG,"InputTest:\t type    "+"0x001");
                 break;
             case "木工类":
                 input.add("0x010");
+                Log.d(TAG,"InputTest:\t type    "+"0x010");
                 break;
             case "土建类":
                 input.add("0x011");
+                Log.d(TAG,"InputTest:\t type    "+"0x011");
                 break;
             case "设备类":
                 input.add("0x100");
+                Log.d(TAG,"InputTest:\t type    "+"0x100");
                 break;
             case "杂项":
                 input.add("0x101");
+                Log.d(TAG,"InputTest:\t type    "+"0x101");
                 break;
-            default:
-                input.add("null");
         }
-        input.add(mRepairDetail.getText().toString());
-        input.add(mRepairContact.getText().toString());
+        input.add(detail);
+        input.add(contact);
+        Log.d(TAG,"InputTest:\t detail    "+detail);
+        Log.d(TAG,"InputTest:\t contact    "+contact);
+        Log.d(TAG,"InputTest:\t dir    "+dir);
         if(photoFile!=null){
             String photo = PhotoUtil.convertFileToString(photoFile);
             input.add(photo);
@@ -283,7 +297,8 @@ public class RepairFragment extends Fragment {
         else
             input.add("000");
         Calendar c = Calendar.getInstance();
-        input.add(c.get(Calendar.YEAR)+"-"+c.get(Calendar.MONTH)+"-"+"30");
+        input.add("2017-12-01");
+        Log.d(TAG,"InputTest:\t reportDate" + "2017-12-01");
         return input;
     }
 
