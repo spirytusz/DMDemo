@@ -2,6 +2,8 @@ package com.zspirytus.dmdemo.JavaSource.WebServiceUtils;
 
 import android.util.Log;
 
+import com.zspirytus.dmdemo.JavaSource.Utils.XmlUtil;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -138,13 +140,16 @@ public class WebServiceConnector {
         ArrayList<String> list = new ArrayList<String>();
         Log.d(TAG,"list Test:\t"+responseType);
         list.clear();
+        Log.d(TAG,"test~: " + responseType);
+        if(responseType.equals(METHOD_GETAVATAR+RESULT))
+            XmlUtil.getAnalysisResult(str,METHOD_GETAVATAR,true);
         String method = METHOD_GETAVATAR;
         if(responseType.equals(method+RESULT))
             return getPhotoResult(str,method);
         if(responseType.equals(METHOD_NEWREPAIRREPORT+RESULT))
             return getPhotoResult(str,METHOD_NEWREPAIRREPORT);
         Pattern forChar = Pattern.compile("<" + responseType + ">(\\w+)</" + responseType + ">");
-        Matcher m = forChar.matcher(str.toString());
+        Matcher m = forChar.matcher(str);
         while (m.find()) {
             String a = m.group(1);
             Log.d(TAG,"list Test:\t"+a);

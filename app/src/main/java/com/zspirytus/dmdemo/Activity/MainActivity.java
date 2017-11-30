@@ -106,7 +106,7 @@ public class MainActivity extends BaseActivity
         if( getSupportFragmentManager().findFragmentByTag(MyInfoFragment.class.getName()) == null)
         {
             ArrayList<String> list = MyInfoFragment.getStudentInfobyLocalFile(this,mSnoVaule);
-            if(list == null)
+            if(true)
                 getInform(WebServiceConnector.PARAMTYPE_SNO,mSnoVaule);
             else {
                 if(mSnoVaule != null && mSnoVaule.equals("")){
