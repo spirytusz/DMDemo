@@ -309,15 +309,16 @@ public class MyInfoFragment extends Fragment{
         mSchedule.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                String Sno = ((ArrayList<String>)getArguments().getSerializable("obj")).get(0);
                 switch (i){
                     case 0:
-                        SubMainActivity.StartThisActivity(mParentActivity,getString(R.string.Repair),i);
+                        SubMainActivity.StartThisActivity(mParentActivity,getString(R.string.Repair),i,Sno);
                         break;
                     case 1:
-                        SubMainActivity.StartThisActivity(mParentActivity,getString(R.string.Enrollment),i);
+                        SubMainActivity.StartThisActivity(mParentActivity,getString(R.string.Enrollment),i,Sno);
                         break;
                     case 2:
-                        SubMainActivity.StartThisActivity(mParentActivity,getString(R.string.Back_late),i);
+                        SubMainActivity.StartThisActivity(mParentActivity,getString(R.string.Back_late),i,Sno);
                         break;
                 }
             }

@@ -1,5 +1,6 @@
 package com.zspirytus.dmdemo.Activity;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -16,8 +17,13 @@ import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.SimpleAdapter;
 
+import com.zspirytus.dmdemo.Interface.getRepBasInfoResponse;
 import com.zspirytus.dmdemo.JavaSource.ActivityManager;
 import com.zspirytus.dmdemo.JavaSource.RSFListViewItem;
+import com.zspirytus.dmdemo.JavaSource.Utils.DialogUtil;
+import com.zspirytus.dmdemo.JavaSource.Utils.PhotoUtil;
+import com.zspirytus.dmdemo.JavaSource.WebServiceUtils.SyncTask.MyAsyncTask;
+import com.zspirytus.dmdemo.JavaSource.WebServiceUtils.WebServiceConnector;
 import com.zspirytus.dmdemo.R;
 
 import java.io.File;
@@ -31,22 +37,33 @@ public class SubMainActivity extends AppCompatActivity {
     private static final String TAG = "SubMainActivity";
     private static final String titleKey = "titleKey";
     private static final String typeKey = "typeKey";
+    private static final String mSnoKey = "Sno";
+    private final Activity activity = this;
     private int i;
+    private String title;
+    private String Sno;
     private ProgressBar mProgressBar;
+    private ListView listView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_repair_schedule);
-        Intent intent = getIntent();
-        i = intent.getIntExtra(typeKey,-1);
         ActivityManager.addActivity(this);
+        getArgs();
         LoadPane();
+        GetMessage();
     }
 
-    public void LoadPane(){
+    private void getArgs(){
         Intent intent = getIntent();
-        String title = intent.getStringExtra(titleKey);
+        i = intent.getIntExtra(typeKey,-1);
+        title = intent.getStringExtra(titleKey);
+        Sno = intent.getStringExtra(mSnoKey);
+    }
+
+    private void LoadPane(){
+        Intent intent = getIntent();
         Toolbar toolbar = (Toolbar)findViewById(R.id.tb_toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -57,10 +74,43 @@ public class SubMainActivity extends AppCompatActivity {
             }
         });
         toolbar.setTitle(title);
-        ListView listView = (ListView)findViewById(R.id.repairschedule_listview);
-        listView.setAdapter(getAdapter());
+        listView = (ListView)findViewById(R.id.repairschedule_listview);
+        listView.setAdapter(getAdapter(null));
         mProgressBar = (ProgressBar) findViewById(R.id.submainactivity_progressbar);
-        mProgressBar.setVisibility(View.GONE);
+    }
+
+    private void GetMessage(){
+        MyAsyncTask<getRepBasInfoResponse> myAsyncTask = new MyAsyncTask<getRepBasInfoResponse>(this, WebServiceConnector.METHOD_GETREPAIRBASICINFOBYSNO);
+        myAsyncTask.setListener(new getRepBasInfoResponse() {
+            @Override
+            public void getResult(ArrayList<String> result) {
+                if(result == null||result.size() == 0){
+                    DialogUtil.showNegativeTipsDialog(activity,"响应失败");
+                    return;
+                }
+                RefreshUI(result);
+                mProgressBar.setVisibility(View.GONE);
+            }
+        });
+        myAsyncTask.execute(getParamType(),getInput());
+    }
+
+    private ArrayList<String> getParamType(){
+        ArrayList<String> paramType = new ArrayList<>();
+        paramType.clear();
+        paramType.add(WebServiceConnector.PARAMTYPE_SNO);
+        return paramType;
+    }
+
+    private ArrayList<String> getInput(){
+        ArrayList<String> input = new ArrayList<>();
+        input.clear();
+        input.add(Sno);
+        return input;
+    }
+
+    private void RefreshUI(ArrayList<String> result){
+        listView.setAdapter(getAdapter(result));
     }
 
     @Override
@@ -79,8 +129,8 @@ public class SubMainActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    private SimpleAdapter getAdapter(){
-        List<RSFListViewItem> list = getListViewItemList();
+    private SimpleAdapter getAdapter(ArrayList<String> response){
+        List<RSFListViewItem> list = getListViewItemList(response);
         List<Map<String,Object>> result = getListDate(list);
         SimpleAdapter adapter=new SimpleAdapter(
                 this,
@@ -107,21 +157,27 @@ public class SubMainActivity extends AppCompatActivity {
      *
      * @return 加入了RSFListViewItem的List<RSFListViewItem> list
      */
-    private List<RSFListViewItem> getListViewItemList(){
-        List<RSFListViewItem> list = new ArrayList<RSFListViewItem>();
+    private List<RSFListViewItem> getListViewItemList(ArrayList<String> result){
+        List<RSFListViewItem> list = new ArrayList<>();
         list.clear();
-        File root = Environment.getExternalStorageDirectory();
-        File folder = new File(root.getAbsolutePath()+"/dmdemo");
-        String[] file = folder.list();
-        RSFListViewItem[] rsf = new RSFListViewItem[file.length];
-        for(int i=0;i<file.length;i++){
-            rsf[i] = new RSFListViewItem();
-            Uri uri = Uri.parse(file[i]);
-            Bitmap bitmap = BitmapFactory.decodeFile(folder.getPath()+"/"+file[i]);
-            rsf[i].setmBitmap(bitmap);
-            rsf[i].setmTitle("title"+(i+1));
-            rsf[i].setmTime(Long.toString(System.currentTimeMillis()));
-            list.add(rsf[i]);
+        if(result == null){
+            RSFListViewItem rsf = new RSFListViewItem();
+            Bitmap bitmap = BitmapFactory.decodeResource(activity.getResources(),R.drawable.ic_av_timer_black_48dp);
+            rsf.setmBitmap(bitmap);
+            rsf.setmTitle("title");
+            rsf.setmTime(Long.toString(System.currentTimeMillis()));
+            list.add(rsf);
+        } else if(result.size()>0) {
+            int length = result.size()%3;
+            RSFListViewItem[] rsf = new RSFListViewItem[length];
+            for(int i = 0;i<rsf.length;i++){
+                rsf[i].setmBitmap(PhotoUtil.convertStringToIcon(result.get(i)));
+                rsf[i].setmTitle(result.get(i+1));
+                rsf[i].setmTime(result.get(i+2));
+                list.add(rsf[i]);
+            }
+        } else {
+
         }
         return list;
     }
@@ -146,10 +202,11 @@ public class SubMainActivity extends AppCompatActivity {
         return result;
     }
 
-    public static void StartThisActivity(Context context,final String title,final int i) {
+    public static void StartThisActivity(Context context,final String title,final int i,final String Sno) {
         Intent intent = new Intent(context, SubMainActivity.class);
         intent.putExtra(titleKey,title);
         intent.putExtra(typeKey,i);
+        intent.putExtra(mSnoKey,Sno);
         context.startActivity(intent);
     }
 }

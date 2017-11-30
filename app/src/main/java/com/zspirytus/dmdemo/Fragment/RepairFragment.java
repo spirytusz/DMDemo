@@ -226,7 +226,7 @@ public class RepairFragment extends Fragment {
 
     private ArrayList<String> getInput(){
         SimpleDateFormat formator = new SimpleDateFormat("ddHHmmssSSS");
-        SimpleDateFormat f = new SimpleDateFormat("yyyy-MM-dd");
+        SimpleDateFormat f = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         Date curDate =  new Date(System.currentTimeMillis());
         String Sno = getArguments().getString(mSnoKey);
         String repairNo = formator.format(curDate);
@@ -296,9 +296,8 @@ public class RepairFragment extends Fragment {
         }
         else
             input.add("000");
-        Calendar c = Calendar.getInstance();
-        input.add("2017-12-01");
-        Log.d(TAG,"InputTest:\t reportDate" + "2017-12-01");
+        input.add("2017-12-01 13:50:04");
+        Log.d(TAG,"InputTest:\t reportDate" + "2017-12-01 13:50:04");
         return input;
     }
 

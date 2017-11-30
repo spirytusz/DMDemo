@@ -10,6 +10,7 @@ import android.widget.ProgressBar;
 import com.zspirytus.dmdemo.Interface.getAvatarResponse;
 import com.zspirytus.dmdemo.Interface.getBooleanTypeResponse;
 import com.zspirytus.dmdemo.Interface.getModRegResponse;
+import com.zspirytus.dmdemo.Interface.getRepBasInfoResponse;
 import com.zspirytus.dmdemo.Interface.getSnobyAccountResponse;
 import com.zspirytus.dmdemo.Interface.getStudentBasicInfoResponse;
 import com.zspirytus.dmdemo.JavaSource.WebServiceUtils.WebServiceConnector;
@@ -94,6 +95,9 @@ public class MyAsyncTask<T> extends AsyncTask<ArrayList<String>, Integer, ArrayL
                 break;
             case WebServiceConnector.METHOD_GETAVATAR:
                 ((getAvatarResponse)response).getAvatar(result);
+                break;
+            case WebServiceConnector.METHOD_GETREPAIRBASICINFOBYSNO:
+                ((getRepBasInfoResponse)response).getResult(result);
                 break;
             case WebServiceConnector.METHOD_NEWRETURNLATELY:
                 ((getBooleanTypeResponse)response).showDialog(result);
