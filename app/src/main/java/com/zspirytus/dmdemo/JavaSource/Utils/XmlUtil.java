@@ -6,7 +6,6 @@ import org.dom4j.Document;
 import org.dom4j.DocumentException;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
-import org.dom4j.io.SAXReader;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,32 +18,34 @@ public class XmlUtil {
 
     private static final String TAG = "XmlUtil";
 
-    private static Document getDocument(String str){
-        try{
+    private static Document getDocument(String str) {
+        try {
             Document document = DocumentHelper.parseText(str);
             return document;
-        }catch (DocumentException e){
-            Log.d(TAG,"function:getDocument catch DocumentException");
+        } catch (DocumentException e) {
+            Log.d(TAG, "function:getDocument catch DocumentException");
             return null;
         }
     }
 
-    public static  ArrayList<String> getAnalysisResult(String str,String methodName,boolean isSingleResponse){
-        final String responseText = "Response";
-        final String resultText = "Result";
-        final String stringText = "string";
-        ArrayList<String> result = new ArrayList<>();
-        result.clear();
-        Log.d(TAG,"test~: ");
+    public static ArrayList<String> getAnalysisResult(String str) {
         Document document = getDocument(str);
-        Element target = document.getRootElement().element(methodName+responseText).element(methodName+resultText);
-        if(!isSingleResponse)
-            target = target.element(stringText);
-        List<Element> elementList = target.elements();
-        for (Element e : elementList){
-            Log.d(TAG," text~: " + e.getText()+"\t"+e.getName());
-            result.add(e.getText());
-        }
+        Element target = document.getRootElement();
+        ArrayList<String> result = new ArrayList<>();
+        result = getNodes(target,result);
         return result;
+    }
+
+    private static ArrayList<String> getNodes(Element node,ArrayList<String> parentList) {
+        String nodeText = node.getTextTrim();
+        ArrayList<String> childList = parentList;
+        if (!nodeText.equals("")) {
+            childList.add(nodeText);
+        }
+        List<Element> listElement = node.elements();
+        for (Element e : listElement) {
+            getNodes(e,childList);
+        }
+        return childList;
     }
 }

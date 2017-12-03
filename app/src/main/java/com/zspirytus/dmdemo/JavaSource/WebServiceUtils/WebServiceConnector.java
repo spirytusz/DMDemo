@@ -86,18 +86,12 @@ public class WebServiceConnector {
             outStream.flush();
             outStream.close();
 
-            Log.d("","con test:"+Boolean.toString(con == null));
             //获取数据
             InputStream inputStream = con.getInputStream();
             String str = InputStreamToString(inputStream);
-            if (isSingleResponse(methodName)){
-                Log.d("","con test:rhearhear"+Boolean.toString(inputStream == null));
-                return getResult(str, methodName + RESULT);
-            }
-            else{
-                Log.d("","con test:rhearhear"+Boolean.toString(inputStream == null));
-                return getResult(str, RESPONSETYPE_STRING);
-            }
+            ArrayList<String> result = getResult(str);
+            Log.d("","WebService Result Test:\t"+methodName+"\t"+result.size());
+            return result;
         } catch (IOException e) {
             Log.d("","IOEXCEPTION!");
             return null;
@@ -136,14 +130,9 @@ public class WebServiceConnector {
      *
      * @return 查询或修改结果
      */
-    private static ArrayList<String> getResult(String str, String responseType) {
-        ArrayList<String> list = new ArrayList<String>();
-        Log.d(TAG,"list Test:\t"+responseType);
-        list.clear();
-        Log.d(TAG,"test~: " + responseType);
-        if(responseType.equals(METHOD_GETAVATAR+RESULT))
-            XmlUtil.getAnalysisResult(str,METHOD_GETAVATAR,true);
-        String method = METHOD_GETAVATAR;
+    private static ArrayList<String> getResult(String str) {
+        return XmlUtil.getAnalysisResult(str);
+        /*String method = METHOD_GETAVATAR;
         if(responseType.equals(method+RESULT))
             return getPhotoResult(str,method);
         if(responseType.equals(METHOD_NEWREPAIRREPORT+RESULT))
@@ -154,8 +143,7 @@ public class WebServiceConnector {
             String a = m.group(1);
             Log.d(TAG,"list Test:\t"+a);
             list.add(m.group(1));
-        }
-        return list;
+        }*/
     }
 
     private static ArrayList<String> getPhotoResult(String str, String methodName){
