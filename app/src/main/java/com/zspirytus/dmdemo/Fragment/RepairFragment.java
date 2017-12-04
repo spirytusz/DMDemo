@@ -3,8 +3,6 @@ package com.zspirytus.dmdemo.Fragment;
 import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
@@ -16,10 +14,10 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
-import com.zspirytus.dmdemo.Interface.SetUploadPicPath;
+import com.zspirytus.dmdemo.Interface.SetMyInfoAvatar;
 import com.zspirytus.dmdemo.Interface.getBooleanTypeResponse;
 import com.zspirytus.dmdemo.JavaSource.Utils.DialogUtil;
-import com.zspirytus.dmdemo.JavaSource.FragmentCollector;
+import com.zspirytus.dmdemo.JavaSource.Manager.FragmentCollector;
 import com.zspirytus.dmdemo.JavaSource.Utils.PhotoUtil;
 import com.zspirytus.dmdemo.JavaSource.WebServiceUtils.SyncTask.MyAsyncTask;
 import com.zspirytus.dmdemo.JavaSource.WebServiceUtils.WebServiceConnector;
@@ -28,7 +26,6 @@ import com.zspirytus.dmdemo.R;
 import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 
 /**
@@ -40,7 +37,6 @@ public class RepairFragment extends Fragment {
     private Activity mParentActivity;
 
     private static final String TAG = "RepairFragment";
-    private static final String FRAGMENT_HIDDEN_STATUS = "FRAGMENT_HIDDEN_STATUS";
     private static final String mSnoKey = "Sno";
 
     private View view;
@@ -52,30 +48,7 @@ public class RepairFragment extends Fragment {
     private TextView mRepairPhoto;
     private Button mRepairSend;
 
-    private SetUploadPicPath listener;
-
-
-    private String outputDirectory;
-
-    /*@Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        if (savedInstanceState != null) {
-            boolean isSupportHidden = savedInstanceState.getBoolean(FRAGMENT_HIDDEN_STATUS);
-            FragmentTransaction ft = getFragmentManager().beginTransaction();
-            if (isSupportHidden) {
-                ft.hide(this);
-            } else {
-                ft.show(this);
-            }
-            ft.commit();
-        }
-    }
-
-    @Override
-    public void onSaveInstanceState(Bundle outState){
-        outState.putBoolean(FRAGMENT_HIDDEN_STATUS,isHidden());
-    }*/
+    private SetMyInfoAvatar listener;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState){
@@ -88,7 +61,7 @@ public class RepairFragment extends Fragment {
     public void onAttach(Context context){
         super.onAttach(context);
         mParentActivity = (Activity) context;
-        listener = (SetUploadPicPath)((Activity)context);
+        listener = (SetMyInfoAvatar)((Activity)context);
     }
 
     @Override
@@ -297,8 +270,8 @@ public class RepairFragment extends Fragment {
         }
         else
             input.add("000");
-        input.add("2017-12-11 13:50:04");
-        Log.d(TAG,"InputTest:\t reportDate" + "2017-12-01 13:50:04");
+        input.add(f.format(curDate));
+        Log.d(TAG,"InputTest:\t reportDate" + f.format(curDate));
         return input;
     }
 

@@ -32,11 +32,10 @@ import com.zspirytus.dmdemo.Fragment.MyInfoFragment;
 import com.zspirytus.dmdemo.Fragment.RepairFragment;
 import com.zspirytus.dmdemo.Fragment.Settings;
 import com.zspirytus.dmdemo.Interface.SetMyInfoAvatar;
-import com.zspirytus.dmdemo.Interface.SetUploadPicPath;
 import com.zspirytus.dmdemo.Interface.getBooleanTypeResponse;
 import com.zspirytus.dmdemo.Interface.getStudentBasicInfoResponse;
-import com.zspirytus.dmdemo.JavaSource.ActivityManager;
-import com.zspirytus.dmdemo.JavaSource.FragmentCollector;
+import com.zspirytus.dmdemo.JavaSource.Manager.ActivityManager;
+import com.zspirytus.dmdemo.JavaSource.Manager.FragmentCollector;
 import com.zspirytus.dmdemo.JavaSource.Utils.DialogUtil;
 import com.zspirytus.dmdemo.JavaSource.Utils.PhotoUtil;
 import com.zspirytus.dmdemo.JavaSource.WebServiceUtils.SyncTask.MyAsyncTask;
@@ -49,19 +48,13 @@ import java.util.ArrayList;
 public class MainActivity extends BaseActivity
         implements
         NavigationView.OnNavigationItemSelectedListener,
-        SetMyInfoAvatar,
-        SetUploadPicPath {
+        SetMyInfoAvatar {
 
     public CircleImageView mAvatar;
 
     private static final String TAG = "MainActivity";
     private static final String mSnoKey = "Sno";
     private static final String mAvatarKey = "Avatar";
-    private static final String hasCustomAvatar = "CustomAvatar";
-    private static final String myInfoFragmentStatusKey = "myInfoFragmentStatusKey";
-    private static final String myRepairFragmentStatusKey = "myRepairFragmentStatusKey";
-    private static final String myELSFragmentStatusKey = "myELSFragmentStatusKey";
-    private static final String mySettingsFragmentStatusKey = "mySettingsFragmentStatusKey";
     private static final int REQ_CAMERA = 0x01;
     private static final int REQ_ALBUM = 0x02;
     private static final int REQ_CUT = 0x04;
@@ -69,8 +62,6 @@ public class MainActivity extends BaseActivity
     private static final int REQ_PERMISSION_FOR_ALBUM = 0x20;
     private static final int BY_CAMERA = 1;
     private static final int BY_ALBUM = 2;
-    private static final int AVATAR_QUALITY = 50;
-    private static final int REPAIRPHOTO_QUALITY = 70;
 
     private final Activity activity = this;
 
@@ -106,7 +97,7 @@ public class MainActivity extends BaseActivity
         if( getSupportFragmentManager().findFragmentByTag(MyInfoFragment.class.getName()) == null)
         {
             ArrayList<String> list = MyInfoFragment.getStudentInfobyLocalFile(this,mSnoVaule);
-            if(true)
+            if(list == null)
                 getInform(WebServiceConnector.PARAMTYPE_SNO,mSnoVaule);
             else {
                 if(mSnoVaule != null && mSnoVaule.equals("")){
@@ -267,7 +258,7 @@ public class MainActivity extends BaseActivity
                         return;
                     if (isRepairPicDir) {
                         //是否为报修照片
-                        PhotoUtil.saveCompressFile(PhotoUtil.picName,REPAIRPHOTO_QUALITY);
+                        PhotoUtil.saveCompressFile(PhotoUtil.picName,PhotoUtil.REPAIRPHOTO_QUALITY);
                         repairPicDir.setText(PhotoUtil.compressFileName.getAbsolutePath());
                         break;
                     }
@@ -282,13 +273,13 @@ public class MainActivity extends BaseActivity
                     //压缩图片文件
                     if(!isRepairPicDir){
                         //不是报修图片，设置头像
-                        PhotoUtil.saveCompressFile(PhotoUtil.cropPicName,AVATAR_QUALITY);
+                        PhotoUtil.saveCompressFile(PhotoUtil.cropPicName,PhotoUtil.AVATAR_QUALITY);
                         Bitmap bitmap = BitmapFactory.decodeFile(PhotoUtil.cropPicName.getAbsolutePath());
                         cimg.setImageBitmap(bitmap);
                         mAvatar.setImageBitmap(bitmap);
                         UpdateAvatar();
                     } else {
-                        PhotoUtil.saveCompressFile(PhotoUtil.cropPicName,REPAIRPHOTO_QUALITY);
+                        PhotoUtil.saveCompressFile(PhotoUtil.cropPicName,PhotoUtil.REPAIRPHOTO_QUALITY);
                         repairPicDir.setText(PhotoUtil.compressFileName.getAbsolutePath());
                     }
                     //删除临时文件

@@ -2,10 +2,8 @@ package com.zspirytus.dmdemo.JavaSource.Utils;
 
 import android.Manifest;
 import android.app.Activity;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -15,7 +13,6 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Environment;
 import android.provider.MediaStore;
-import android.renderscript.ScriptGroup;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.FileProvider;
 import android.support.v7.app.AlertDialog;
@@ -24,7 +21,6 @@ import android.util.Log;
 
 import com.zspirytus.dmdemo.R;
 
-import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -32,10 +28,6 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-
-import static android.content.Context.MODE_PRIVATE;
 
 /**
  * Created by ZSpirytus on 2017/10/15.
@@ -46,6 +38,10 @@ public class PhotoUtil {
     public static final File picName = new File(Environment.getExternalStorageDirectory().getAbsolutePath()+ "/dmdemo/" + "temp.jpg");
     public static final File cropPicName = new File(Environment.getExternalStorageDirectory().getAbsolutePath()+"/dmdemo/crop.jpg");
     public static final File compressFileName = new File(Environment.getExternalStorageDirectory().getAbsolutePath()+"/dmdemo/compress.jpg");
+
+    public static final int AVATAR_QUALITY = 50;
+    public static final int REPAIRPHOTO_QUALITY = 70;
+
     private static final String TAG = "PhotoUtil";
     private static final int REQ_CAMERA = 0x01;
     private static final int REQ_ALBUM = 0x02;
@@ -140,7 +136,7 @@ public class PhotoUtil {
      * @param activity 调用该方法的活动
      * @return 返回拍照所得的照片的Uri
      */
-    public static Uri useCamera(Activity activity){
+    public static Uri useCamera(final Activity activity){
         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         picName.getParentFile().mkdirs();
         Uri picUri = FileProvider.getUriForFile(activity, "com.zspirytus.dmdemo.Activity.MainActivity.fileprovider", picName);
@@ -154,7 +150,7 @@ public class PhotoUtil {
      *
      * @param activity 调用该方法的活动
      */
-    public static void selectFromAlbum(Activity activity) {
+    public static void selectFromAlbum(final Activity activity) {
         Intent intent = new Intent(Intent.ACTION_PICK);
         intent.setDataAndType(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, "image/*");
         activity.startActivityForResult(intent, REQ_ALBUM);
@@ -166,7 +162,7 @@ public class PhotoUtil {
      * @param picUri 需要裁剪的图片的Uri
      * @return 裁剪所得照片的Uri
      */
-    public static Uri cropPicture(Activity activity,Uri picUri) {
+    public static Uri cropPicture(final Activity activity,final Uri picUri) {
         if(!cropPicName.exists())
             cropPicName.getParentFile().mkdirs();
         Uri cropPicUri = Uri.fromFile(cropPicName);
@@ -193,7 +189,7 @@ public class PhotoUtil {
      * @param str 转换成String的图片
      * @return 图片Bitmap
      */
-    public static Bitmap getBitmapbyString(String str){
+    public static Bitmap getBitmapbyString(final String str){
         Bitmap bitmap = null;
         try{
             byte[] bitmapArray;
@@ -210,7 +206,7 @@ public class PhotoUtil {
      * @param bitmap 需要转String的图片
      * @return String型的图片
      */
-    public static String convertIconToString(Bitmap bitmap)
+    public static String convertIconToString(final Bitmap bitmap)
     {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         bitmap.compress(Bitmap.CompressFormat.PNG, 100, baos);
@@ -223,7 +219,7 @@ public class PhotoUtil {
      * @param str  String型图片
      * @return     Bitmap型图片
      */
-    public static Bitmap convertStringToIcon(String str)
+    public static Bitmap convertStringToIcon(final String str)
     {
         Bitmap bitmap = null;
         try
@@ -241,26 +237,7 @@ public class PhotoUtil {
         }
     }
 
-    /**  压缩图片
-     *
-     * @param bitmap 需要压缩的图片
-     * @param photoSize   图片大小
-     * @return 压缩完成的图片
-     */
-    public static Bitmap CompressBitmap(Bitmap bitmap,int photoSize){
-        int maxSize = 1024*384;
-        Log.d("","Size Test:\t"+(bitmap.getByteCount()/1024)+"KB");
-        if(photoSize <= maxSize)
-            return bitmap;
-        float inSampleSize = (float)maxSize/(float) photoSize;
-        Matrix matrix = new Matrix();
-        matrix.setScale(inSampleSize,inSampleSize);
-        Bitmap newBitmap = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(),
-                bitmap.getHeight(), matrix, true);
-        return newBitmap;
-    }
-
-    public static void saveCompressFile(File file,int quality){
+    public static void saveCompressFile(final File file,final int quality){
         Bitmap old = BitmapFactory.decodeFile(file.getAbsolutePath());
         Log.d("","old size:\t"+old.getByteCount()/1024+"KB");
         Bitmap bitmap = getThumbnails(file.getAbsolutePath());
@@ -284,7 +261,7 @@ public class PhotoUtil {
         }
     }
 
-    public static String convertFileToString(File file) {
+    public static String convertFileToString(final File file) {
         String base64 = null;
         InputStream in = null;
         try {
@@ -293,29 +270,26 @@ public class PhotoUtil {
             int length = in.read(bytes);
             base64 = Base64.encodeToString(bytes, 0, length, Base64.DEFAULT);
         } catch (FileNotFoundException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+
         } catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+
         } finally {
             try {
                 if (in != null) {
                     in.close();
                 }
             } catch (IOException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
+
             }
         }
         return base64;
     }
 
-    private static Bitmap getThumbnails(String path){
+    private static Bitmap getThumbnails(final String path){
         BitmapFactory.Options options = new BitmapFactory.Options();
         options.inJustDecodeBounds = true;
         BitmapFactory.decodeFile(path, options);
-        options.inSampleSize = calculateInSampleSize(options, 480, 800);
+        options.inSampleSize = calculateInSampleSize(options, 854, 480);
         options.inJustDecodeBounds = false;
         return BitmapFactory.decodeFile(path, options);
     }
@@ -325,7 +299,7 @@ public class PhotoUtil {
      * @param path
      * @return
      */
-    private static int readPictureDegree(String path) {
+    private static int readPictureDegree(final String path) {
         int degree = 0;
         try {
             ExifInterface exifInterface = new ExifInterface(path);
@@ -355,7 +329,7 @@ public class PhotoUtil {
      * @param degress
      * @return
      */
-    private static Bitmap rotateBitmap(Bitmap bitmap,int degress) {
+    private static Bitmap rotateBitmap(Bitmap bitmap,final int degress) {
         if (bitmap != null) {
             Matrix m = new Matrix();
             m.postRotate(degress);
@@ -379,41 +353,4 @@ public class PhotoUtil {
         return inSampleSize;
     }
 
-    public static void savePic(File file){
-        OutputStream os = null;
-        InputStream in = null;
-        byte[] b = new byte[1024];
-        int len = 0;
-        try{
-            Log.d("","Compress beginning");
-            in = new FileInputStream(file);
-            os = new FileOutputStream(compressFileName);
-            while((len = in.read(b)) != -1){
-                os.write(b,0,len);
-            }
-            Log.d("","Compress Successfully");
-        }catch (FileNotFoundException e){
-
-        }catch (IOException e){
-
-        }finally{
-            try{
-                os.close();
-                in.close();
-            }catch (Exception e){
-
-            }
-        }
-    }
-
-    /** 保存头像到SharedPreferences
-     *
-     * @param context 上下文
-     * @param bitmap 头像
-     */
-    public static void saveAvatar(Context context, Bitmap bitmap){
-        SharedPreferences.Editor editor = context.getSharedPreferences("data",MODE_PRIVATE).edit();
-        editor.putString("Avatar", PhotoUtil.convertIconToString(bitmap));
-        editor.apply();
-    }
 }

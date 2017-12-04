@@ -21,7 +21,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.zspirytus.dmdemo.Interface.getSnobyAccountResponse;
-import com.zspirytus.dmdemo.JavaSource.ActivityManager;
+import com.zspirytus.dmdemo.JavaSource.Manager.ActivityManager;
 import com.zspirytus.dmdemo.JavaSource.Utils.PhotoUtil;
 import com.zspirytus.dmdemo.JavaSource.WebServiceUtils.SyncTask.MyAsyncTask;
 import com.zspirytus.dmdemo.JavaSource.WebServiceUtils.WebServiceConnector;

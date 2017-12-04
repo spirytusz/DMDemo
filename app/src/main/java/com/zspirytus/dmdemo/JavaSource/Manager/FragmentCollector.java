@@ -1,4 +1,4 @@
-package com.zspirytus.dmdemo.JavaSource;
+package com.zspirytus.dmdemo.JavaSource.Manager;
 
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;

@@ -1,4 +1,4 @@
-package com.zspirytus.dmdemo.JavaSource;
+package com.zspirytus.dmdemo.JavaSource.ListViewModule;
 
 /**
  * Created by ZSpirytus on 2017/10/15.

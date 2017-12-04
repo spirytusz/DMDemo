@@ -1,6 +1,6 @@
 package com.zspirytus.dmdemo.Interface;
 
-import android.graphics.Bitmap;
+import android.widget.TextView;
 
 import com.zspirytus.dmdemo.Reproduction.CircleImageView;
 
@@ -9,5 +9,9 @@ import com.zspirytus.dmdemo.Reproduction.CircleImageView;
  */
 
 public interface SetMyInfoAvatar {
+
     public void setAvatar(CircleImageView img,int by);
+
+    public void setUploadPicPath(TextView textView, int by);
+
 }

@@ -1,4 +1,4 @@
-package com.zspirytus.dmdemo.JavaSource;
+package com.zspirytus.dmdemo.JavaSource.Manager;
 
 import android.app.Activity;
 

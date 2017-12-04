@@ -1,7 +1,5 @@
 package com.zspirytus.dmdemo.JavaSource.WebServiceUtils;
 
-import android.util.Log;
-
 import com.zspirytus.dmdemo.JavaSource.Utils.XmlUtil;
 
 import java.io.BufferedReader;
@@ -12,8 +10,6 @@ import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /**
  * Created by ZSpirytus on 2017/11/3.
@@ -51,11 +47,9 @@ public class WebServiceConnector {
     public static final String PARAMTYPE_RETURNTIME = "returnTime";
     public static final String PARAMTYPE_REPORTDATE = "reportDate";
 
-    private static final String RESULT = "Result";
     private static final String TAG = "WebServiceConnector";
     private static final String WSDL_URI = "http://39.108.113.13/DMS.asmx?wsdl";
     private static final String NAMESPACE = "http://zspirytus.org/";
-    private static final String RESPONSETYPE_STRING = "string";
 
     /**
      * 发送SOAP请求信息
@@ -86,16 +80,11 @@ public class WebServiceConnector {
             outStream.flush();
             outStream.close();
 
-            Log.d(TAG,"myTest:\t con\t"+Boolean.toString(con != null));
             //获取数据
             InputStream inputStream = con.getInputStream();
-            Log.d(TAG,"myTest:\t inputStream\t"+Boolean.toString(inputStream != null));
             String str = InputStreamToString(inputStream);
-            ArrayList<String> result = getResult(str);
-            Log.d("","WebService Result Test:\t"+methodName+"\t"+result.size());
-            return result;
+            return getResult(str);
         } catch (IOException e) {
-            Log.d("","IOEXCEPTION!\n"+e.getMessage()+"\t"+e.getLocalizedMessage());
             e.printStackTrace();
             return null;
         }
@@ -124,7 +113,6 @@ public class WebServiceConnector {
             command = command + "</" + methodName + ">";
         } else
             command = "\t<" + methodName + " xmlns=\"" + NAMESPACE + "\"/> ";
-        Log.d(TAG, "Request test:\n" + command);
         return SOAP_HEADER + command + SOAP_END;
     }
 
@@ -135,37 +123,6 @@ public class WebServiceConnector {
      */
     private static ArrayList<String> getResult(String str) {
         return XmlUtil.getAnalysisResult(str);
-        /*String method = METHOD_GETAVATAR;
-        if(responseType.equals(method+RESULT))
-            return getPhotoResult(str,method);
-        if(responseType.equals(METHOD_NEWREPAIRREPORT+RESULT))
-            return getPhotoResult(str,METHOD_NEWREPAIRREPORT);
-        Pattern forChar = Pattern.compile("<" + responseType + ">(\\w+)</" + responseType + ">");
-        Matcher m = forChar.matcher(str);
-        while (m.find()) {
-            String a = m.group(1);
-            Log.d(TAG,"list Test:\t"+a);
-            list.add(m.group(1));
-        }*/
-    }
-
-    private static ArrayList<String> getPhotoResult(String str, String methodName){
-        final String temp1 =
-                "<?xml version=\"1.0\" encoding=\"utf-8\"?>" +
-                        "<soap:Envelope xmlns:soap=\"http://www.w3.org/2003/05/soap-envelope\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\">" +
-                        "<soap:Body>" +
-                        "<"+methodName+"Response xmlns=\"http://zspirytus.org/\">" +
-                        "<"+methodName+"Result>";
-        final String temp2 = "</"+methodName+"Result>" +
-                "</"+methodName+"Response>" +
-                "</soap:Body>" +
-                "</soap:Envelope>";
-        ArrayList<String> list = new ArrayList<String>();
-        list.clear();
-        str = str.replace(temp1,"");
-        str = str.replace(temp2,"");
-        list.add(str);
-        return list;
     }
 
     /**
@@ -181,14 +138,11 @@ public class WebServiceConnector {
             while ((line = reader.readLine()) != null) {
                 str.append(line + "\n");
             }
-            Log.d(TAG,"Response test:\t"+str);
             return str.toString();
         } catch (IOException e) {
-            Log.d(TAG,"getResult occur an IOException");
             e.printStackTrace();
             return null;
         } catch (Exception e){
-            Log.d(TAG,"getResult occur an Exception");
             return null;
         }
     }
@@ -199,7 +153,7 @@ public class WebServiceConnector {
      * @param methodName 方法名
      * @return 返回值类型是否为单一返回值
      */
-    private static boolean isSingleResponse(String methodName) {
+    /*private static boolean isSingleResponse(String methodName) {
         return methodName == METHOD_NEWREPAIRREPORT
                 || methodName == METHOD_NEWRETURNLATELY
                 || methodName == METHOD_NEWSTUDENTLEAVINGSCHOOL
@@ -208,5 +162,5 @@ public class WebServiceConnector {
                 || methodName == METHOD_MODIFYPWD
                 || methodName == METHOD_GETSNOBYACCOUNT
                 || methodName == METHOD_GETAVATAR;
-    }
+    }*/
 }
