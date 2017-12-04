@@ -1,5 +1,7 @@
 package com.zspirytus.dmdemo.Fragment;
 
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.text.Html;
@@ -23,12 +25,28 @@ public class AboutFragment extends Fragment {
         TextView centerTextView = view.findViewById(R.id.aboutfragment_text);
         TextView webTextView = view.findViewById(R.id.aboutfragment_webservice_git);
         TextView appTextView = view.findViewById(R.id.aboutfragment_app_git);
-        String app = getString(R.string.app_git);
-        String web = getString(R.string.webservice_git);
+        final String app = getString(R.string.app_git);
+        final String web = getString(R.string.webservice_git);
         String color = "#236B8E";
         String appText = "App: <font color='"+color+"'>"+app+"</font>";
         String webText = "WebService: <font color='"+color+"'>"+web+"</font>";
         appTextView.setText(Html.fromHtml(appText));
         webTextView.setText(Html.fromHtml(webText));
+        appTextView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(Intent.ACTION_VIEW);
+                intent.setData(Uri.parse(app));
+                startActivity(intent);
+            }
+        });
+        webTextView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(Intent.ACTION_VIEW);
+                intent.setData(Uri.parse(web));
+                startActivity(intent);
+            }
+        });
     }
 }
