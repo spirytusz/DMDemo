@@ -207,6 +207,7 @@ public class RepairFragment extends Fragment {
             public void showDialog(ArrayList<String> result) {
                 if(result == null||result.size() == 0){
                     DialogUtil.showNegativeTipsDialog(mParentActivity,"响应失败");
+                    Log.d(TAG,"RepairFragment Test: result is null?\t"+Boolean.toString(result == null));
                     return;
                 }
                 boolean isSuccess = result.get(0).replaceAll("\r|\n|\t","").equals("true");
@@ -296,7 +297,7 @@ public class RepairFragment extends Fragment {
         }
         else
             input.add("000");
-        input.add("2017-12-01 13:50:04");
+        input.add("2017-12-11 13:50:04");
         Log.d(TAG,"InputTest:\t reportDate" + "2017-12-01 13:50:04");
         return input;
     }

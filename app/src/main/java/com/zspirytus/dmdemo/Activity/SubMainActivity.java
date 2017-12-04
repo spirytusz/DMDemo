@@ -17,8 +17,11 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.SimpleAdapter;
+import android.widget.TextView;
 
+import com.zspirytus.dmdemo.Interface.getRLInfoResponse;
 import com.zspirytus.dmdemo.Interface.getRepBasInfoResponse;
+import com.zspirytus.dmdemo.Interface.getSLSInfoResponse;
 import com.zspirytus.dmdemo.JavaSource.ActivityManager;
 import com.zspirytus.dmdemo.JavaSource.RSFListViewItem;
 import com.zspirytus.dmdemo.JavaSource.Utils.DialogUtil;
@@ -59,6 +62,7 @@ public class SubMainActivity extends AppCompatActivity {
     private void getArgs(){
         Intent intent = getIntent();
         i = intent.getIntExtra(typeKey,-1);
+        Log.d(TAG,"Adapters Length:\t"+i);
         title = intent.getStringExtra(titleKey);
         Sno = intent.getStringExtra(mSnoKey);
     }
@@ -76,15 +80,79 @@ public class SubMainActivity extends AppCompatActivity {
         });
         toolbar.setTitle(title);
         mProgressBar = (ProgressBar) findViewById(R.id.submainactivity_progressbar);
+        listView = (ListView)findViewById(R.id.submainactivity_listview);
     }
 
     private void GetMessage(){
+        switch (i){
+            case 0:
+                getRepResponse();
+                break;
+            case 1:
+               getSLSResponse();
+                break;
+            case 2:
+                getRLResponse();
+        }
+    }
+
+    private void getRepResponse(){
         MyAsyncTask<getRepBasInfoResponse> myAsyncTask = new MyAsyncTask<getRepBasInfoResponse>(this, WebServiceConnector.METHOD_GETREPAIRBASICINFOBYSNO,mProgressBar);
         myAsyncTask.setListener(new getRepBasInfoResponse() {
             @Override
             public void getResult(ArrayList<String> result) {
+                if(result == null){
+                    DialogUtil.showNegativeTipsDialog(activity,"响应失败");
+                    finish();
+                    return;
+                } else if(result.size() == 0){
+                    listView.setVisibility(listView.GONE);
+                    TextView textView = (TextView) findViewById(R.id.submainactivity_textview);
+                    textView.setText("空");
+                    return;
+                }
+                RefreshUI(result);
+                mProgressBar.setVisibility(View.GONE);
+            }
+        });
+        myAsyncTask.execute(getParamType(),getInput());
+    }
+
+    private void getSLSResponse(){
+        MyAsyncTask<getSLSInfoResponse> myAsyncTask = new MyAsyncTask<getSLSInfoResponse>(this, WebServiceConnector.METHOD_GETSLSBASICINFO,mProgressBar);
+        myAsyncTask.setListener(new getSLSInfoResponse() {
+            @Override
+            public void getResult(ArrayList<String> result) {
                 if(result == null||result.size() == 0){
                     DialogUtil.showNegativeTipsDialog(activity,"响应失败");
+                    finish();
+                    return;
+                } else if(result.size() == 0){
+                    listView.setVisibility(listView.GONE);
+                    TextView textView = (TextView) findViewById(R.id.submainactivity_textview);
+                    textView.setText("空");
+                    return;
+                }
+                RefreshUI(result);
+                mProgressBar.setVisibility(View.GONE);
+            }
+        });
+        myAsyncTask.execute(getParamType(),getInput());
+    }
+
+    private void getRLResponse(){
+        MyAsyncTask<getRLInfoResponse> myAsyncTask = new MyAsyncTask<getRLInfoResponse>(this, WebServiceConnector.METHOD_GETRETURNLATELYBASICINFO,mProgressBar);
+        myAsyncTask.setListener(new getRLInfoResponse() {
+            @Override
+            public void getResult(ArrayList<String> result) {
+                if(result == null||result.size() == 0){
+                    DialogUtil.showNegativeTipsDialog(activity,"响应失败");
+                    finish();
+                    return;
+                } else if(result.size() == 0){
+                    listView.setVisibility(listView.GONE);
+                    TextView textView = (TextView) findViewById(R.id.submainactivity_textview);
+                    textView.setText("空");
                     return;
                 }
                 RefreshUI(result);
@@ -109,7 +177,6 @@ public class SubMainActivity extends AppCompatActivity {
     }
 
     private void RefreshUI(ArrayList<String> result){
-        listView = (ListView)findViewById(R.id.repairschedule_listview);
         listView.setAdapter(getAdapter(result));
     }
 
@@ -158,31 +225,45 @@ public class SubMainActivity extends AppCompatActivity {
      * @return 加入了RSFListViewItem的List<RSFListViewItem> list
      */
     private List<RSFListViewItem> getListViewItemList(ArrayList<String> result){
-        List<RSFListViewItem> list = new ArrayList<>();
-        list.clear();
-       /* RSFListViewItem rsfl = new RSFListViewItem();
-        rsfl.setmBitmap(BitmapFactory.decodeResource(getResources(),R.drawable.ic_av_timer_black_48dp));
-        rsfl.setmTime("123");
-        rsfl.setmTitle("456");
-        list.add(rsfl);*/
+        Log.d("","result size:\t"+result.size());
         if(result.size()>0) {
+            List<RSFListViewItem> list = new ArrayList<>();
+            list.clear();
             int length = result.size();
-            Log.d(TAG,"Sub Length Test:\t"+length);
-            RSFListViewItem rsf = new RSFListViewItem();
-            for(int i = 0;i<length;i+=3){
-                Log.d(TAG,"Sub Result Test:\t"+result.get(i));
-                Log.d(TAG,"Sub Result Test:\t"+result.get(i+1));
-                Log.d(TAG,"Sub Result Test:\t"+result.get(i+2));
-                rsf.setmBitmap(PhotoUtil.convertStringToIcon(result.get(i)));
-                rsf.setmTitle(result.get(i+1));
-                rsf.setmTime(result.get(i+2));
-                list.add(rsf);
-                rsf = new RSFListViewItem();
+            RSFListViewItem rsf;
+            switch(i){
+                case 0:
+                    for(int i = 0;i<length;i+=3){
+                        rsf = new RSFListViewItem();
+                        rsf.setmBitmap(PhotoUtil.convertStringToIcon(result.get(i)));
+                        rsf.setmTitle(result.get(i+1));
+                        rsf.setmTime(result.get(i+2));
+                        list.add(rsf);
+                    }
+                    break;
+                case 1:
+                    Log.d(TAG,"Adapterss Length:\t"+length);
+                    for(int i = 0;i<length;i+=3){
+                        rsf = new RSFListViewItem();
+                        rsf.setmBitmap(BitmapFactory.decodeResource(getResources(),R.drawable.ic_directions_run_black_24dp));
+                        rsf.setmTitle(result.get(i+1));
+                        rsf.setmTime(result.get(i+2));
+                        list.add(rsf);
+                    }
+                    break;
+                case 2:
+                    for(int i = 0;i<length;i+=2){
+                        rsf = new RSFListViewItem();
+                        rsf.setmBitmap(BitmapFactory.decodeResource(getResources(),R.drawable.ic_av_timer_black_48dp));
+                        rsf.setmTitle(result.get(i));
+                        rsf.setmTime(result.get(i+1));
+                        list.add(rsf);
+                    }
+                    break;
             }
-        } else {
-
+            return list;
         }
-        return list;
+        return null;
     }
 
     /**

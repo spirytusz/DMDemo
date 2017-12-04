@@ -72,7 +72,7 @@ public class WebServiceConnector {
             HttpURLConnection con = (HttpURLConnection) url.openConnection();
             byte[] bytes = request.getBytes("utf-8");
             con.setDoInput(true); //指定该链接是否可以输入
-            con.setDoOutput(true); //指定该链接是否可以输出
+            con.setDoOutput(false); //指定该链接是否可以输出
             con.setUseCaches(false); //指定该链接是否只用caches
             con.setConnectTimeout(6000); // 设置超时时间
             con.setRequestMethod("POST"); //指定发送方法名，包括Post和Get。
@@ -86,14 +86,17 @@ public class WebServiceConnector {
             outStream.flush();
             outStream.close();
 
+            Log.d(TAG,"myTest:\t con\t"+Boolean.toString(con != null));
             //获取数据
             InputStream inputStream = con.getInputStream();
+            Log.d(TAG,"myTest:\t inputStream\t"+Boolean.toString(inputStream != null));
             String str = InputStreamToString(inputStream);
             ArrayList<String> result = getResult(str);
             Log.d("","WebService Result Test:\t"+methodName+"\t"+result.size());
             return result;
         } catch (IOException e) {
-            Log.d("","IOEXCEPTION!");
+            Log.d("","IOEXCEPTION!\n"+e.getMessage()+"\t"+e.getLocalizedMessage());
+            e.printStackTrace();
             return null;
         }
     }
