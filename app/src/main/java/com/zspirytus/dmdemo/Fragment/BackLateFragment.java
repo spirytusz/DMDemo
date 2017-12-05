@@ -10,16 +10,20 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.zspirytus.dmdemo.Activity.BaseActivity;
+import com.zspirytus.dmdemo.Activity.MainActivity;
 import com.zspirytus.dmdemo.Interface.getBooleanTypeResponse;
 import com.zspirytus.dmdemo.JavaSource.Utils.DialogUtil;
 import com.zspirytus.dmdemo.JavaSource.WebServiceUtils.SyncTask.MyAsyncTask;
 import com.zspirytus.dmdemo.JavaSource.WebServiceUtils.WebServiceConnector;
 import com.zspirytus.dmdemo.R;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -85,6 +89,7 @@ public class BackLateFragment extends Fragment {
                 if (isSuccess) {
                     mReturnTime.setText("");
                     mReason.setText("");
+                    BaseActivity.CloseKeyBoard(mParentActivity);
                 }
             }
         });
@@ -104,36 +109,66 @@ public class BackLateFragment extends Fragment {
     private ArrayList<String> getInput() {
         ArrayList<String> input = new ArrayList<>();
         input.clear();
+        Calendar c = Calendar.getInstance();
         Bundle bundle = getArguments();
         String Sno = bundle.getString(mSnoKey);
         String Rno = getRno();
-        String returnTime = mReturnTime.getText().toString();
+        String returnTime = c.get(Calendar.YEAR)+"-"+(c.get(Calendar.MONTH)+1)+"-"+c.get(Calendar.DAY_OF_MONTH)+" "+mReturnTime.getText().toString()+":00";
+        Log.d(TAG,"Addsss Day Test:\t"+AddDay(returnTime,1));
+        if(!isNextDay(mReturnTime.getText().toString()))
+            returnTime = AddDay(returnTime,1);
+        Log.d(TAG,"Addsss Day Test:\t"+returnTime);
         String reason = mReason.getText().toString();
-        if (
+        /*if (
                 Sno != null && !Sno.equals("")
                         && Rno != null && !Rno.equals("")
                         && returnTime != null && !returnTime.equals("")
-                        && reason != null && !reason.equals("")) {
+                        && reason != null && !reason.equals("")) {*/
             input.add(Sno);
             input.add(Rno);
             input.add(returnTime);
             input.add(reason);
-        } else {
+        /*} else {
             return null;
-        }
+        }*/
         return input;
     }
 
+    private static String AddDay(String day,int Num) {
+        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        Date nowDate = null;
+        try {
+            nowDate = df.parse(day);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        //如果需要向后计算日期 -改为+
+        Date newDate2 = new Date(nowDate.getTime() + (long)Num * 24 * 60 * 60 * 1000);
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        String dateOk = simpleDateFormat.format(newDate2);
+        return dateOk;
+    }
+
     private boolean isInputLegal() {
-        if (mReason.getText().toString().equals(""))
-            return false;
-        ArrayList<Integer> inputTime = getmReturnTime();
-        Calendar c = Calendar.getInstance();
-        int nowMinute = c.get(Calendar.HOUR_OF_DAY) * 60 + c.get(Calendar.MINUTE);
-        int inputMinute = inputTime.get(0) * 60 + inputTime.get(1);
-        if (nowMinute >= inputMinute)
+        if (mReason.getText().toString().equals("")||mReturnTime.getText().toString().equals(getString(R.string.Return_Time)))
             return false;
         return true;
+    }
+
+    private boolean isNextDay(String time){
+        Calendar c = Calendar.getInstance();
+        SimpleDateFormat formator = new SimpleDateFormat("HHmm");
+        String now = c.get(Calendar.HOUR)+":"+c.get(Calendar.MINUTE);
+        try{
+            Date nowTime = formator.parse(now);
+            Date inputTime = formator.parse(time);
+            if(inputTime.getTime()<nowTime.getTime())
+                return true;
+            else
+                return false;
+        }catch (ParseException e){
+            return false;
+        }
     }
 
     private ArrayList<Integer> getmReturnTime() {

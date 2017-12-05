@@ -120,14 +120,14 @@ public class MyInfoFragment extends Fragment{
         myAsyncTask.setListener(new getAvatarResponse() {
             @Override
             public void getAvatar(ArrayList<String> result) {
-                if(result.size() > 0){
+                if(result == null)
+                    Toast.makeText(mParentActivity,"从数据库获取头像失败！",Toast.LENGTH_SHORT).show();
+                if(result.size() == 0){
+                    mAvatar.setImageResource(R.drawable.ic_account_circle_black_24dp);
+                } else if(result.size() > 0){
                     Bitmap bitmap = PhotoUtil.convertStringToIcon(result.get(0));
                     mAvatar.setImageBitmap(bitmap);
                     ((MainActivity)mParentActivity).mAvatar.setImageBitmap(bitmap);
-                } else if(result.get(0).equals("")){
-                    mAvatar.setImageResource(R.drawable.ic_account_circle_black_24dp);
-                } else {
-                    Toast.makeText(mParentActivity,"从数据库获取头像失败！",Toast.LENGTH_SHORT).show();
                 }
             }
         });

@@ -14,6 +14,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.zspirytus.dmdemo.Activity.BaseActivity;
 import com.zspirytus.dmdemo.Interface.SetMyInfoAvatar;
 import com.zspirytus.dmdemo.Interface.getBooleanTypeResponse;
 import com.zspirytus.dmdemo.JavaSource.Utils.DialogUtil;
@@ -192,6 +193,7 @@ public class RepairFragment extends Fragment {
                     mRepairDetail.setText("");
                     mRepairContact.setText("");
                     mRepairPhoto.setText("");
+                    BaseActivity.CloseKeyBoard(mParentActivity);
                 }
             }
         });

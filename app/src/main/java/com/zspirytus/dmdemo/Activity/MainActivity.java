@@ -21,6 +21,7 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -97,7 +98,7 @@ public class MainActivity extends BaseActivity
         if( getSupportFragmentManager().findFragmentByTag(MyInfoFragment.class.getName()) == null)
         {
             ArrayList<String> list = MyInfoFragment.getStudentInfobyLocalFile(this,mSnoVaule);
-            if(list == null)
+            if(true)
                 getInform(WebServiceConnector.PARAMTYPE_SNO,mSnoVaule);
             else {
                 if(mSnoVaule != null && mSnoVaule.equals("")){
@@ -389,7 +390,6 @@ public class MainActivity extends BaseActivity
             Log.d("","itemName:"+"backlate");
         }
         ft.commitAllowingStateLoss();
-        Log.d("","MyInfoFragmentHiddenStatus:"+mMInfoFragment.isHidden());
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;

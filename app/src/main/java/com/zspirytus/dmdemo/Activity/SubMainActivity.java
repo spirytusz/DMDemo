@@ -120,7 +120,7 @@ public class SubMainActivity extends AppCompatActivity {
         myAsyncTask.setListener(new getSLSInfoResponse() {
             @Override
             public void getResult(ArrayList<String> result) {
-                if(result == null||result.size() == 0){
+                if(result == null){
                     DialogUtil.showNegativeTipsDialog(activity,"响应失败");
                     finish();
                     return;
@@ -142,7 +142,7 @@ public class SubMainActivity extends AppCompatActivity {
         myAsyncTask.setListener(new getRLInfoResponse() {
             @Override
             public void getResult(ArrayList<String> result) {
-                if(result == null||result.size() == 0){
+                if(result == null){
                     DialogUtil.showNegativeTipsDialog(activity,"响应失败");
                     finish();
                     return;
