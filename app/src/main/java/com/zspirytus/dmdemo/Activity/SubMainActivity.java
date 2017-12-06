@@ -48,6 +48,7 @@ public class SubMainActivity extends AppCompatActivity {
     private String Sno;
     private ProgressBar mProgressBar;
     private ListView listView;
+    private SimpleAdapter mBasicInfoAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -155,7 +156,6 @@ public class SubMainActivity extends AppCompatActivity {
                     return;
                 }
                 RefreshUI(result);
-                mProgressBar.setVisibility(View.GONE);
             }
         });
         myAsyncTask.execute(getParamType(),getInput());
@@ -176,7 +176,13 @@ public class SubMainActivity extends AppCompatActivity {
     }
 
     private void RefreshUI(ArrayList<String> result){
-        listView.setAdapter(getAdapter(result));
+        listView = (ListView) findViewById(R.id.submainactivity_listview);
+        if(mBasicInfoAdapter == null){
+            mBasicInfoAdapter = getAdapter(result);
+            listView.setAdapter(mBasicInfoAdapter);
+        }  else {
+            listView.setAdapter(mBasicInfoAdapter);
+        }
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
@@ -240,7 +246,10 @@ public class SubMainActivity extends AppCompatActivity {
                 case 0:
                     for(int i = 0;i<length;i+=3){
                         rsf = new RSFListViewItem();
-                        rsf.setmBitmap(PhotoUtil.convertStringToIcon(result.get(i)));
+                        if(!result.get(i).equals("null"))
+                            rsf.setmBitmap(PhotoUtil.convertStringToIcon(result.get(i)));
+                        else
+                            rsf.setmBitmap(BitmapFactory.decodeResource(getResources(),R.drawable.ic_build_black_48dp));
                         rsf.setmTitle(result.get(i+1));
                         rsf.setmTime(DateUtil.FormatDate(result.get(i+2),"yyyy/MM/dd"));
                         list.add(rsf);

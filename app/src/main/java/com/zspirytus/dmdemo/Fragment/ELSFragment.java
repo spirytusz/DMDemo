@@ -40,6 +40,7 @@ public class ELSFragment extends Fragment {
     private EditText mReason;
     private Button mElsButton;
 
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.layout_elsfragment, container, false);
@@ -120,6 +121,7 @@ public class ELSFragment extends Fragment {
         ArrayList<String> paramType = new ArrayList<>();
         paramType.clear();
         paramType.add(WebServiceConnector.PARAMTYPE_SNO);
+        paramType.add(WebServiceConnector.PARAMTYPE_SLSNO);
         paramType.add(WebServiceConnector.PARAMTYPE_LEAVEDATE);
         paramType.add(WebServiceConnector.PARAMTYPE_BACKDATE);
         paramType.add(WebServiceConnector.PARAMTYPE_REASON);
@@ -131,6 +133,7 @@ public class ELSFragment extends Fragment {
         input.clear();
         String Sno = getArguments().getString(mSnoKey);
         input.add(Sno);
+        input.add(DateUtil.getNowDate("ddHHmmssSSS"));
         input.add(mStartTime.getText().toString());
         input.add(mEndTime.getText().toString());
         input.add(mReason.getText().toString());

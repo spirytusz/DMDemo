@@ -29,6 +29,7 @@ public class XmlUtil {
     }
 
     public static ArrayList<String> getAnalysisResult(String str) {
+        Log.d("","responseTest:\n"+str);
         Document document = getDocument(str);
         Element target = document.getRootElement();
         ArrayList<String> result = new ArrayList<>();

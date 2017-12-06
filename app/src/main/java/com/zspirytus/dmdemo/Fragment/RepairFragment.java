@@ -16,6 +16,7 @@ import android.widget.TextView;
 import com.zspirytus.dmdemo.Activity.BaseActivity;
 import com.zspirytus.dmdemo.Interface.SetMyInfoAvatar;
 import com.zspirytus.dmdemo.Interface.getBooleanTypeResponse;
+import com.zspirytus.dmdemo.JavaSource.Utils.DateUtil;
 import com.zspirytus.dmdemo.JavaSource.Utils.DialogUtil;
 import com.zspirytus.dmdemo.JavaSource.Manager.FragmentCollector;
 import com.zspirytus.dmdemo.JavaSource.Utils.PhotoUtil;
@@ -195,11 +196,8 @@ public class RepairFragment extends Fragment {
     }
 
     private ArrayList<String> getInput(){
-        SimpleDateFormat format = new SimpleDateFormat("ddHHmmssSSS");
-        SimpleDateFormat f = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        Date curDate =  new Date(System.currentTimeMillis());
         String Sno = getArguments().getString(mSnoKey);
-        String repairNo = format.format(curDate);
+        String repairNo = DateUtil.getNowDate("ddHHmmssSSS");
         String area = mRepairArea.getText().toString();
         String place = mRepairPlace.getText().toString();
         String type = mRepairType.getText().toString();
@@ -216,33 +214,9 @@ public class RepairFragment extends Fragment {
         input.clear();
         input.add(Sno);
         input.add(repairNo);
-        if(area.equals(getString(R.string.Public_Area))){
-            input.add("0");
-        }
-        else{
-            input.add("1");
-        }
+        input.add(area);
         input.add(place);
-        switch (type){
-            case "电工类":
-                input.add("0x000");
-                break;
-            case "水工类":
-                input.add("0x001");
-                break;
-            case "木工类":
-                input.add("0x010");
-                break;
-            case "土建类":
-                input.add("0x011");
-                break;
-            case "设备类":
-                input.add("0x100");
-                break;
-            case "杂项":
-                input.add("0x101");
-                break;
-        }
+        input.add(type);
         input.add(detail);
         input.add(contact);
         if(photoFile!=null){
@@ -251,7 +225,7 @@ public class RepairFragment extends Fragment {
         }
         else
             input.add("000");
-        input.add(f.format(curDate));
+        input.add(DateUtil.getNowDate("yyyy-MM-dd HH:mm:ss"));
         return input;
     }
 
