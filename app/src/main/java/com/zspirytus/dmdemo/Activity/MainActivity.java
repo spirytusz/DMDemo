@@ -13,7 +13,6 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.support.design.widget.NavigationView;
@@ -79,7 +78,7 @@ public class MainActivity extends BaseActivity
     private ActionBarDrawerToggle toggle;
     private ProgressBar mProgressBar;
 
-    private String mSnoVaule;
+    private String mSnoValue;
     private Uri picUri;
     private boolean isAlbum = false;
     private boolean isRepairPicDir = false;
@@ -97,11 +96,11 @@ public class MainActivity extends BaseActivity
         RestoreAvatar();
         if( getSupportFragmentManager().findFragmentByTag(MyInfoFragment.class.getName()) == null)
         {
-            ArrayList<String> list = MyInfoFragment.getStudentInfobyLocalFile(this,mSnoVaule);
+            ArrayList<String> list = MyInfoFragment.getStudentInfobyLocalFile(this,mSnoValue);
             if(true)
-                getInform(WebServiceConnector.PARAMTYPE_SNO,mSnoVaule);
+                getInform(WebServiceConnector.PARAMTYPE_SNO,mSnoValue);
             else {
-                if(mSnoVaule != null && mSnoVaule.equals("")){
+                if(mSnoValue != null && mSnoValue.equals("")){
 
                 }
                 setDefaultFragment(getSupportFragmentManager(),list);
@@ -152,10 +151,10 @@ public class MainActivity extends BaseActivity
         navigationView.setNavigationItemSelectedListener(this);
 
         mFragmentManager = getSupportFragmentManager();
-        mSnoVaule = getIntent().getStringExtra(mSnoKey);
+        mSnoValue = getIntent().getStringExtra(mSnoKey);
         View headerView = navigationView.getHeaderView(0);
         mSno = headerView.findViewById(R.id.side_sno);
-        mSno.setText(mSnoVaule);
+        mSno.setText(mSnoValue);
         mName  = headerView.findViewById(R.id.side_name);
         mAvatar = headerView.findViewById(R.id.imageView);
         mAvatar.setImageResource(R.drawable.ic_account_circle_black_24dp);
@@ -310,25 +309,22 @@ public class MainActivity extends BaseActivity
         if (id == R.id.nav_account) {
             FragmentCollector.HideAllFragment(ft);
             ft.show(mMInfoFragment);
-            Log.d("","itemName:"+"account");
         } else if (id == R.id.nav_repair) {
             if (mRepairFragment == null) {
-                mRepairFragment = RepairFragment.GetThisFragment(mSnoVaule);
+                mRepairFragment = RepairFragment.GetThisFragment(mSnoValue);
                 FragmentCollector.addFragment(mRepairFragment);
                 ft.add(R.id.fragment_container, mRepairFragment,mRepairFragment.getClass().getName());
             }
             FragmentCollector.HideAllFragment(ft);
             ft.show(mRepairFragment);
-            Log.d("","itemName:"+"repair");
         } else if (id == R.id.nav_els) {
             if (mELSchool == null) {
-                mELSchool = ELSFragment.GetThisFragment(mSnoVaule);
+                mELSchool = ELSFragment.GetThisFragment(mSnoValue);
                 FragmentCollector.addFragment(mELSchool);
                 ft.add(R.id.fragment_container, mELSchool,mELSchool.getClass().getName());
             }
             FragmentCollector.HideAllFragment(ft);
             ft.show(mELSchool);
-            Log.d("","itemName:"+"elschool");
         } else if (id == R.id.nav_settings) {
             if (mSettings == null) {
                 mSettings = new Settings();
@@ -337,7 +333,6 @@ public class MainActivity extends BaseActivity
             }
             FragmentCollector.HideAllFragment(ft);
             ft.show(mSettings);
-            Log.d("","itemName:"+"settings");
         } else if (id == R.id.nav_about) {
             if(mAboutFragment == null){
                 mAboutFragment = new AboutFragment();
@@ -346,16 +341,14 @@ public class MainActivity extends BaseActivity
             }
             FragmentCollector.HideAllFragment(ft);
             ft.show(mAboutFragment);
-            Log.d("","itemName:"+"about");
         } else if (id == R.id.nav_backLate) {
             if(mBackLateFragment == null){
-                mBackLateFragment = BackLateFragment.GetThisFragment(mSnoVaule);
+                mBackLateFragment = BackLateFragment.GetThisFragment(mSnoValue);
                 FragmentCollector.addFragment(mBackLateFragment);
                 ft.add(R.id.fragment_container,mBackLateFragment);
             }
             FragmentCollector.HideAllFragment(ft);
             ft.show(mBackLateFragment);
-            Log.d("","itemName:"+"backlate");
         }
         ft.commitAllowingStateLoss();
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
