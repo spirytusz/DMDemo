@@ -2,10 +2,8 @@ package com.zspirytus.dmdemo.Fragment;
 
 import android.app.Activity;
 import android.content.Context;
-import android.icu.util.Calendar;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,6 +13,7 @@ import android.widget.TextView;
 
 import com.zspirytus.dmdemo.Activity.BaseActivity;
 import com.zspirytus.dmdemo.Interface.getBooleanTypeResponse;
+import com.zspirytus.dmdemo.JavaSource.Utils.DateUtil;
 import com.zspirytus.dmdemo.JavaSource.Utils.DialogUtil;
 import com.zspirytus.dmdemo.JavaSource.Manager.FragmentCollector;
 import com.zspirytus.dmdemo.JavaSource.WebServiceUtils.SyncTask.MyAsyncTask;
@@ -33,7 +32,6 @@ public class ELSFragment extends Fragment {
     private Activity mParentActivity;
 
     private static final String TAG = "ELSchool";
-    private static final String FRAGMENT_HIDDEN_STATUS = "FRAGMENT_HIDDEN_STATUS";
     private static final String mSnoKey = "Sno";
 
     private View view;
@@ -41,26 +39,6 @@ public class ELSFragment extends Fragment {
     private TextView mEndTime;
     private EditText mReason;
     private Button mElsButton;
-
-    /*@Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        if (savedInstanceState != null) {
-            boolean isSupportHidden = savedInstanceState.getBoolean(FRAGMENT_HIDDEN_STATUS);
-            FragmentTransaction ft = getFragmentManager().beginTransaction();
-            if (isSupportHidden) {
-                ft.hide(this);
-            } else {
-                ft.show(this);
-            }
-            ft.commit();
-        }
-    }
-
-    @Override
-    public void onSaveInstanceState(Bundle outState){
-        outState.putBoolean(FRAGMENT_HIDDEN_STATUS,isHidden());
-    }*/
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -128,45 +106,14 @@ public class ELSFragment extends Fragment {
         myAsyncTask.execute(getParamType(), getInput());
     }
 
-    private ArrayList<Integer> getDateFromTextView(TextView textView) {
-        char[] c = textView.getText().toString().toCharArray();
-        String y = c[0] + "" + c[1] + "" + c[2] + "" + c[3];
-        String m = c[7] + "" + c[8];
-        String d = c[12] + "" + c[13];
-        Log.d("","format test:\t"+y+"\t"+m+"\t"+d);
-        int year = Integer.parseInt(y);
-        int month = Integer.parseInt(m);
-        int day = Integer.parseInt(d);
-        ArrayList<Integer> end = new ArrayList<>();
-        end.clear();
-        end.add(year);
-        end.add(month);
-        end.add(day);
-        return end;
-    }
-
     private boolean isInputLegal() {
         String start = mStartTime.getText().toString();
         String end = mEndTime.getText().toString();
         String reason = mReason.getText().toString();
         if (start.equals(getString(R.string.Start_Time)) || end.equals(getString(R.string.End_Time)) || reason.equals(""))
             return false;
-        Calendar c = Calendar.getInstance();
-        ArrayList<Integer> startDate = getDateFromTextView(mStartTime);
-        ArrayList<Integer> endDate = getDateFromTextView(mEndTime);
-        ArrayList<Integer> nowDate = new ArrayList<>();
-        nowDate.clear();
-        nowDate.add(c.get(Calendar.YEAR));
-        nowDate.add(c.get(Calendar.MONTH));
-        nowDate.add(c.get(Calendar.DAY_OF_MONTH));
-        return isDateOneBigger(startDate, nowDate) && isDateOneBigger(endDate, startDate);
-    }
-
-    private boolean isDateOneBigger(ArrayList<Integer> date1, ArrayList<Integer> date2) {
-        for (int i = 0; i < date1.size(); i++)
-            if (date1.get(i) > date2.get(i))
-                return true;
-        return false;
+        return DateUtil.isDateOneBigger(mStartTime.getText().toString(),DateUtil.getNowDate())
+                && DateUtil.isDateOneBigger(mEndTime.getText().toString(),mStartTime.getText().toString());
     }
 
     private ArrayList<String> getParamType() {
@@ -180,14 +127,12 @@ public class ELSFragment extends Fragment {
     }
 
     private ArrayList<String> getInput() {
-        ArrayList<Integer> start = getDateFromTextView(mStartTime);
-        ArrayList<Integer> end = getDateFromTextView(mEndTime);
         ArrayList<String> input = new ArrayList<>();
         input.clear();
         String Sno = getArguments().getString(mSnoKey);
         input.add(Sno);
-        input.add(start.get(0) + "-" + start.get(1) + "-" + start.get(2));
-        input.add(end.get(0) + "-" + end.get(1) + "-" + end.get(2));
+        input.add(mStartTime.getText().toString());
+        input.add(mEndTime.getText().toString());
         input.add(mReason.getText().toString());
         return input;
     }

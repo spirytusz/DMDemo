@@ -3,11 +3,10 @@ package com.zspirytus.dmdemo.JavaSource.Utils;
 import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
-import android.content.ContentResolver;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.icu.util.Calendar;
 import android.support.v7.app.AlertDialog;
+import android.text.format.DateFormat;
 import android.widget.DatePicker;
 import android.widget.TextView;
 import android.widget.TimePicker;
@@ -18,18 +17,20 @@ import android.widget.TimePicker;
 
 public class DialogUtil {
 
+    private static final String SUCCESS = "成功";
+    private static final String FAILED = "失败";
+    private static final String TIP = "提示";
+    private static final String OK = "好";
+    private static final String ILLEGAL = "输入值为空或违反约束";
+
     public static void TimePicker(Activity activity, final TextView textView){
-        Calendar c = Calendar.getInstance();
         int hour;
-        int minute;
         if(is24((Context)activity)){
-            hour = c.get(Calendar.HOUR_OF_DAY);
+            hour = DateUtil.getNowHour_int();
         } else {
-            hour = c.get(Calendar.HOUR);
+            hour = DateUtil.getNowHour_int()%12;
         }
-        minute = c.get(Calendar.MINUTE);
-        // 直接创建一个TimePickerDialog对话框实例，并将它显示出来
-        new TimePickerDialog(activity,
+        TimePickerDialog dialog = new TimePickerDialog(activity,
                 // 绑定监听器
                 new TimePickerDialog.OnTimeSetListener() {
 
@@ -51,13 +52,13 @@ public class DialogUtil {
                     }
                 },
                 // 设置初始时间
-                hour, minute,true).show();
+                hour, DateUtil.getNowMinute_int(),true);
+        dialog.setCancelable(true);
+        dialog.show();
     }
 
     public static void DatePicker(Activity activity,final TextView textView){
-        Calendar c = Calendar.getInstance();
-        // 直接创建一个DatePickerDialog对话框实例，并将它显示出来
-        new DatePickerDialog(activity,
+        DatePickerDialog dialog = new DatePickerDialog(activity,
                 // 绑定监听器
                 new DatePickerDialog.OnDateSetListener() {
 
@@ -69,25 +70,26 @@ public class DialogUtil {
                             month = "0" + month;
                         if (dayOfMonth < 10)
                             day = "0" + day;
-                        textView.setText(year + " - " + month + " - " + day);
+                        textView.setText(year + "-" + month + "-" + day);
                     }
-                }
+                },
                 // 设置初始日期
-                , c.get(Calendar.YEAR), c.get(Calendar.MONTH), c
-                .get(Calendar.DAY_OF_MONTH)).show();
+                DateUtil.getNowYear_int(), DateUtil.getNowMonth_int() - 1, DateUtil.getNowDay_int());
+        dialog.setCancelable(true);
+        dialog.show();
     }
 
     public static void showResultDialog(Activity activity,final boolean isSuccess){
         String FormatResult = "";
         if(isSuccess){
-            FormatResult = "成功";
+            FormatResult = SUCCESS;
         } else {
-            FormatResult = "失败";
+            FormatResult = FAILED;
         }
         AlertDialog.Builder dialog = new AlertDialog.Builder(activity);
-        dialog.setTitle("提示");
+        dialog.setTitle(TIP);
         dialog.setMessage(FormatResult);
-        dialog.setPositiveButton("好", new DialogInterface.OnClickListener() {
+        dialog.setPositiveButton(OK, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
 
@@ -98,9 +100,9 @@ public class DialogUtil {
 
     public static void showNegativeTipsDialog(Activity activity){
         AlertDialog.Builder dialog = new AlertDialog.Builder(activity);
-        dialog.setTitle("提示");
-        dialog.setMessage("输入值为空或违反约束");
-        dialog.setPositiveButton("好", new DialogInterface.OnClickListener() {
+        dialog.setTitle(TIP);
+        dialog.setMessage(ILLEGAL);
+        dialog.setPositiveButton(OK, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
             }
@@ -110,9 +112,9 @@ public class DialogUtil {
 
     public static void showNegativeTipsDialog(Activity activity,String errorMessage){
         AlertDialog.Builder dialog = new AlertDialog.Builder(activity);
-        dialog.setTitle("提示");
+        dialog.setTitle(TIP);
         dialog.setMessage(errorMessage);
-        dialog.setPositiveButton("好", new DialogInterface.OnClickListener() {
+        dialog.setPositiveButton(OK, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
             }
@@ -121,11 +123,6 @@ public class DialogUtil {
     }
 
     private static boolean is24(Context context){
-        ContentResolver mResolver= context.getContentResolver();
-        String timeFormat = android.provider.Settings.System.getString(mResolver,android.provider.Settings.System.TIME_12_24);
-        if(timeFormat.equals("24"))
-            return true;
-        else
-            return false;
+        return DateFormat.is24HourFormat(context);
     }
 }
