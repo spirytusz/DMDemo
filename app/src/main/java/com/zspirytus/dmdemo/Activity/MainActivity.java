@@ -107,45 +107,9 @@ public class MainActivity extends BaseActivity
                 setDefaultFragment(getSupportFragmentManager(),list);
                 mName.setText(list.get(1));
             }
-        } /*else {
-            mMInfoFragment = (MyInfoFragment) getSupportFragmentManager().findFragmentByTag(MyInfoFragment.class.getName());
-            FragmentCollector.HideAllFragment(mFragmentManager.beginTransaction());
         }
-        if(getSupportFragmentManager().findFragmentByTag(RepairFragment.class.getName()) != null){
-            mRepairFragment = (RepairFragment) getSupportFragmentManager().findFragmentByTag(RepairFragment.class.getName());
-        }
-        if(getSupportFragmentManager().findFragmentByTag(ELSFragment.class.getName()) != null){
-            mELSchool = (ELSFragment) getSupportFragmentManager().findFragmentByTag(ELSFragment.class.getName());
-        }
-        if(getSupportFragmentManager().findFragmentByTag(Settings.class.getName()) != null){
-            mSettings = (Settings) getSupportFragmentManager().findFragmentByTag(Settings.class.getName());
-        }*/
-    }
 
-    /*private void restoreFragmentStatus(){
-        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-        if((mMInfoFragment = (MyInfoFragment) mFragmentManager.findFragmentByTag(MyInfoFragment.class.getName())) == null){
-            mMInfoFragment = new MyInfoFragment();
-            FragmentCollector.addFragment(mMInfoFragment);
-            ft.add(R.id.fragment_container, mMInfoFragment,mMInfoFragment.getClass().getName());
-        }
-        if((mRepairFragment = (RepairFragment) mFragmentManager.findFragmentByTag(RepairFragment.class.getName())) == null){
-            mRepairFragment = new RepairFragment();
-            FragmentCollector.addFragment(mRepairFragment);
-            ft.add(R.id.fragment_container, mRepairFragment,mRepairFragment.getClass().getName());
-        }
-        if((mELSchool = (ELSFragment) mFragmentManager.findFragmentByTag(ELSFragment.class.getName())) == null){
-            mELSchool = new ELSFragment();
-            FragmentCollector.addFragment(mELSchool);
-            ft.add(R.id.fragment_container, mELSchool,mELSchool.getClass().getName());
-        }
-        if((mSettings = (Settings) mFragmentManager.findFragmentByTag(Settings.class.getName())) == null){
-            mSettings = new Settings();
-            FragmentCollector.addFragment(mSettings);
-            ft.add(R.id.fragment_container, mSettings,mSettings.getClass().getName());
-        }
-        ft.commitAllowingStateLoss();
-    }*/
+    }
 
     private void getInform(String paramType,String param){
         MyAsyncTask<getStudentBasicInfoResponse> gs = new MyAsyncTask<getStudentBasicInfoResponse>(this,WebServiceConnector.METHOD_GETBASICINFOBYSNO,mProgressBar);
@@ -268,6 +232,10 @@ public class MainActivity extends BaseActivity
                 case REQ_ALBUM:
                     //相册回调
                     picUri = data.getData();
+                    if(isRepairPicDir){
+                        repairPicDir.setText(PhotoUtil.getRealFilePath(this,picUri));
+                        break;
+                    }
                     PhotoUtil.cropPicture(this, picUri);
                     break;
                 case REQ_CUT:
