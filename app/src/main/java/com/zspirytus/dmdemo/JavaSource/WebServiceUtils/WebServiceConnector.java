@@ -46,6 +46,7 @@ public class WebServiceConnector {
     public static final String PARAMTYPE_RNO = "Rno";
     public static final String PARAMTYPE_RETURNTIME = "returnTime";
     public static final String PARAMTYPE_REPORTDATE = "reportDate";
+    public static final String PARAMTYPE_SLSNO = "SLSNo";
 
     private static final String TAG = "WebServiceConnector";
     private static final String WSDL_URI = "http://39.108.113.13/DMS.asmx?wsdl";

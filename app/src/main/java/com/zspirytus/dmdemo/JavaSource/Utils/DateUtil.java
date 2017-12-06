@@ -151,4 +151,10 @@ public class DateUtil {
         }
     }
 
+    public static String FormatDate(String date,String format){
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat(format);
+        Date d = new Date(date);
+        return simpleDateFormat.format(d);
+    }
+
 }

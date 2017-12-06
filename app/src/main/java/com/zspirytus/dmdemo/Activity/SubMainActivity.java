@@ -8,20 +8,22 @@ import android.graphics.BitmapFactory;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.zspirytus.dmdemo.Interface.getRLInfoResponse;
 import com.zspirytus.dmdemo.Interface.getRepBasInfoResponse;
 import com.zspirytus.dmdemo.Interface.getSLSInfoResponse;
 import com.zspirytus.dmdemo.JavaSource.Manager.ActivityManager;
 import com.zspirytus.dmdemo.JavaSource.ListViewModule.RSFListViewItem;
+import com.zspirytus.dmdemo.JavaSource.Utils.DateUtil;
 import com.zspirytus.dmdemo.JavaSource.Utils.DialogUtil;
 import com.zspirytus.dmdemo.JavaSource.Utils.PhotoUtil;
 import com.zspirytus.dmdemo.JavaSource.WebServiceUtils.SyncTask.MyAsyncTask;
@@ -29,6 +31,7 @@ import com.zspirytus.dmdemo.JavaSource.WebServiceUtils.WebServiceConnector;
 import com.zspirytus.dmdemo.R;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -59,7 +62,6 @@ public class SubMainActivity extends AppCompatActivity {
     private void getArgs(){
         Intent intent = getIntent();
         i = intent.getIntExtra(typeKey,-1);
-        Log.d(TAG,"Adapters Length:\t"+i);
         title = intent.getStringExtra(titleKey);
         Sno = intent.getStringExtra(mSnoKey);
     }
@@ -175,6 +177,13 @@ public class SubMainActivity extends AppCompatActivity {
 
     private void RefreshUI(ArrayList<String> result){
         listView.setAdapter(getAdapter(result));
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                HashMap<String,String> map=(HashMap<String,String>)adapterView.getItemAtPosition(i);
+                Toast.makeText(activity,map.get("title"),Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     @Override
@@ -222,7 +231,6 @@ public class SubMainActivity extends AppCompatActivity {
      * @return 加入了RSFListViewItem的List<RSFListViewItem> list
      */
     private List<RSFListViewItem> getListViewItemList(ArrayList<String> result){
-        Log.d("","result size:\t"+result.size());
         if(result.size()>0) {
             List<RSFListViewItem> list = new ArrayList<>();
             list.clear();
@@ -234,17 +242,16 @@ public class SubMainActivity extends AppCompatActivity {
                         rsf = new RSFListViewItem();
                         rsf.setmBitmap(PhotoUtil.convertStringToIcon(result.get(i)));
                         rsf.setmTitle(result.get(i+1));
-                        rsf.setmTime(result.get(i+2));
+                        rsf.setmTime(DateUtil.FormatDate(result.get(i+2),"yyyy/MM/dd"));
                         list.add(rsf);
                     }
                     break;
                 case 1:
-                    Log.d(TAG,"Adapterss Length:\t"+length);
                     for(int i = 0;i<length;i+=3){
                         rsf = new RSFListViewItem();
                         rsf.setmBitmap(BitmapFactory.decodeResource(getResources(),R.drawable.ic_directions_run_black_24dp));
-                        rsf.setmTitle(result.get(i+1));
-                        rsf.setmTime(result.get(i+2));
+                        rsf.setmTitle(result.get(i));
+                        rsf.setmTime(DateUtil.FormatDate(result.get(i+1),"yyyy/MM/dd")+"\t"+DateUtil.FormatDate(result.get(i+2),"yyyy/MM/dd"));
                         list.add(rsf);
                     }
                     break;
@@ -290,4 +297,5 @@ public class SubMainActivity extends AppCompatActivity {
         intent.putExtra(mSnoKey,Sno);
         context.startActivity(intent);
     }
+
 }
