@@ -1,6 +1,7 @@
 package com.zspirytus.dmdemo.JavaSource.Utils;
 
 import android.Manifest;
+import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -35,9 +36,9 @@ import java.io.InputStream;
 
 public class PhotoUtil {
 
-    public static final File picName = new File(Environment.getExternalStorageDirectory().getAbsolutePath()+ "/dmdemo/" + "temp.jpg");
-    public static final File cropPicName = new File(Environment.getExternalStorageDirectory().getAbsolutePath()+"/dmdemo/crop.jpg");
-    public static final File compressFileName = new File(Environment.getExternalStorageDirectory().getAbsolutePath()+"/dmdemo/compress.jpg");
+    public static final File picName = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/dmdemo/" + "temp.jpg");
+    public static final File cropPicName = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/dmdemo/crop.jpg");
+    public static final File compressFileName = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/dmdemo/compress.jpg");
 
     public static final int AVATAR_QUALITY = 50;
     public static final int REPAIRPHOTO_QUALITY = 70;
@@ -49,104 +50,123 @@ public class PhotoUtil {
     private static final int REQ_PERMISSION_FOR_CAMERA = 0x10;
     private static final int REQ_PERMISSION_FOR_ALBUM = 0x20;
 
-    /** 申请权限并打开相机
+    /**
+     * 申请权限并打开相机
      *
      * @param activity 调用该方法的活动
      * @return 权限已赋予，返回照片Uri；权限未赋予，返回null
      */
-    public static Uri applyPermissionForCamera(final Activity activity){
-        String[] permissions = {
-                Manifest.permission.CAMERA,
-                Manifest.permission.WRITE_EXTERNAL_STORAGE,
-                Manifest.permission.READ_EXTERNAL_STORAGE
-        };
-        if(ContextCompat.checkSelfPermission(activity, permissions[0]) == PackageManager.PERMISSION_GRANTED
-                &&ContextCompat.checkSelfPermission(activity, permissions[1]) == PackageManager.PERMISSION_GRANTED
-                &&ContextCompat.checkSelfPermission(activity, permissions[2]) == PackageManager.PERMISSION_GRANTED
-                ){
-            Uri uri = useCamera(activity);
-            return uri;
-        }else{
-            AlertDialog.Builder dialog = new AlertDialog.Builder(activity);
-            dialog.setTitle(activity.getString(R.string.Need_Permission));
-            dialog.setMessage(activity.getString(R.string.The_Application_Need_the_Permission));
-            dialog.setCancelable(false);
-            dialog.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialogInterface, int i) {
-                    String[] permissions = {
-                            Manifest.permission.CAMERA,
-                            Manifest.permission.WRITE_EXTERNAL_STORAGE,
-                            Manifest.permission.READ_EXTERNAL_STORAGE
-                    };
-                    activity.requestPermissions(permissions,REQ_PERMISSION_FOR_CAMERA);
-                }
-            });
-            dialog.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialogInterface, int i) {
+    @TargetApi(Build.VERSION_CODES.M)
+    public static Uri applyPermissionForCamera(final Activity activity) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            String[] permissions = {
+                    Manifest.permission.CAMERA,
+                    Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                    Manifest.permission.READ_EXTERNAL_STORAGE
+            };
+            if (ContextCompat.checkSelfPermission(activity, permissions[0]) == PackageManager.PERMISSION_GRANTED
+                    && ContextCompat.checkSelfPermission(activity, permissions[1]) == PackageManager.PERMISSION_GRANTED
+                    && ContextCompat.checkSelfPermission(activity, permissions[2]) == PackageManager.PERMISSION_GRANTED
+                    ) {
+                Uri uri = useCamera(activity);
+                return uri;
+            } else {
+                AlertDialog.Builder dialog = new AlertDialog.Builder(activity);
+                dialog.setTitle(activity.getString(R.string.Need_Permission));
+                dialog.setMessage(activity.getString(R.string.The_Application_Need_the_Permission));
+                dialog.setCancelable(false);
+                dialog.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        String[] permissions = {
+                                Manifest.permission.CAMERA,
+                                Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                                Manifest.permission.READ_EXTERNAL_STORAGE
+                        };
+                        activity.requestPermissions(permissions, REQ_PERMISSION_FOR_CAMERA);
+                    }
+                });
+                dialog.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
 
-                }
-            });
-            dialog.show();
+                    }
+                });
+                dialog.show();
+            }
+        } else {
+            return useCamera(activity);
         }
         return null;
     }
 
-    /** 申请权限并打开相册
+    /**
+     * 申请权限并打开相册
      *
      * @param activity 调用该方法的活动
      */
-    public static void applyPermissionForAlbum(final Activity activity){
-        String[] permissions = {
-                Manifest.permission.WRITE_EXTERNAL_STORAGE,
-                Manifest.permission.READ_EXTERNAL_STORAGE
-        };
-        if(ContextCompat.checkSelfPermission(activity, permissions[0]) == PackageManager.PERMISSION_GRANTED
-                &&ContextCompat.checkSelfPermission(activity, permissions[1]) == PackageManager.PERMISSION_GRANTED
-                ){
-            selectFromAlbum(activity);
-        }else{
-            AlertDialog.Builder dialog = new AlertDialog.Builder(activity);
-            dialog.setTitle(activity.getString(R.string.Need_Permission));
-            dialog.setMessage(activity.getString(R.string.The_Application_Need_the_Permission));
-            dialog.setCancelable(false);
-            dialog.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialogInterface, int i) {
-                    String[] permissions = {
-                            Manifest.permission.WRITE_EXTERNAL_STORAGE,
-                            Manifest.permission.READ_EXTERNAL_STORAGE
-                    };
-                    activity.requestPermissions(permissions,REQ_PERMISSION_FOR_ALBUM);
-                }
-            });
-            dialog.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialogInterface, int i) {
+    @TargetApi(Build.VERSION_CODES.M)
+    public static void applyPermissionForAlbum(final Activity activity) {
+        if(Build.VERSION.SDK_INT>=Build.VERSION_CODES.M){
+            String[] permissions = {
+                    Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                    Manifest.permission.READ_EXTERNAL_STORAGE
+            };
+            if (ContextCompat.checkSelfPermission(activity, permissions[0]) == PackageManager.PERMISSION_GRANTED
+                    && ContextCompat.checkSelfPermission(activity, permissions[1]) == PackageManager.PERMISSION_GRANTED
+                    ) {
+                selectFromAlbum(activity);
+            } else {
+                AlertDialog.Builder dialog = new AlertDialog.Builder(activity);
+                dialog.setTitle(activity.getString(R.string.Need_Permission));
+                dialog.setMessage(activity.getString(R.string.The_Application_Need_the_Permission));
+                dialog.setCancelable(false);
+                dialog.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        String[] permissions = {
+                                Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                                Manifest.permission.READ_EXTERNAL_STORAGE
+                        };
+                        activity.requestPermissions(permissions, REQ_PERMISSION_FOR_ALBUM);
+                    }
+                });
+                dialog.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
 
-                }
-            });
-            dialog.show();
+                    }
+                });
+                dialog.show();
+            }
+        } else {
+            selectFromAlbum(activity);
         }
     }
 
-    /**  打开相机拍照拍照
+    /**
+     * 打开相机拍照拍照
      *
      * @param activity 调用该方法的活动
      * @return 返回拍照所得的照片的Uri
      */
-    public static Uri useCamera(final Activity activity){
+    public static Uri useCamera(final Activity activity) {
         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         picName.getParentFile().mkdirs();
-        Uri picUri = FileProvider.getUriForFile(activity, "com.zspirytus.dmdemo.Activity.MainActivity.fileprovider", picName);
+        Uri picUri = null;
+        if(Build.VERSION.SDK_INT>=Build.VERSION_CODES.N){
+            picUri = FileProvider.getUriForFile(activity, "com.zspirytus.dmdemo.Activity.MainActivity.fileprovider", picName);
+        } else {
+            picUri = Uri.fromFile(picName);
+        }
         intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
         intent.putExtra(MediaStore.EXTRA_OUTPUT, picUri);
         activity.startActivityForResult(intent, REQ_CAMERA);
         return picUri;
     }
 
-    /**  打开相册选择图片
+    /**
+     * 打开相册选择图片
      *
      * @param activity 调用该方法的活动
      */
@@ -156,14 +176,15 @@ public class PhotoUtil {
         activity.startActivityForResult(intent, REQ_ALBUM);
     }
 
-    /**  截取图片
+    /**
+     * 截取图片
      *
      * @param activity 调用该方法的活动
-     * @param picUri 需要裁剪的图片的Uri
+     * @param picUri   需要裁剪的图片的Uri
      * @return 裁剪所得照片的Uri
      */
-    public static Uri cropPicture(final Activity activity,final Uri picUri) {
-        if(!cropPicName.exists())
+    public static Uri cropPicture(final Activity activity, final Uri picUri) {
+        if (!cropPicName.exists())
             cropPicName.getParentFile().mkdirs();
         Uri cropPicUri = Uri.fromFile(cropPicName);
         Intent intent = new Intent("com.android.camera.action.CROP");
@@ -184,80 +205,78 @@ public class PhotoUtil {
         return cropPicUri;
     }
 
-    /** String to Bitmap
+    /**
+     * String to Bitmap
      *
      * @param str 转换成String的图片
      * @return 图片Bitmap
      */
-    public static Bitmap getBitmapbyString(final String str){
+    public static Bitmap getBitmapbyString(final String str) {
         Bitmap bitmap = null;
-        try{
+        try {
             byte[] bitmapArray;
-            bitmapArray = Base64.decode(str,Base64.DEFAULT);
-            bitmap = BitmapFactory.decodeByteArray(bitmapArray,0,bitmapArray.length);
-        }catch(Exception e){
+            bitmapArray = Base64.decode(str, Base64.DEFAULT);
+            bitmap = BitmapFactory.decodeByteArray(bitmapArray, 0, bitmapArray.length);
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return bitmap;
     }
 
-    /** Bitmap to String
+    /**
+     * Bitmap to String
      *
      * @param bitmap 需要转String的图片
      * @return String型的图片
      */
-    public static String convertIconToString(final Bitmap bitmap)
-    {
+    public static String convertIconToString(final Bitmap bitmap) {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         bitmap.compress(Bitmap.CompressFormat.PNG, 100, baos);
         byte[] appicon = baos.toByteArray();
         return Base64.encodeToString(appicon, Base64.DEFAULT);
     }
 
-    /**  String to Bitmap
+    /**
+     * String to Bitmap
      *
-     * @param str  String型图片
-     * @return     Bitmap型图片
+     * @param str String型图片
+     * @return Bitmap型图片
      */
-    public static Bitmap convertStringToIcon(final String str)
-    {
+    public static Bitmap convertStringToIcon(final String str) {
         Bitmap bitmap = null;
-        try
-        {
+        try {
             byte[] bitmapArray;
             bitmapArray = Base64.decode(str, Base64.DEFAULT);
             bitmap =
                     BitmapFactory.decodeByteArray(bitmapArray, 0,
                             bitmapArray.length);
             return bitmap;
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             return null;
         }
     }
 
-    public static void saveCompressFile(final File file,final int quality){
+    public static void saveCompressFile(final File file, final int quality) {
         Bitmap old = BitmapFactory.decodeFile(file.getAbsolutePath());
-        Log.d("","old size:\t"+old.getByteCount()/1024+"KB");
+        Log.d("", "old size:\t" + old.getByteCount() / 1024 + "KB");
         Bitmap bitmap = getThumbnails(file.getAbsolutePath());
-        Log.d("","old size:\t"+bitmap.getByteCount()/1024+"KB");
-        Log.d("","old size:\t"+convertIconToString(bitmap).length()/1024+"KB");
+        Log.d("", "old size:\t" + bitmap.getByteCount() / 1024 + "KB");
+        Log.d("", "old size:\t" + convertIconToString(bitmap).length() / 1024 + "KB");
         int degree = readPictureDegree(file.getAbsolutePath());
-        if(degree != 0){
-            rotateBitmap(bitmap,degree);
+        if (degree != 0) {
+            rotateBitmap(bitmap, degree);
         }
         FileOutputStream fos = null;
-        try{
-            if(!compressFileName.exists()){
+        try {
+            if (!compressFileName.exists()) {
                 compressFileName.getParentFile().mkdirs();
             } else {
                 compressFileName.delete();
             }
             fos = new FileOutputStream(compressFileName);
             bitmap.compress(Bitmap.CompressFormat.JPEG, quality, fos);
-        } catch (FileNotFoundException e){
-            Log.d(TAG,"Compress Failed!");
+        } catch (FileNotFoundException e) {
+            Log.d(TAG, "Compress Failed!");
         }
     }
 
@@ -285,7 +304,7 @@ public class PhotoUtil {
         return base64;
     }
 
-    private static Bitmap getThumbnails(final String path){
+    private static Bitmap getThumbnails(final String path) {
         BitmapFactory.Options options = new BitmapFactory.Options();
         options.inJustDecodeBounds = true;
         BitmapFactory.decodeFile(path, options);
@@ -296,6 +315,7 @@ public class PhotoUtil {
 
     /**
      * 获取照片角度
+     *
      * @param path
      * @return
      */
@@ -325,11 +345,12 @@ public class PhotoUtil {
 
     /**
      * 旋转照片
+     *
      * @param bitmap
      * @param degress
      * @return
      */
-    private static Bitmap rotateBitmap(Bitmap bitmap,final int degress) {
+    private static Bitmap rotateBitmap(Bitmap bitmap, final int degress) {
         if (bitmap != null) {
             Matrix m = new Matrix();
             m.postRotate(degress);
@@ -341,7 +362,7 @@ public class PhotoUtil {
     }
 
     private static int calculateInSampleSize(BitmapFactory.Options options,
-                                            int reqWidth, int reqHeight) {
+                                             int reqWidth, int reqHeight) {
         final int height = options.outHeight;
         final int width = options.outWidth;
         int inSampleSize = 1;

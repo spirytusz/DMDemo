@@ -268,7 +268,6 @@ public class RepairFragment extends Fragment {
         if(photoFile!=null){
             String photo = PhotoUtil.convertFileToString(photoFile);
             input.add(photo);
-            Log.d("","String length:\t"+photo.length()/1024+"KB");
         }
         else
             input.add("000");
