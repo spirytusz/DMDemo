@@ -136,4 +136,19 @@ public class DateUtil {
         return dateOk;
     }
 
+    public static boolean isNextDay(String time,String format) {
+        SimpleDateFormat mFormat = new SimpleDateFormat(format);
+        String now = DateUtil.getNowTime(format);
+        try {
+            Date nowTime = mFormat.parse(now);
+            Date inputTime = mFormat.parse(time);
+            if (inputTime.getTime() < nowTime.getTime())
+                return true;
+            else
+                return false;
+        } catch (ParseException e) {
+            return false;
+        }
+    }
+
 }

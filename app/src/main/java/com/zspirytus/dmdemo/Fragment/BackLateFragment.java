@@ -19,7 +19,6 @@ import com.zspirytus.dmdemo.JavaSource.WebServiceUtils.SyncTask.MyAsyncTask;
 import com.zspirytus.dmdemo.JavaSource.WebServiceUtils.WebServiceConnector;
 import com.zspirytus.dmdemo.R;
 
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -64,7 +63,6 @@ public class BackLateFragment extends Fragment {
         mButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                getmReturnTime();
                 if (!isInputLegal()) {
                     DialogUtil.showNegativeTipsDialog(mParentActivity);
                     return;
@@ -112,7 +110,7 @@ public class BackLateFragment extends Fragment {
                 + "-" + DateUtil.getNowDay_int()
                 + " " + mReturnTime.getText().toString()
                 + ":00";
-        if (isNextDay(mReturnTime.getText().toString()))
+        if (DateUtil.isNextDay(mReturnTime.getText().toString(),"HH:mm"))
             returnTime = DateUtil.AddOneDay(returnTime, 1, "yyyy-MM-dd HH:mm:ss");
         String reason = mReason.getText().toString();
         input.add(Sno);
@@ -126,32 +124,6 @@ public class BackLateFragment extends Fragment {
         if (mReason.getText().toString().equals("") || mReturnTime.getText().toString().equals(getString(R.string.Return_Time)))
             return false;
         return true;
-    }
-
-    private boolean isNextDay(String time) {
-        SimpleDateFormat format = new SimpleDateFormat("HH:mm");
-        String now = DateUtil.getNowTime("HH:mm");
-        try {
-            Date nowTime = format.parse(now);
-            Date inputTime = format.parse(time);
-            if (inputTime.getTime() < nowTime.getTime())
-                return true;
-            else
-                return false;
-        } catch (ParseException e) {
-            return false;
-        }
-    }
-
-    private ArrayList<Integer> getmReturnTime() {
-        char[] c = mReturnTime.getText().toString().toCharArray();
-        String hour = c[0] + "" + c[1] + "";
-        String minute = c[3] + "" + c[4] + "";
-        ArrayList<Integer> time = new ArrayList<>();
-        time.clear();
-        time.add(Integer.parseInt(hour));
-        time.add(Integer.parseInt(minute));
-        return time;
     }
 
     private String getRno() {
@@ -168,4 +140,5 @@ public class BackLateFragment extends Fragment {
         blf.setArguments(bundle);
         return blf;
     }
+
 }

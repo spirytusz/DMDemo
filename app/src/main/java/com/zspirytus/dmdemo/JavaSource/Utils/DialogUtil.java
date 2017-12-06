@@ -53,7 +53,7 @@ public class DialogUtil {
                 },
                 // 设置初始时间
                 hour, DateUtil.getNowMinute_int(),true);
-        dialog.setCancelable(true);
+        dialog.setCancelable(false);
         dialog.show();
     }
 
@@ -75,7 +75,7 @@ public class DialogUtil {
                 },
                 // 设置初始日期
                 DateUtil.getNowYear_int(), DateUtil.getNowMonth_int() - 1, DateUtil.getNowDay_int());
-        dialog.setCancelable(true);
+        dialog.setCancelable(false);
         dialog.show();
     }
 

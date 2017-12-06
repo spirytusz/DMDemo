@@ -87,18 +87,16 @@ public class RepairFragment extends Fragment {
         mRepairArea.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                AlertDialog.Builder builder = new AlertDialog.Builder(mParentActivity);// 自定义对话框
-                builder.setSingleChoiceItems(mArea, 0, new DialogInterface.OnClickListener() {// 2默认的选中
+                AlertDialog.Builder builder = new AlertDialog.Builder(mParentActivity);
+                builder.setSingleChoiceItems(mArea, 0, new DialogInterface.OnClickListener() {
 
                     @Override
                     public void onClick(DialogInterface dialog, int which) {// which是被选中的位置
-                        // showToast(which+"");
-                        //setmAreaSelected(mArea[which]);
                         mRepairArea.setText(mArea[which]);
-                        dialog.dismiss();// 随便点击一个item消失对话框，不用点击确认取消
+                        dialog.dismiss();
                     }
                 });
-                builder.show();// 让弹出框显示
+                builder.show();
             }
         });
         mRepairPlace = v.findViewById(R.id.repair_edittext_place);
@@ -106,18 +104,16 @@ public class RepairFragment extends Fragment {
         mRepairType.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                AlertDialog.Builder builder = new AlertDialog.Builder(mParentActivity);// 自定义对话框
+                AlertDialog.Builder builder = new AlertDialog.Builder(mParentActivity);
                 builder.setSingleChoiceItems(mCategory, 0, new DialogInterface.OnClickListener() {// 2默认的选中
 
                     @Override
                     public void onClick(DialogInterface dialog, int which) {// which是被选中的位置
-                        // showToast(which+"");
-                        //setmCategorySelected(mCategory[which]);
                         mRepairType.setText(mCategory[which]);
-                        dialog.dismiss();// 随便点击一个item消失对话框，不用点击确认取消
+                        dialog.dismiss();
                     }
                 });
-                builder.show();// 让弹出框显示
+                builder.show();
             }
         });
         mRepairDetail = v.findViewById(R.id.repair_edittext_detail);
@@ -199,11 +195,11 @@ public class RepairFragment extends Fragment {
     }
 
     private ArrayList<String> getInput(){
-        SimpleDateFormat formator = new SimpleDateFormat("ddHHmmssSSS");
+        SimpleDateFormat format = new SimpleDateFormat("ddHHmmssSSS");
         SimpleDateFormat f = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         Date curDate =  new Date(System.currentTimeMillis());
         String Sno = getArguments().getString(mSnoKey);
-        String repairNo = formator.format(curDate);
+        String repairNo = format.format(curDate);
         String area = mRepairArea.getText().toString();
         String place = mRepairPlace.getText().toString();
         String type = mRepairType.getText().toString();

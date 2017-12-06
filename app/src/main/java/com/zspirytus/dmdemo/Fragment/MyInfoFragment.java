@@ -8,7 +8,6 @@ import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -49,7 +48,6 @@ public class MyInfoFragment extends Fragment{
     private Activity mParentActivity;
 
     private static final String mAvatarKey = "Avatar";
-    private static final String FRAGMENT_HIDDEN_STATUS = "FRAGMENT_HIDDEN_STATUS";
     private static final String SNO = "Sno";
     private static final String SNAME = "Sname";
     private static final String SCOLLEGE = "Scollege";
@@ -158,13 +156,9 @@ public class MyInfoFragment extends Fragment{
     private static void saveStudentInfo(Context context,ArrayList<String> list){
         SharedPreferences.Editor editor = context.getSharedPreferences(INFO_FILENAME,Context.MODE_PRIVATE).edit();
         editor.putString(SNO,list.get(0));
-        Log.d("","list contain:\t"+list.get(0));
         editor.putString(SNAME,list.get(1));
-        Log.d("","list contain:\t"+list.get(1));
         editor.putString(SCOLLEGE,list.get(2));
-        Log.d("","list contain:\t"+list.get(2));
         editor.putString(SDEPT,list.get(3));
-        Log.d("","list contain:\t"+list.get(3));
         editor.apply();
     }
 
@@ -183,8 +177,6 @@ public class MyInfoFragment extends Fragment{
             return null;
         if(!sno.equals(Sno))
             return null;
-        Log.d("","sno equals Sno?"+Boolean.toString(sno.equals(Sno)));
-        Log.d("","sno equals Sno?\t"+sno+"\t"+Sno);
         ArrayList<String> list = new ArrayList<String>();
         list.clear();
         list.add(sno);
