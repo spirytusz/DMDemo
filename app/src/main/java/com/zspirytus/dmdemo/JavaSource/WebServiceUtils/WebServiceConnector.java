@@ -54,7 +54,7 @@ public class WebServiceConnector {
     public static final String PARAMTYPE_SLSNO = "SLSNo";
 
     private static final String TAG = "WebServiceConnector";
-    private static final String WSDL_URI = "http:///DMS.asmx?wsdl";
+    private static final String WSDL_URI = "http://39.108.113.13/DMS.asmx?wsdl";
     private static final String NAMESPACE = "http://zspirytus.org/";
 
     /**

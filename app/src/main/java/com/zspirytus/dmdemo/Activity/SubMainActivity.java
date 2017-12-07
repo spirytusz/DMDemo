@@ -14,6 +14,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.ProgressBar;
@@ -54,6 +55,7 @@ public class SubMainActivity extends AppCompatActivity {
     private String Sno;
     private ProgressBar mProgressBar;
     private ListView listView;
+    private FrameLayout mFrameLayout;
     private SimpleAdapter mBasicInfoAdapter;
 
     private boolean isNextListView = false;
@@ -87,6 +89,8 @@ public class SubMainActivity extends AppCompatActivity {
                 if(isNextListView){
                     listView.setAdapter(mBasicInfoAdapter);
                     setIsNextListView(false);
+                    listView.setVisibility(View.GONE);
+                    mFrameLayout.setVisibility(View.VISIBLE);
                 } else {
                     finish();
                 }
@@ -95,6 +99,8 @@ public class SubMainActivity extends AppCompatActivity {
         toolbar.setTitle(title);
         mProgressBar = (ProgressBar) findViewById(R.id.submainactivity_progressbar);
         listView = (ListView)findViewById(R.id.submainactivity_listview);
+        mFrameLayout = (FrameLayout) findViewById(R.id.sub_fragment_container);
+        mFrameLayout.setVisibility(View.GONE);
     }
 
     private void GetMessage(){
@@ -244,6 +250,8 @@ public class SubMainActivity extends AppCompatActivity {
             if(isNextListView){
                 listView.setAdapter(mBasicInfoAdapter);
                 setIsNextListView(false);
+                listView.setVisibility(View.GONE);
+                mFrameLayout.setVisibility(View.VISIBLE);
             } else {
                 finish();
             }

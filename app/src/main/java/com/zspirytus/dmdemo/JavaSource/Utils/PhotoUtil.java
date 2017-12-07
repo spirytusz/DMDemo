@@ -45,6 +45,7 @@ public class PhotoUtil {
 
     public static final int AVATAR_QUALITY = 50;
     public static final int REPAIRPHOTO_QUALITY = 70;
+    public static final int UPLOAD_MAXSIZE = 1024*100;
 
     private static final String TAG = "PhotoUtil";
     private static final int REQ_CAMERA = 0x01;
@@ -259,12 +260,9 @@ public class PhotoUtil {
         }
     }
 
-    public static void saveCompressFile(final File file, final int quality) {
+    public static File saveCompressFile(final File file, final int quality) {
         Bitmap old = BitmapFactory.decodeFile(file.getAbsolutePath());
-        Log.d("", "old size:\t" + old.getByteCount() / 1024 + "KB");
         Bitmap bitmap = getThumbnails(file.getAbsolutePath());
-        Log.d("", "old size:\t" + bitmap.getByteCount() / 1024 + "KB");
-        Log.d("", "old size:\t" + convertIconToString(bitmap).length() / 1024 + "KB");
         int degree = readPictureDegree(file.getAbsolutePath());
         if (degree != 0) {
             rotateBitmap(bitmap, degree);
@@ -278,8 +276,11 @@ public class PhotoUtil {
             }
             fos = new FileOutputStream(compressFileName);
             bitmap.compress(Bitmap.CompressFormat.JPEG, quality, fos);
+            return compressFileName;
         } catch (FileNotFoundException e) {
             Log.d(TAG, "Compress Failed!");
+            e.printStackTrace();
+            return null;
         }
     }
 

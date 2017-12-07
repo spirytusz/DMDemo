@@ -207,6 +207,9 @@ public class RepairFragment extends Fragment {
         File photoFile;
         if(!dir.equals(getString(R.string.Add_Your_Photo))){
             photoFile = new File(dir);
+            if(photoFile.length() > PhotoUtil.UPLOAD_MAXSIZE){
+                photoFile = PhotoUtil.saveCompressFile(photoFile,70);
+            }
         }
         else
              photoFile = null;
