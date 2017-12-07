@@ -9,6 +9,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
@@ -221,7 +222,7 @@ public class SubMainActivity extends AppCompatActivity {
         super.onDestroy();
     }
 
-    @Override
+    /*@Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
@@ -235,6 +236,20 @@ public class SubMainActivity extends AppCompatActivity {
                 break;
         }
         return super.onOptionsItemSelected(item);
+    }*/
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if (keyCode == KeyEvent.KEYCODE_BACK && event.getRepeatCount() == 0) {
+            if(isNextListView){
+                listView.setAdapter(mBasicInfoAdapter);
+                setIsNextListView(false);
+            } else {
+                finish();
+            }
+            return true;
+        }
+        return super.onKeyDown(keyCode, event);
     }
 
     private void doTask(final String no,int type){
@@ -246,7 +261,7 @@ public class SubMainActivity extends AppCompatActivity {
         switch (type){
             case 0:
                 MyAsyncTask<getRepDetailsInfoResponse> myAsyncTask
-                        = new MyAsyncTask<getRepDetailsInfoResponse>(this,WebServiceConnector.METHOD_GETREPAIRDETAILSINFO);
+                        = new MyAsyncTask<getRepDetailsInfoResponse>(this,WebServiceConnector.METHOD_GETREPAIRDETAILSINFO,mProgressBar);
                 myAsyncTask.setListener(new getRepDetailsInfoResponse() {
                     @Override
                     public void getResult(ArrayList<String> result) {
@@ -269,7 +284,7 @@ public class SubMainActivity extends AppCompatActivity {
                 break;
             case 1:
                 MyAsyncTask<getSLSDetailsInfoResponse> myAsyncTask1
-                        = new MyAsyncTask<getSLSDetailsInfoResponse>(this,WebServiceConnector.METHOD_GETSLSDETAILSINFO);
+                        = new MyAsyncTask<getSLSDetailsInfoResponse>(this,WebServiceConnector.METHOD_GETSLSDETAILSINFO,mProgressBar);
                 myAsyncTask1.setListener(new getSLSDetailsInfoResponse() {
                     @Override
                     public void getResult(ArrayList<String> result) {
@@ -291,7 +306,7 @@ public class SubMainActivity extends AppCompatActivity {
                 break;
             case 2:
                 MyAsyncTask<getRLDetailsInfoResponse> myAsyncTask2
-                        = new MyAsyncTask<getRLDetailsInfoResponse>(this,WebServiceConnector.METHOD_GETRLDETAILSINFO);
+                        = new MyAsyncTask<getRLDetailsInfoResponse>(this,WebServiceConnector.METHOD_GETRLDETAILSINFO,mProgressBar);
                 myAsyncTask2.setListener(new getRLDetailsInfoResponse() {
                     @Override
                     public void getResult(ArrayList<String> result) {
