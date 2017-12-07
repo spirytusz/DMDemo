@@ -10,8 +10,11 @@ import android.widget.ProgressBar;
 import com.zspirytus.dmdemo.Interface.getAvatarResponse;
 import com.zspirytus.dmdemo.Interface.getBooleanTypeResponse;
 import com.zspirytus.dmdemo.Interface.getModRegResponse;
+import com.zspirytus.dmdemo.Interface.getRLDetailsInfoResponse;
 import com.zspirytus.dmdemo.Interface.getRLInfoResponse;
 import com.zspirytus.dmdemo.Interface.getRepBasInfoResponse;
+import com.zspirytus.dmdemo.Interface.getRepDetailsInfoResponse;
+import com.zspirytus.dmdemo.Interface.getSLSDetailsInfoResponse;
 import com.zspirytus.dmdemo.Interface.getSLSInfoResponse;
 import com.zspirytus.dmdemo.Interface.getSnobyAccountResponse;
 import com.zspirytus.dmdemo.Interface.getStudentBasicInfoResponse;
@@ -107,6 +110,15 @@ public class MyAsyncTask<T> extends AsyncTask<ArrayList<String>, Integer, ArrayL
             case WebServiceConnector.METHOD_GETRETURNLATELYBASICINFO:
                 ((getRLInfoResponse)response).getResult(result);
                 break;
+            case WebServiceConnector.METHOD_GETREPAIRDETAILSINFO:
+                ((getRepDetailsInfoResponse)response).getResult(result);
+                break;
+            case WebServiceConnector.METHOD_GETRLDETAILSINFO:
+                ((getRLDetailsInfoResponse)response).getResult(result);
+                break;
+            case WebServiceConnector.METHOD_GETSLSDETAILSINFO:
+                ((getSLSDetailsInfoResponse)response).getResult(result);
+                break;
             case WebServiceConnector.METHOD_NEWRETURNLATELY:
                 ((getBooleanTypeResponse)response).showDialog(result);
                 break;
@@ -120,8 +132,5 @@ public class MyAsyncTask<T> extends AsyncTask<ArrayList<String>, Integer, ArrayL
                 ((getBooleanTypeResponse)response).showDialog(result);
                 break;
         }
-        Log.d(TAG,"onPostExecute Test:\t"+methodName);
-        if(result != null)
-            Log.d(TAG,"onPostExecute's result Test:\t"+result.size());
     }
 }

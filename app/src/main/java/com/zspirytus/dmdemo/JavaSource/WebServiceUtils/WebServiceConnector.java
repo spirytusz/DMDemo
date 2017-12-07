@@ -1,5 +1,7 @@
 package com.zspirytus.dmdemo.JavaSource.WebServiceUtils;
 
+import android.util.Log;
+
 import com.zspirytus.dmdemo.JavaSource.Utils.XmlUtil;
 
 import java.io.BufferedReader;
@@ -29,6 +31,9 @@ public class WebServiceConnector {
     public static final String METHOD_MODIFYPWD = "ModifyPwd";
     public static final String METHOD_GETSNOBYACCOUNT = "getSnobyAccount";
     public static final String METHOD_GETAVATAR = "getAvatar";
+    public static final String METHOD_GETREPAIRDETAILSINFO = "getRepairDetailsInfoBySno";
+    public static final String METHOD_GETRLDETAILSINFO = "getRLDetailsInfo ";
+    public static final String METHOD_GETSLSDETAILSINFO = "getSLSDetailsInfo";
 
     public static final String PARAMTYPE_SNO = "Sno";
     public static final String PARAMTYPE_ACCOUNT = "account";
@@ -62,6 +67,7 @@ public class WebServiceConnector {
      */
     public static ArrayList<String> executingMethod(String methodName, ArrayList<String> paramType, ArrayList<String> param) {
         String request = getRequset(methodName, paramType, param);
+        Log.d(TAG,"requestTest:\t"+request);
         try {
             URL url = new URL(WSDL_URI);
             HttpURLConnection con = (HttpURLConnection) url.openConnection();

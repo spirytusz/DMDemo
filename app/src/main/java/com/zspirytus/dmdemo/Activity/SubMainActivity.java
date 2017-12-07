@@ -8,9 +8,11 @@ import android.graphics.BitmapFactory;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.ProgressBar;
@@ -18,8 +20,11 @@ import android.widget.SimpleAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.zspirytus.dmdemo.Interface.getRLDetailsInfoResponse;
 import com.zspirytus.dmdemo.Interface.getRLInfoResponse;
 import com.zspirytus.dmdemo.Interface.getRepBasInfoResponse;
+import com.zspirytus.dmdemo.Interface.getRepDetailsInfoResponse;
+import com.zspirytus.dmdemo.Interface.getSLSDetailsInfoResponse;
 import com.zspirytus.dmdemo.Interface.getSLSInfoResponse;
 import com.zspirytus.dmdemo.JavaSource.Manager.ActivityManager;
 import com.zspirytus.dmdemo.JavaSource.ListViewModule.RSFListViewItem;
@@ -31,7 +36,6 @@ import com.zspirytus.dmdemo.JavaSource.WebServiceUtils.WebServiceConnector;
 import com.zspirytus.dmdemo.R;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -43,12 +47,15 @@ public class SubMainActivity extends AppCompatActivity {
     private static final String typeKey = "typeKey";
     private static final String mSnoKey = "Sno";
     private final Activity activity = this;
+
     private int i;
     private String title;
     private String Sno;
     private ProgressBar mProgressBar;
     private ListView listView;
     private SimpleAdapter mBasicInfoAdapter;
+
+    private boolean isNextListView = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -75,7 +82,13 @@ public class SubMainActivity extends AppCompatActivity {
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                finish();
+                Log.d(TAG,"isNextListView back:"+Boolean.toString(isNextListView));
+                if(isNextListView){
+                    listView.setAdapter(mBasicInfoAdapter);
+                    setIsNextListView(false);
+                } else {
+                    finish();
+                }
             }
         });
         toolbar.setTitle(title);
@@ -97,7 +110,8 @@ public class SubMainActivity extends AppCompatActivity {
     }
 
     private void getRepResponse(){
-        MyAsyncTask<getRepBasInfoResponse> myAsyncTask = new MyAsyncTask<getRepBasInfoResponse>(this, WebServiceConnector.METHOD_GETREPAIRBASICINFOBYSNO,mProgressBar);
+        MyAsyncTask<getRepBasInfoResponse> myAsyncTask
+                = new MyAsyncTask<getRepBasInfoResponse>(this, WebServiceConnector.METHOD_GETREPAIRBASICINFOBYSNO,mProgressBar);
         myAsyncTask.setListener(new getRepBasInfoResponse() {
             @Override
             public void getResult(ArrayList<String> result) {
@@ -119,7 +133,8 @@ public class SubMainActivity extends AppCompatActivity {
     }
 
     private void getSLSResponse(){
-        MyAsyncTask<getSLSInfoResponse> myAsyncTask = new MyAsyncTask<getSLSInfoResponse>(this, WebServiceConnector.METHOD_GETSLSBASICINFO,mProgressBar);
+        MyAsyncTask<getSLSInfoResponse> myAsyncTask
+                = new MyAsyncTask<getSLSInfoResponse>(this, WebServiceConnector.METHOD_GETSLSBASICINFO,mProgressBar);
         myAsyncTask.setListener(new getSLSInfoResponse() {
             @Override
             public void getResult(ArrayList<String> result) {
@@ -141,7 +156,8 @@ public class SubMainActivity extends AppCompatActivity {
     }
 
     private void getRLResponse(){
-        MyAsyncTask<getRLInfoResponse> myAsyncTask = new MyAsyncTask<getRLInfoResponse>(this, WebServiceConnector.METHOD_GETRETURNLATELYBASICINFO,mProgressBar);
+        MyAsyncTask<getRLInfoResponse> myAsyncTask
+                = new MyAsyncTask<getRLInfoResponse>(this, WebServiceConnector.METHOD_GETRETURNLATELYBASICINFO,mProgressBar);
         myAsyncTask.setListener(new getRLInfoResponse() {
             @Override
             public void getResult(ArrayList<String> result) {
@@ -176,6 +192,7 @@ public class SubMainActivity extends AppCompatActivity {
     }
 
     private void RefreshUI(ArrayList<String> result){
+        final int type = i;
         listView = (ListView) findViewById(R.id.submainactivity_listview);
         if(mBasicInfoAdapter == null){
             mBasicInfoAdapter = getAdapter(result);
@@ -187,9 +204,15 @@ public class SubMainActivity extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 HashMap<String,String> map=(HashMap<String,String>)adapterView.getItemAtPosition(i);
-                Toast.makeText(activity,map.get("title"),Toast.LENGTH_SHORT).show();
+                String no = map.get("title");
+                Toast.makeText(activity,no,Toast.LENGTH_SHORT).show();
+                doTask(no,type);
             }
         });
+    }
+
+    private void setIsNextListView(boolean isNextListView){
+        this.isNextListView = isNextListView;
     }
 
     @Override
@@ -202,10 +225,93 @@ public class SubMainActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
-                finish();
+                Log.d(TAG,"isNextListView back:"+Boolean.toString(isNextListView));
+                if(isNextListView){
+                    listView.setAdapter(mBasicInfoAdapter);
+                    setIsNextListView(false);
+                } else {
+                    finish();
+                }
                 break;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    private void doTask(final String no,int type){
+        final ListView listView = (ListView) findViewById(R.id.submainactivity_listview);
+        ArrayList<String> paramType = new ArrayList<>();
+        ArrayList<String> param = new ArrayList<>();
+        paramType.add(WebServiceConnector.PARAMTYPE_RNO);
+        param.add(no);
+        switch (type){
+            case 0:
+                MyAsyncTask<getRepDetailsInfoResponse> myAsyncTask
+                        = new MyAsyncTask<getRepDetailsInfoResponse>(this,WebServiceConnector.METHOD_GETREPAIRDETAILSINFO);
+                myAsyncTask.setListener(new getRepDetailsInfoResponse() {
+                    @Override
+                    public void getResult(ArrayList<String> result) {
+                        String formatResult = "";
+                        for(String item:result){
+                            formatResult = formatResult + item + "\n";
+                        }
+                        //Toast.makeText(activity,formatResult,Toast.LENGTH_SHORT).show();
+                        ArrayAdapter<String> adapter = new ArrayAdapter<String>(
+                                SubMainActivity.this,
+                                android.R.layout.simple_list_item_1,
+                                (String[])result.toArray(new String[result.size()])
+                        );
+                        listView.setAdapter(adapter);
+                        setIsNextListView(true);
+                        Log.d(TAG,"isNextListView:"+Boolean.toString(isNextListView));
+                    }
+                });
+                myAsyncTask.execute(paramType,param);
+                break;
+            case 1:
+                MyAsyncTask<getSLSDetailsInfoResponse> myAsyncTask1
+                        = new MyAsyncTask<getSLSDetailsInfoResponse>(this,WebServiceConnector.METHOD_GETSLSDETAILSINFO);
+                myAsyncTask1.setListener(new getSLSDetailsInfoResponse() {
+                    @Override
+                    public void getResult(ArrayList<String> result) {
+                        String formatResult = "";
+                        for(String item:result){
+                            formatResult = formatResult + item + "\n";
+                        }
+                        //Toast.makeText(activity,formatResult,Toast.LENGTH_SHORT).show();
+                        ArrayAdapter<String> adapter = new ArrayAdapter<String>(
+                                SubMainActivity.this,
+                                android.R.layout.simple_list_item_1,
+                                (String[])result.toArray(new String[result.size()])
+                        );
+                        listView.setAdapter(adapter);
+                        setIsNextListView(true);
+                    }
+                });
+                myAsyncTask1.execute(paramType,param);
+                break;
+            case 2:
+                MyAsyncTask<getRLDetailsInfoResponse> myAsyncTask2
+                        = new MyAsyncTask<getRLDetailsInfoResponse>(this,WebServiceConnector.METHOD_GETRLDETAILSINFO);
+                myAsyncTask2.setListener(new getRLDetailsInfoResponse() {
+                    @Override
+                    public void getResult(ArrayList<String> result) {
+                        String formatResult = "";
+                        for(String item:result){
+                            formatResult = formatResult + item + "\n";
+                        }
+                        //Toast.makeText(activity,formatResult,Toast.LENGTH_SHORT).show();
+                        ArrayAdapter<String> adapter = new ArrayAdapter<String>(
+                                SubMainActivity.this,
+                                android.R.layout.simple_list_item_1,
+                                (String[])result.toArray(new String[result.size()])
+                        );
+                        listView.setAdapter(adapter);
+                        setIsNextListView(true);
+                    }
+                });
+                myAsyncTask2.execute(paramType,param);
+                break;
+        }
     }
 
     private SimpleAdapter getAdapter(ArrayList<String> response){
