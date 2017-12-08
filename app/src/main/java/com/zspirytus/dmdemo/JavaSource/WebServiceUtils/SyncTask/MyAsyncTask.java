@@ -14,6 +14,7 @@ import com.zspirytus.dmdemo.Interface.getRLDetailsInfoResponse;
 import com.zspirytus.dmdemo.Interface.getRLInfoResponse;
 import com.zspirytus.dmdemo.Interface.getRepBasInfoResponse;
 import com.zspirytus.dmdemo.Interface.getRepDetailsInfoResponse;
+import com.zspirytus.dmdemo.Interface.getRepPicResponse;
 import com.zspirytus.dmdemo.Interface.getSLSDetailsInfoResponse;
 import com.zspirytus.dmdemo.Interface.getSLSInfoResponse;
 import com.zspirytus.dmdemo.Interface.getSnobyAccountResponse;
@@ -56,7 +57,7 @@ public class MyAsyncTask<T> extends AsyncTask<ArrayList<String>, Integer, ArrayL
     protected void onPreExecute(){
         if(mProgressBar != null)
             mProgressBar.setVisibility(View.VISIBLE);
-        else {
+        else /*if(!methodName.equals(WebServiceConnector.METHOD_GETREPBASICINFOBMP))*/{
             mProgressDialog = new ProgressDialog(context);
             mProgressDialog.setTitle("Send");
             mProgressDialog.setMessage("Sending...");
@@ -79,7 +80,7 @@ public class MyAsyncTask<T> extends AsyncTask<ArrayList<String>, Integer, ArrayL
         getTaskResult(result);
         if(mProgressBar != null)
             mProgressBar.setVisibility(View.GONE);
-        else {
+        else /*if(!methodName.equals(WebServiceConnector.METHOD_GETREPBASICINFOBMP))*/{
             mProgressDialog.dismiss();
         }
     }
@@ -118,6 +119,9 @@ public class MyAsyncTask<T> extends AsyncTask<ArrayList<String>, Integer, ArrayL
                 break;
             case WebServiceConnector.METHOD_GETSLSDETAILSINFO:
                 ((getSLSDetailsInfoResponse)response).getResult(result);
+                break;
+            case WebServiceConnector.METHOD_GETREPBASICINFOBMP:
+                ((getRepPicResponse)response).getResult(result);
                 break;
             case WebServiceConnector.METHOD_NEWRETURNLATELY:
                 ((getBooleanTypeResponse)response).showDialog(result);

@@ -29,6 +29,7 @@ import com.zspirytus.dmdemo.Interface.getRLDetailsInfoResponse;
 import com.zspirytus.dmdemo.Interface.getRLInfoResponse;
 import com.zspirytus.dmdemo.Interface.getRepBasInfoResponse;
 import com.zspirytus.dmdemo.Interface.getRepDetailsInfoResponse;
+import com.zspirytus.dmdemo.Interface.getRepPicResponse;
 import com.zspirytus.dmdemo.Interface.getSLSDetailsInfoResponse;
 import com.zspirytus.dmdemo.Interface.getSLSInfoResponse;
 import com.zspirytus.dmdemo.JavaSource.Manager.ActivityManager;
@@ -59,6 +60,8 @@ public class SubMainActivity extends AppCompatActivity {
     private ProgressBar mProgressBar;
     private ListView listView;
     private DetailsInfoFragment dif;
+    private ArrayList<String> pictures = null;
+    private ArrayList<String> texts = null;
 
     private boolean isNextListView = false;
 
@@ -177,7 +180,21 @@ public class SubMainActivity extends AppCompatActivity {
                     return;
                 }
                 RefreshUI(result);
+                getRepPicResponse();
+                setRepInfoText(result);
                 mProgressBar.setVisibility(View.GONE);
+            }
+        });
+        myAsyncTask.execute(getParamType(),getInput());
+    }
+
+    private void getRepPicResponse(){
+        MyAsyncTask<getRepPicResponse> myAsyncTask = new MyAsyncTask<getRepPicResponse>(this,WebServiceConnector.METHOD_GETREPBASICINFOBMP);
+        myAsyncTask.setListener(new getRepPicResponse() {
+            @Override
+            public void getResult(ArrayList<String> result) {
+                setRepInfoPic(result);
+                RefreshUI(getRepInfoText());
             }
         });
         myAsyncTask.execute(getParamType(),getInput());
@@ -255,6 +272,22 @@ public class SubMainActivity extends AppCompatActivity {
         });
     }
 
+    private void setRepInfoText(ArrayList<String> texts){
+        this.texts = texts;
+    }
+
+    private ArrayList<String> getRepInfoText(){
+        return texts;
+    }
+
+    private void setRepInfoPic(ArrayList<String> pictures){
+        this.pictures = pictures;
+    }
+
+    private ArrayList<String> getRepInfoPic(){
+        return pictures;
+    }
+
     private void showFragment(ArrayList<String> strings){
         TextView textView = (TextView) findViewById(R.id.submainactivity_textview);
         textView.setVisibility(View.GONE);
@@ -263,7 +296,7 @@ public class SubMainActivity extends AppCompatActivity {
         listView.setVisibility(View.GONE);
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
         if(dif == null){
-            dif = DetailsInfoFragment.GetThisFragment(strings);
+            dif = DetailsInfoFragment.GetThisFragment(strings,i);
             ft.add(R.id.sub_fragment_container,dif);
         }
         ft.show(dif);
@@ -430,21 +463,25 @@ public class SubMainActivity extends AppCompatActivity {
             RSFListViewItem rsf;
             switch(i){
                 case 0:
-                    for(int i = 0;i<length;i+=3){
+                    for(int i = 0;i<length;i+=2){
                         rsf = new RSFListViewItem();
-                        if(!result.get(i).equals("null"))
-                            rsf.setmBitmap(PhotoUtil.convertStringToIcon(result.get(i)));
-                        else
-                            rsf.setmBitmap(BitmapFactory.decodeResource(getResources(),R.drawable.ic_build_black_48dp));
-                        rsf.setmTitle(result.get(i+1));
-                        rsf.setmTime(DateUtil.FormatDate(result.get(i+2),"yyyy/MM/dd"));
+                        if(pictures != null){
+                            if(pictures.get(i/2).equals("123"))
+                                rsf.setmBitmap(BitmapFactory.decodeResource(getResources(),R.drawable.ic_background_blank));
+                            else
+                                rsf.setmBitmap(PhotoUtil.convertStringToIcon(pictures.get(i/2)));
+                        } else {
+                            rsf.setmBitmap(PhotoUtil.convertStringToIcon(""));
+                        }
+                        rsf.setmTitle(result.get(i));
+                        rsf.setmTime(DateUtil.FormatDate(result.get(i+1),"yyyy/MM/dd"));
                         list.add(rsf);
                     }
                     break;
                 case 1:
                     for(int i = 0;i<length;i+=3){
                         rsf = new RSFListViewItem();
-                        rsf.setmBitmap(BitmapFactory.decodeResource(getResources(),R.drawable.ic_directions_run_black_24dp));
+                        rsf.setmBitmap(BitmapFactory.decodeResource(getResources(),R.drawable.ic_background_blank));
                         rsf.setmTitle(result.get(i));
                         rsf.setmTime(DateUtil.FormatDate(result.get(i+1),"yyyy/MM/dd")+"\t"+DateUtil.FormatDate(result.get(i+2),"yyyy/MM/dd"));
                         list.add(rsf);
@@ -453,7 +490,7 @@ public class SubMainActivity extends AppCompatActivity {
                 case 2:
                     for(int i = 0;i<length;i+=2){
                         rsf = new RSFListViewItem();
-                        rsf.setmBitmap(BitmapFactory.decodeResource(getResources(),R.drawable.ic_av_timer_black_48dp));
+                        rsf.setmBitmap(BitmapFactory.decodeResource(getResources(),R.drawable.ic_background_blank));
                         rsf.setmTitle(result.get(i));
                         rsf.setmTime(result.get(i+1));
                         list.add(rsf);

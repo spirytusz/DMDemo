@@ -37,6 +37,7 @@ public class DetailsInfoFragment extends Fragment {
 
     private static final String TAG = "DetailsInfoFragment";
     private static final String infoKey = "info";
+    private static final String typeKey = "type";
 
     private Activity mParentActivity;
 
@@ -75,10 +76,19 @@ public class DetailsInfoFragment extends Fragment {
         switch (item.getItemId()){
             case R.id.dlf_update:
                 Toast.makeText(mParentActivity,"不填代表不修改",Toast.LENGTH_SHORT).show();
-                UpdateDialogForRepair();
+                switch (getArguments().getInt(typeKey)){
+                    case 0:
+                        UpdateDialogForRepair();
+                        break;
+                    case 1:
+                        UpdateForELS();
+                        break;
+                    case 2:
+                        UpdateForRL();
+                        break;
+                }
                 break;
             case R.id.dlf_delete:
-                Toast.makeText(mParentActivity,"delete", Toast.LENGTH_SHORT).show();
                 //hideFragment(view);
                 mParentActivity.onBackPressed();
                 break;
@@ -147,7 +157,71 @@ public class DetailsInfoFragment extends Fragment {
     }
 
     private void UpdateForELS(){
+        final View dialogView = LayoutInflater.from(mParentActivity)
+                .inflate(R.layout.layout_updatedialogforels,null);
+        AlertDialog.Builder customizeDialog =
+                new AlertDialog.Builder(mParentActivity);
+        final TextView startTime = dialogView.findViewById(R.id.sub_start_time);
+        final TextView endTime = dialogView.findViewById(R.id.sub_end_time);
+        startTime.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                DialogUtil.DatePicker(mParentActivity,startTime);
+            }
+        });
+        endTime.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                DialogUtil.DatePicker(mParentActivity,endTime);
+            }
+        });
+        customizeDialog.setView(dialogView);
+        customizeDialog.setPositiveButton("确定",
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        EditText reason = dialogView.findViewById(R.id.sub_reason);
+                        String startTimeStr = startTime.getText().toString();
+                        String endTimeStr = endTime.getText().toString();
+                        String reasonStr = reason.getText().toString();
+                        Toast.makeText(mParentActivity,startTimeStr+endTimeStr+reasonStr,Toast.LENGTH_SHORT).show();
+                    }
+                });
+        customizeDialog.setNegativeButton("取消",
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
 
+                    }
+                });
+        customizeDialog.show();
+    }
+
+    private void UpdateForRL(){
+        final View dialogView = LayoutInflater.from(mParentActivity)
+                .inflate(R.layout.layout_updatedialogforrl,null);
+        AlertDialog.Builder customizeDialog =
+                new AlertDialog.Builder(mParentActivity);
+        customizeDialog.setView(dialogView);
+        customizeDialog.setPositiveButton("确定",
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        EditText time = dialogView.findViewById(R.id.sub_returnTime);
+                        EditText reason = dialogView.findViewById(R.id.sub_reason1);
+                        String timeStr = time.getText().toString();
+                        String reasonStr = reason.getText().toString();
+                        Toast.makeText(mParentActivity,timeStr+reasonStr,Toast.LENGTH_SHORT).show();
+                    }
+                });
+        customizeDialog.setNegativeButton("取消",
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+
+                    }
+                });
+        customizeDialog.show();
     }
 
     private void LoadPane(View view){
@@ -171,10 +245,11 @@ public class DetailsInfoFragment extends Fragment {
         listView.setAdapter(adapter);
     }
 
-    public static DetailsInfoFragment GetThisFragment(ArrayList<String> info){
+    public static DetailsInfoFragment GetThisFragment(ArrayList<String> info,int type){
         DetailsInfoFragment dif = new DetailsInfoFragment();
         Bundle bundle = new Bundle();
         bundle.putSerializable(infoKey,(Serializable)info);
+        bundle.putInt(typeKey,type);
         dif.setArguments(bundle);
         return dif;
     }

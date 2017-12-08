@@ -6,64 +6,33 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="36dp"
-        android:orientation="horizontal"
-        android:background="@color/colorWhite">
+        android:background="@color/colorWhite"
+        android:orientation="horizontal">
 
         <TextView
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1.4"
             android:gravity="center"
-            android:text="@string/Start_Time"/>
+            android:text="@string/Return_Time" />
 
         <TextView
-            android:id="@+id/sub_start_time"
+            android:id="@+id/sub_returnTime"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="4.5"
-            android:hint="@string/Start_Time"
-            android:textSize="14dp"
-            android:textColor="@color/colorAccent"
-            android:textColorHint="@color/colorGray"
-            android:gravity="center" />
-
-        <ImageView
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1.4"
-            android:src="@drawable/ic_keyboard_arrow_down_black_48dp"/>
-
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="36dp"
-        android:orientation="horizontal"
-        android:background="@color/colorWhite">
-
-        <TextView
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1.4"
+            android:background="@null"
             android:gravity="center"
-            android:text="@string/End_Time"/>
-
-        <TextView
-            android:id="@+id/sub_end_time"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:textSize="14dp"
-            android:layout_weight="4.5"
-            android:hint="@string/End_Time"
+            android:hint="@string/Return_Time"
+            android:maxLines="1"
             android:textColor="@color/colorAccent"
             android:textColorHint="@color/colorGray"
-            android:gravity="center" />
+            android:textSize="14dp" />
 
-        <ImageView
+        <View
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_weight="1.4"
-            android:src="@drawable/ic_keyboard_arrow_down_black_48dp"/>
+            android:layout_weight="1.4" />
 
     </LinearLayout>
 
@@ -81,7 +50,7 @@
             android:text="@string/ELS_Reason"/>
 
         <EditText
-            android:id="@+id/sub_reason"
+            android:id="@+id/sub_reason1"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="4.5"

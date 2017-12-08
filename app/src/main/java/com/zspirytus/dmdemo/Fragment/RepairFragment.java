@@ -88,16 +88,6 @@ public class RepairFragment extends Fragment {
         mRepairArea.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                /*AlertDialog.Builder builder = new AlertDialog.Builder(mParentActivity);
-                builder.setSingleChoiceItems(mArea, 0, new DialogInterface.OnClickListener() {
-
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {// which是被选中的位置
-                        mRepairArea.setText(mArea[which]);
-                        dialog.dismiss();
-                    }
-                });
-                builder.show();*/
                 DialogUtil.showListDialog(mParentActivity,mArea,mRepairArea);
             }
         });
@@ -106,16 +96,6 @@ public class RepairFragment extends Fragment {
         mRepairType.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                /*AlertDialog.Builder builder = new AlertDialog.Builder(mParentActivity);
-                builder.setSingleChoiceItems(mCategory, 0, new DialogInterface.OnClickListener() {// 2默认的选中
-
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {// which是被选中的位置
-                        mRepairType.setText(mCategory[which]);
-                        dialog.dismiss();
-                    }
-                });
-                builder.show();*/
                 DialogUtil.showListDialog(mParentActivity,mCategory,mRepairType);
             }
         });
@@ -229,7 +209,7 @@ public class RepairFragment extends Fragment {
             input.add(photo);
         }
         else
-            input.add("000");
+            input.add("");
         input.add(DateUtil.getNowDate("yyyy-MM-dd HH:mm:ss"));
         return input;
     }

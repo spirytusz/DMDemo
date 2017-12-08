@@ -34,6 +34,7 @@ public class WebServiceConnector {
     public static final String METHOD_GETREPAIRDETAILSINFO = "getRepairDetailsInfoBySno";
     public static final String METHOD_GETRLDETAILSINFO = "getRLDetailsInfo ";
     public static final String METHOD_GETSLSDETAILSINFO = "getSLSDetailsInfo";
+    public static final String METHOD_GETREPBASICINFOBMP = "getRepairBasicInfoBmpBySno";
 
     public static final String PARAMTYPE_SNO = "Sno";
     public static final String PARAMTYPE_ACCOUNT = "account";
