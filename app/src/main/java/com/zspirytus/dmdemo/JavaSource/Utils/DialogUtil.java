@@ -122,6 +122,19 @@ public class DialogUtil {
         dialog.show();
     }
 
+    public static void showListDialog(Activity activity,final String[] list,final TextView textView){
+        AlertDialog.Builder builder = new AlertDialog.Builder(activity);
+        builder.setSingleChoiceItems(list, 0, new DialogInterface.OnClickListener() {// 2默认的选中
+
+            @Override
+            public void onClick(DialogInterface dialog, int which) {// which是被选中的位置
+                textView.setText(list[which]);
+                dialog.dismiss();
+            }
+        });
+        builder.show();
+    }
+
     private static boolean is24(Context context){
         return DateFormat.is24HourFormat(context);
     }

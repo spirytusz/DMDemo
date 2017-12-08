@@ -5,15 +5,17 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.KeyEvent;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.ListView;
@@ -22,6 +24,7 @@ import android.widget.SimpleAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.zspirytus.dmdemo.Fragment.DetailsInfoFragment;
 import com.zspirytus.dmdemo.Interface.getRLDetailsInfoResponse;
 import com.zspirytus.dmdemo.Interface.getRLInfoResponse;
 import com.zspirytus.dmdemo.Interface.getRepBasInfoResponse;
@@ -55,8 +58,7 @@ public class SubMainActivity extends AppCompatActivity {
     private String Sno;
     private ProgressBar mProgressBar;
     private ListView listView;
-    private FrameLayout mFrameLayout;
-    private SimpleAdapter mBasicInfoAdapter;
+    private DetailsInfoFragment dif;
 
     private boolean isNextListView = false;
 
@@ -70,6 +72,52 @@ public class SubMainActivity extends AppCompatActivity {
         GetMessage();
     }
 
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        Log.e(TAG,TAG+"OptionMenu");
+        getMenuInflater().inflate(R.menu.blank, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    /*@Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if (keyCode == KeyEvent.KEYCODE_BACK && event.getRepeatCount() == 0) {
+            if(isNextListView){
+                //listView.setAdapter(mBasicInfoAdapter);
+                setIsNextListView(false);
+                //listView.setVisibility(View.GONE);
+                //mFrameLayout.setVisibility(View.VISIBLE);
+                hideFragment();
+            } else {
+                finish();
+            }
+        } else if(keyCode == R.id.dlf_delete){
+            Toast.makeText(this,"delete",Toast.LENGTH_SHORT).show();
+        } else if (keyCode == R.id.dlf_update){
+            Toast.makeText(this,"update",Toast.LENGTH_SHORT).show();
+        }
+        return super.onKeyDown(keyCode, event);
+    }*/
+
+    @Override
+    public void onBackPressed() {
+
+        if (isNextListView) {
+            //listView.setAdapter(mBasicInfoAdapter);
+            setIsNextListView(false);
+            //listView.setVisibility(View.GONE);
+            //mFrameLayout.setVisibility(View.VISIBLE);
+            hideFragment();
+        } else {
+            super.onBackPressed();
+        }
+    }
+
     private void getArgs(){
         Intent intent = getIntent();
         i = intent.getIntExtra(typeKey,-1);
@@ -78,7 +126,6 @@ public class SubMainActivity extends AppCompatActivity {
     }
 
     private void LoadPane(){
-        Intent intent = getIntent();
         Toolbar toolbar = (Toolbar)findViewById(R.id.tb_toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -87,20 +134,17 @@ public class SubMainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 Log.d(TAG,"isNextListView back:"+Boolean.toString(isNextListView));
                 if(isNextListView){
-                    listView.setAdapter(mBasicInfoAdapter);
                     setIsNextListView(false);
-                    listView.setVisibility(View.GONE);
-                    mFrameLayout.setVisibility(View.VISIBLE);
+                    hideFragment();
                 } else {
                     finish();
                 }
             }
         });
         toolbar.setTitle(title);
+        toolbar.inflateMenu(R.menu.blank);
         mProgressBar = (ProgressBar) findViewById(R.id.submainactivity_progressbar);
         listView = (ListView)findViewById(R.id.submainactivity_listview);
-        mFrameLayout = (FrameLayout) findViewById(R.id.sub_fragment_container);
-        mFrameLayout.setVisibility(View.GONE);
     }
 
     private void GetMessage(){
@@ -201,21 +245,42 @@ public class SubMainActivity extends AppCompatActivity {
     private void RefreshUI(ArrayList<String> result){
         final int type = i;
         listView = (ListView) findViewById(R.id.submainactivity_listview);
-        if(mBasicInfoAdapter == null){
-            mBasicInfoAdapter = getAdapter(result);
-            listView.setAdapter(mBasicInfoAdapter);
-        }  else {
-            listView.setAdapter(mBasicInfoAdapter);
-        }
+        listView.setAdapter(getAdapter(result));
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                HashMap<String,String> map=(HashMap<String,String>)adapterView.getItemAtPosition(i);
-                String no = map.get("title");
-                Toast.makeText(activity,no,Toast.LENGTH_SHORT).show();
-                doTask(no,type);
+                HashMap<String,Object> map=(HashMap<String,Object>)adapterView.getItemAtPosition(i);
+                doTask(map,type);
             }
         });
+    }
+
+    private void showFragment(ArrayList<String> strings){
+        TextView textView = (TextView) findViewById(R.id.submainactivity_textview);
+        textView.setVisibility(View.GONE);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.tb_toolbar);
+        toolbar.setVisibility(View.GONE);
+        listView.setVisibility(View.GONE);
+        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+        if(dif == null){
+            dif = DetailsInfoFragment.GetThisFragment(strings);
+            ft.add(R.id.sub_fragment_container,dif);
+        }
+        ft.show(dif);
+        ft.commitAllowingStateLoss();
+    }
+
+    private void hideFragment(){
+        Toolbar toolbar = (Toolbar) findViewById(R.id.tb_toolbar);
+        toolbar.setVisibility(View.VISIBLE);
+        TextView textView = (TextView) findViewById(R.id.submainactivity_textview);
+        textView.setVisibility(View.GONE);
+        listView.setVisibility(View.VISIBLE);
+        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+        ft.hide(dif);
+        ft.remove(dif);
+        dif = null;
+        ft.commitAllowingStateLoss();
     }
 
     private void setIsNextListView(boolean isNextListView){
@@ -244,28 +309,12 @@ public class SubMainActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }*/
 
-    @Override
-    public boolean onKeyDown(int keyCode, KeyEvent event) {
-        if (keyCode == KeyEvent.KEYCODE_BACK && event.getRepeatCount() == 0) {
-            if(isNextListView){
-                listView.setAdapter(mBasicInfoAdapter);
-                setIsNextListView(false);
-                listView.setVisibility(View.GONE);
-                mFrameLayout.setVisibility(View.VISIBLE);
-            } else {
-                finish();
-            }
-            return true;
-        }
-        return super.onKeyDown(keyCode, event);
-    }
-
-    private void doTask(final String no,int type){
+    private void doTask(final HashMap<String,Object> map,int type){
         final ListView listView = (ListView) findViewById(R.id.submainactivity_listview);
         ArrayList<String> paramType = new ArrayList<>();
         ArrayList<String> param = new ArrayList<>();
         paramType.add(WebServiceConnector.PARAMTYPE_RNO);
-        param.add(no);
+        param.add((String)map.get("title"));
         switch (type){
             case 0:
                 MyAsyncTask<getRepDetailsInfoResponse> myAsyncTask
@@ -273,7 +322,7 @@ public class SubMainActivity extends AppCompatActivity {
                 myAsyncTask.setListener(new getRepDetailsInfoResponse() {
                     @Override
                     public void getResult(ArrayList<String> result) {
-                        String formatResult = "";
+                        /*String formatResult = "";
                         for(String item:result){
                             formatResult = formatResult + item + "\n";
                         }
@@ -283,7 +332,13 @@ public class SubMainActivity extends AppCompatActivity {
                                 android.R.layout.simple_list_item_1,
                                 (String[])result.toArray(new String[result.size()])
                         );
-                        listView.setAdapter(adapter);
+                        listView.setAdapter(adapter);*/
+                        String bmp = PhotoUtil.convertIconToString((Bitmap)map.get("bmp"));
+                        ArrayList<String> formatResult = new ArrayList<String>();
+                        formatResult.add(bmp);
+                        for(int i = 0;i<result.size();i++)
+                            formatResult.add(result.get(i));
+                        showFragment(formatResult);
                         setIsNextListView(true);
                         Log.d(TAG,"isNextListView:"+Boolean.toString(isNextListView));
                     }
@@ -296,7 +351,7 @@ public class SubMainActivity extends AppCompatActivity {
                 myAsyncTask1.setListener(new getSLSDetailsInfoResponse() {
                     @Override
                     public void getResult(ArrayList<String> result) {
-                        String formatResult = "";
+                        /*String formatResult = "";
                         for(String item:result){
                             formatResult = formatResult + item + "\n";
                         }
@@ -306,7 +361,8 @@ public class SubMainActivity extends AppCompatActivity {
                                 android.R.layout.simple_list_item_1,
                                 (String[])result.toArray(new String[result.size()])
                         );
-                        listView.setAdapter(adapter);
+                        listView.setAdapter(adapter);*/
+                        showFragment(result);
                         setIsNextListView(true);
                     }
                 });
@@ -318,7 +374,7 @@ public class SubMainActivity extends AppCompatActivity {
                 myAsyncTask2.setListener(new getRLDetailsInfoResponse() {
                     @Override
                     public void getResult(ArrayList<String> result) {
-                        String formatResult = "";
+                        /*String formatResult = "";
                         for(String item:result){
                             formatResult = formatResult + item + "\n";
                         }
@@ -328,7 +384,8 @@ public class SubMainActivity extends AppCompatActivity {
                                 android.R.layout.simple_list_item_1,
                                 (String[])result.toArray(new String[result.size()])
                         );
-                        listView.setAdapter(adapter);
+                        listView.setAdapter(adapter);*/
+                        showFragment(result);
                         setIsNextListView(true);
                     }
                 });

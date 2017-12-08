@@ -27,7 +27,7 @@ public class AboutFragment extends Fragment {
         TextView appTextView = view.findViewById(R.id.aboutfragment_app_git);
         final String app = getString(R.string.app_git);
         final String web = getString(R.string.webservice_git);
-        String color = "#236B8E";
+        String color = "#0000ff";
         String appText = "App: <font color='"+color+"'>"+app+"</font>";
         String webText = "WebService: <font color='"+color+"'>"+web+"</font>";
         appTextView.setText(Html.fromHtml(appText));

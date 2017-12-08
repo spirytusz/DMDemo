@@ -88,7 +88,7 @@ public class RepairFragment extends Fragment {
         mRepairArea.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                AlertDialog.Builder builder = new AlertDialog.Builder(mParentActivity);
+                /*AlertDialog.Builder builder = new AlertDialog.Builder(mParentActivity);
                 builder.setSingleChoiceItems(mArea, 0, new DialogInterface.OnClickListener() {
 
                     @Override
@@ -97,7 +97,8 @@ public class RepairFragment extends Fragment {
                         dialog.dismiss();
                     }
                 });
-                builder.show();
+                builder.show();*/
+                DialogUtil.showListDialog(mParentActivity,mArea,mRepairArea);
             }
         });
         mRepairPlace = v.findViewById(R.id.repair_edittext_place);
@@ -105,7 +106,7 @@ public class RepairFragment extends Fragment {
         mRepairType.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                AlertDialog.Builder builder = new AlertDialog.Builder(mParentActivity);
+                /*AlertDialog.Builder builder = new AlertDialog.Builder(mParentActivity);
                 builder.setSingleChoiceItems(mCategory, 0, new DialogInterface.OnClickListener() {// 2默认的选中
 
                     @Override
@@ -114,7 +115,8 @@ public class RepairFragment extends Fragment {
                         dialog.dismiss();
                     }
                 });
-                builder.show();
+                builder.show();*/
+                DialogUtil.showListDialog(mParentActivity,mCategory,mRepairType);
             }
         });
         mRepairDetail = v.findViewById(R.id.repair_edittext_detail);

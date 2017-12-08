@@ -76,6 +76,8 @@
     <string name="Return_Time">夜归时间</string>
     <string name="app_git">https://github.com/zkw012300/DMDemo</string>
     <string name="webservice_git">https://github.com/zkw012300/DMS</string>
+    <string name="update">修改</string>
+    <string name="delete">删除</string>
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
