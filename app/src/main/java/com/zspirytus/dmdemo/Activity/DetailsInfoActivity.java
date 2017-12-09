@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.BitmapFactory;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -18,7 +19,6 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.ProgressBar;
-import android.widget.SimpleAdapter;
 import android.widget.TextView;
 
 import com.zspirytus.dmdemo.Interface.getBooleanTypeResponse;
@@ -39,9 +39,13 @@ public class DetailsInfoActivity extends AppCompatActivity {
     private static final String TAG = "DetailsInfoActivity";
     private static final String PrimaryKey = "primaryKey";
     private static final String typeKey = "type";
+    private static final String doNothing = "null";
+    private ArrayList<String> resultMemory;
 
 
     private final Activity activity = this;
+
+    private boolean flagOfLoaded = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,6 +57,14 @@ public class DetailsInfoActivity extends AppCompatActivity {
     }
 
     @Override
+    public void onDestroy(){
+        Intent intent = getIntent();
+        intent.putExtra(doNothing,doNothing);
+        setResult(0,intent);
+        super.onDestroy();
+    }
+
+    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.toolbar_menu, menu);
         return super.onCreateOptionsMenu(menu);
@@ -60,25 +72,27 @@ public class DetailsInfoActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()){
-            case R.id.dlf_update:
-                switch(getIntent().getIntExtra(typeKey,-1)){
-                    case 0:
-                        UpdateForRep();
-                        break;
-                    case 1:
-                        UpdateForELS();
-                        break;
-                    case 2:
-                        UpdateForRL();
-                        break;
-                    default:
-                        break;
-                }
-                break;
-            case R.id.dlf_delete:
-                Delete();
-                break;
+        if(flagOfLoaded){
+            switch (item.getItemId()){
+                case R.id.dlf_update:
+                    switch(getIntent().getIntExtra(typeKey,-1)){
+                        case 0:
+                            UpdateForRep();
+                            break;
+                        case 1:
+                            UpdateForELS();
+                            break;
+                        case 2:
+                            UpdateForRL();
+                            break;
+                        default:
+                            break;
+                    }
+                    break;
+                case R.id.dlf_delete:
+                    Delete();
+                    break;
+            }
         }
         return super.onOptionsItemSelected(item);
     }
@@ -97,6 +111,7 @@ public class DetailsInfoActivity extends AppCompatActivity {
     }
 
     private void LoadInfo(ArrayList<String> result){
+        resultMemory = result;
         ImageView imageView = (ImageView) findViewById(R.id.detailsinfoactivity_imageview);
         TextView textView = (TextView) findViewById(R.id.detailsinfoactivity_textview);
         ListView listView = (ListView) findViewById(R.id.detailsiinfoactivity_listview);
@@ -111,6 +126,7 @@ public class DetailsInfoActivity extends AppCompatActivity {
                 listViewItem
         );
         listView.setAdapter(adapter);
+        flagOfLoaded = true;
     }
 
     private void GetMessage(){
@@ -153,7 +169,7 @@ public class DetailsInfoActivity extends AppCompatActivity {
                             return;
                         }
                         ArrayList<String> formatResult = new ArrayList<String>();
-                        formatResult.add("");
+                        formatResult.add(PhotoUtil.convertIconToString(BitmapFactory.decodeResource(getResources(),R.drawable.ic_directions_run_black_48dp)));
                         formatResult.add(result.get(0));
                         formatResult.add(DateUtil.FormatDate(result.get(1),"yyyy/MM/dd")+" - "+DateUtil.FormatDate(result.get(2),"yyyy/MM/dd"));
                         formatResult.add(result.get(3));
@@ -175,7 +191,7 @@ public class DetailsInfoActivity extends AppCompatActivity {
                             return;
                         }
                         ArrayList<String> formatResult = new ArrayList<String>();
-                        formatResult.add("");
+                        formatResult.add(PhotoUtil.convertIconToString(BitmapFactory.decodeResource(getResources(),R.drawable.ic_av_timer_black_custom_48dp)));
                         for(int i = 0;i<result.size();i++)
                             formatResult.add(result.get(i));
                         //Refresh UI
@@ -402,7 +418,15 @@ public class DetailsInfoActivity extends AppCompatActivity {
                     return;
                 }
                 boolean isSuccess = result.get(0).replaceAll("\r|\n|\t","").equals("true");
-                DialogUtil.showResultDialog(activity,isSuccess);
+                AlertDialog.Builder dialog = DialogUtil.getResultDialog(activity,isSuccess);
+                dialog.setPositiveButton("好",
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                GetMessage();
+                            }
+                        });
+                dialog.show();
             }
         });
         myAsyncTask.execute(paramType,request);
@@ -444,7 +468,7 @@ public class DetailsInfoActivity extends AppCompatActivity {
                 new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
-
+                        doDelete(primaryKey,type);
                     }
                 });
         dialog.setNegativeButton("取消",
@@ -479,12 +503,24 @@ public class DetailsInfoActivity extends AppCompatActivity {
         myAsyncTask.setListener(new getBooleanTypeResponse() {
             @Override
             public void showDialog(ArrayList<String> result) {
+                Log.d(TAG,"isSuccess?\t"+result.get(0));
                 if(result == null||result.size() == 0){
                     DialogUtil.showNegativeTipsDialog(activity,"响应失败");
                     return;
                 }
                 boolean isSuccess = result.get(0).replaceAll("\r|\n|\t","").equals("true");
-                DialogUtil.showResultDialog(activity,isSuccess);
+                Log.d(TAG,"isSuccess?\t"+Boolean.toString(isSuccess));
+                AlertDialog.Builder dialog = DialogUtil.getDialog(activity,"成功");
+                dialog.setPositiveButton("确定",
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                Intent intent = getIntent();
+                                intent.putExtra(PrimaryKey,primaryKey);
+                                setResult(0,intent);
+                                finish();
+                            }
+                        });
             }
         });
         myAsyncTask.execute(paramType,requestParams);

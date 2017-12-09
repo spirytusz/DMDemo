@@ -16,15 +16,14 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
+import android.widget.Toast;
 
-import com.zspirytus.dmdemo.Interface.getRLDetailsInfoResponse;
 import com.zspirytus.dmdemo.Interface.getRLInfoResponse;
 import com.zspirytus.dmdemo.Interface.getRepBasInfoResponse;
-import com.zspirytus.dmdemo.Interface.getRepDetailsInfoResponse;
 import com.zspirytus.dmdemo.Interface.getRepPicResponse;
-import com.zspirytus.dmdemo.Interface.getSLSDetailsInfoResponse;
 import com.zspirytus.dmdemo.Interface.getSLSInfoResponse;
 import com.zspirytus.dmdemo.JavaSource.Manager.ActivityManager;
 import com.zspirytus.dmdemo.JavaSource.ListViewModule.RSFListViewItem;
@@ -45,7 +44,9 @@ public class SubMainActivity extends AppCompatActivity {
     private static final String TAG = "SubMainActivity";
     private static final String titleKey = "titleKey";
     private static final String typeKey = "typeKey";
+    private static final String PrimaryKey = "primaryKey";
     private static final String mSnoKey = "Sno";
+    private static final int mResquestCode = 2677;
     private final Activity activity = this;
 
     private int i;
@@ -87,6 +88,19 @@ public class SubMainActivity extends AppCompatActivity {
         ActivityManager.removeActivity(this);
         cancelTask();
         super.onDestroy();
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if(requestCode == mResquestCode){
+            if(resultCode == 0){
+                // delete listView item
+                Bundle bundle = data.getExtras();
+                String deleteNo = bundle.getString(PrimaryKey);
+                Toast.makeText(this,deleteNo,Toast.LENGTH_SHORT).show();
+            }
+        }
     }
 
     private void cancelTask(){
@@ -263,6 +277,7 @@ public class SubMainActivity extends AppCompatActivity {
                 HashMap<String,Object> map=(HashMap<String,Object>)adapterView.getItemAtPosition(i);
                 String primaryKey = (String)map.get("title");
                 DetailsInfoActivity.StartThisActivity(activity,primaryKey,type);
+                //startNextActivityForResult(primaryKey,type);
             }
         });
     }
@@ -300,6 +315,9 @@ public class SubMainActivity extends AppCompatActivity {
                     ImageView iv = (ImageView) view;
                     iv.setImageBitmap((Bitmap)data);
                     return true;
+                } else if((view instanceof ProgressBar)){
+                    ProgressBar progressBar = (ProgressBar) view;
+                    progressBar.setVisibility(View.GONE);
                 }
                 return false;
             }
@@ -337,7 +355,7 @@ public class SubMainActivity extends AppCompatActivity {
                 case 1:
                     for(int i = 0;i<length;i+=3){
                         rsf = new RSFListViewItem();
-                        rsf.setmBitmap(BitmapFactory.decodeResource(getResources(),R.drawable.ic_background_blank));
+                        rsf.setmBitmap(BitmapFactory.decodeResource(getResources(),R.drawable.ic_directions_run_black_48dp));
                         rsf.setmTitle(result.get(i));
                         rsf.setmTime(DateUtil.FormatDate(result.get(i+1),"yyyy/MM/dd")+"\t"+DateUtil.FormatDate(result.get(i+2),"yyyy/MM/dd"));
                         list.add(rsf);
@@ -346,7 +364,7 @@ public class SubMainActivity extends AppCompatActivity {
                 case 2:
                     for(int i = 0;i<length;i+=2){
                         rsf = new RSFListViewItem();
-                        rsf.setmBitmap(BitmapFactory.decodeResource(getResources(),R.drawable.ic_background_blank));
+                        rsf.setmBitmap(BitmapFactory.decodeResource(getResources(),R.drawable.ic_av_timer_black_custom_48dp));
                         rsf.setmTitle(result.get(i));
                         rsf.setmTime(result.get(i+1));
                         list.add(rsf);
@@ -376,6 +394,13 @@ public class SubMainActivity extends AppCompatActivity {
             result.add(map);
         }
         return result;
+    }
+
+    private void startNextActivityForResult(String primaryKey,int type){
+        Intent intent = new Intent(activity,DetailsInfoActivity.class);
+        intent.putExtra(PrimaryKey,primaryKey);
+        intent.putExtra(typeKey,type);
+        this.startActivity(intent);
     }
 
     public static void StartThisActivity(Context context,final String title,final int i,final String Sno) {

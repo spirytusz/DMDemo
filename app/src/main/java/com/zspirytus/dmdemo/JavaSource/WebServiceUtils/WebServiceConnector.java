@@ -38,9 +38,9 @@ public class WebServiceConnector {
     public static final String METHOD_UPDATEREP = "updateRepair";
     public static final String METHOD_UPDATEELS = "updateSLS";
     public static final String METHOD_UPDATERL = "updateReturnLately";
-    public static final String METHOD_DELETEREP = "";
-    public static final String METHOD_DELETEELS = "";
-    public static final String METHOD_DELETERL = "";
+    public static final String METHOD_DELETEREP = "deleteRepair";
+    public static final String METHOD_DELETEELS = "deleteSLS";
+    public static final String METHOD_DELETERL = "deleteReturnLately";
 
     public static final String PARAMTYPE_SNO = "Sno";
     public static final String PARAMTYPE_ACCOUNT = "account";
@@ -83,7 +83,7 @@ public class WebServiceConnector {
      * @return 封装在ArrayList中的结果
      */
     public static ArrayList<String> executingMethod(String methodName, ArrayList<String> paramType, ArrayList<String> param) {
-        String request = getRequset(methodName, paramType, param);
+        String request = getRequest(methodName, paramType, param);
         Log.d(TAG,"requestTest:\t"+request);
         try {
             URL url = new URL(WSDL_URI);
@@ -122,7 +122,7 @@ public class WebServiceConnector {
      * @param params     方法参数值
      * @return SOAP请求信息
      */
-    private static String getRequset(String methodName, ArrayList<String> paramType, ArrayList<String> params) {
+    private static String getRequest(String methodName, ArrayList<String> paramType, ArrayList<String> params) {
         String command;
         final String SOAP_HEADER = "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n" +
                 "<soap12:Envelope xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:soap12=\"http://www.w3.org/2003/05/soap-envelope\">\n" +
@@ -137,6 +137,7 @@ public class WebServiceConnector {
             command = command + "</" + methodName + ">";
         } else
             command = "\t<" + methodName + " xmlns=\"" + NAMESPACE + "\"/> ";
+        Log.d(TAG,"request:\n"+command);
         return SOAP_HEADER + command + SOAP_END;
     }
 

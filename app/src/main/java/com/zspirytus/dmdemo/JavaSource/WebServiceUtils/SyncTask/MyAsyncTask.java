@@ -152,6 +152,15 @@ public class MyAsyncTask<T> extends AsyncTask<ArrayList<String>, Void, ArrayList
             case WebServiceConnector.METHOD_UPDATERL:
                 ((getBooleanTypeResponse)response).showDialog(result);
                 break;
+            case WebServiceConnector.METHOD_DELETEREP:
+                ((getBooleanTypeResponse)response).showDialog(result);
+                break;
+            case WebServiceConnector.METHOD_DELETEELS:
+                ((getBooleanTypeResponse)response).showDialog(result);
+                break;
+            case WebServiceConnector.METHOD_DELETERL:
+                ((getBooleanTypeResponse)response).showDialog(result);
+                break;
         }
     }
 

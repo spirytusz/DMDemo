@@ -101,6 +101,19 @@ public class DialogUtil {
         dialog.show();
     }
 
+    public static AlertDialog.Builder getResultDialog(Activity activity,final boolean isSuccess){
+        String FormatResult = "";
+        if(isSuccess){
+            FormatResult = SUCCESS;
+        } else {
+            FormatResult = FAILED;
+        }
+        AlertDialog.Builder dialog = new AlertDialog.Builder(activity);
+        dialog.setTitle(TIP);
+        dialog.setMessage(FormatResult);
+        return dialog;
+    }
+
     public static void showNegativeTipsDialog(Activity activity){
         AlertDialog.Builder dialog = new AlertDialog.Builder(activity);
         dialog.setTitle(TIP);
@@ -136,6 +149,13 @@ public class DialogUtil {
             }
         });
         builder.show();
+    }
+
+    public static AlertDialog.Builder getDialog(Activity activity,String tips){
+        AlertDialog.Builder dialog = new AlertDialog.Builder(activity);
+        dialog.setTitle(TIP);
+        dialog.setMessage(tips);
+        return dialog;
     }
 
     private static boolean is24(Context context){
