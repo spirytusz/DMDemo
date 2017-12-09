@@ -13,12 +13,6 @@
         app:titleTextColor="@android:color/white"
         android:background="@color/colorPrimary"/>
 
-    <ProgressBar
-        android:id="@+id/submainactivity_progressbar"
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:layout_gravity="center"/>
-
     <ListView
         android:id="@+id/submainactivity_listview"
         android:layout_width="match_parent"

@@ -35,6 +35,9 @@ public class WebServiceConnector {
     public static final String METHOD_GETRLDETAILSINFO = "getRLDetailsInfo ";
     public static final String METHOD_GETSLSDETAILSINFO = "getSLSDetailsInfo";
     public static final String METHOD_GETREPBASICINFOBMP = "getRepairBasicInfoBmpBySno";
+    public static final String METHOD_UPDATEREP = "updateRepair";
+    public static final String METHOD_UPDATEELS = "updateSLS";
+    public static final String METHOD_UPDATERL = "updateReturnLately";
 
     public static final String PARAMTYPE_SNO = "Sno";
     public static final String PARAMTYPE_ACCOUNT = "account";
@@ -53,6 +56,15 @@ public class WebServiceConnector {
     public static final String PARAMTYPE_RETURNTIME = "returnTime";
     public static final String PARAMTYPE_REPORTDATE = "reportDate";
     public static final String PARAMTYPE_SLSNO = "SLSNo";
+
+    public static final String SQL_REPAIRPLACE = "RepairPlace";
+    public static final String SQL_REPAIRTYPE = "RepairType";
+    public static final String SQL_DETAIL = "RepairDetail";
+    public static final String SQL_CONTACT = "Contact";
+    public static final String SQL_RETURNTIME = "returnTime";
+    public static final String SQL_REASON = "reason";
+    public static final String SQL_LEAVEDATE = "LeaveDate";
+    public static final String SQL_BACKDATE = "BackDate";
 
     private static final String TAG = "WebServiceConnector";
     private static final String WSDL_URI = "http://39.108.113.13/DMS.asmx?wsdl";

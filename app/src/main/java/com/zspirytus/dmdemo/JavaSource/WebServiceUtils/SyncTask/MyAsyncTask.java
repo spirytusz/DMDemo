@@ -57,7 +57,7 @@ public class MyAsyncTask<T> extends AsyncTask<ArrayList<String>, Integer, ArrayL
     protected void onPreExecute(){
         if(mProgressBar != null)
             mProgressBar.setVisibility(View.VISIBLE);
-        else /*if(!methodName.equals(WebServiceConnector.METHOD_GETREPBASICINFOBMP))*/{
+        else if(!methodName.equals(WebServiceConnector.METHOD_GETREPBASICINFOBMP)){
             mProgressDialog = new ProgressDialog(context);
             mProgressDialog.setTitle("Send");
             mProgressDialog.setMessage("Sending...");
@@ -80,7 +80,7 @@ public class MyAsyncTask<T> extends AsyncTask<ArrayList<String>, Integer, ArrayL
         getTaskResult(result);
         if(mProgressBar != null)
             mProgressBar.setVisibility(View.GONE);
-        else /*if(!methodName.equals(WebServiceConnector.METHOD_GETREPBASICINFOBMP))*/{
+        else if(!methodName.equals(WebServiceConnector.METHOD_GETREPBASICINFOBMP)){
             mProgressDialog.dismiss();
         }
     }
@@ -135,6 +135,22 @@ public class MyAsyncTask<T> extends AsyncTask<ArrayList<String>, Integer, ArrayL
             case WebServiceConnector.METHOD_UPDATEAVATAR:
                 ((getBooleanTypeResponse)response).showDialog(result);
                 break;
+            case WebServiceConnector.METHOD_UPDATEREP:
+                ((getBooleanTypeResponse)response).showDialog(result);
+                break;
+            case WebServiceConnector.METHOD_UPDATEELS:
+                ((getBooleanTypeResponse)response).showDialog(result);
+                break;
+            case WebServiceConnector.METHOD_UPDATERL:
+                ((getBooleanTypeResponse)response).showDialog(result);
+                break;
         }
+    }
+
+    private boolean shouldShowProgressDialog(){
+        return !methodName.equals(WebServiceConnector.METHOD_GETREPBASICINFOBMP) ||
+                !methodName.equals(WebServiceConnector.METHOD_GETREPAIRDETAILSINFO) ||
+                !methodName.equals(WebServiceConnector.METHOD_GETRLDETAILSINFO) ||
+                !methodName.equals(WebServiceConnector.METHOD_GETSLSDETAILSINFO);
     }
 }

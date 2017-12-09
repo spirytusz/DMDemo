@@ -7,9 +7,13 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.support.v7.app.AlertDialog;
 import android.text.format.DateFormat;
+import android.view.LayoutInflater;
+import android.view.View;
 import android.widget.DatePicker;
 import android.widget.TextView;
 import android.widget.TimePicker;
+
+import com.zspirytus.dmdemo.R;
 
 /**
  * Created by ZSpirytus on 2017/11/27.
@@ -133,6 +137,15 @@ public class DialogUtil {
             }
         });
         builder.show();
+    }
+
+    public static AlertDialog.Builder getCustomDialog(Activity activity,int layoutId){
+        final View dialogView = LayoutInflater.from(activity)
+                .inflate(layoutId,null);
+        AlertDialog.Builder customizeDialog =
+                new AlertDialog.Builder(activity);
+        customizeDialog.setView(dialogView);
+        return customizeDialog;
     }
 
     private static boolean is24(Context context){

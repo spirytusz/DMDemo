@@ -39,7 +39,14 @@
         <activity
             android:name=".Activity.SubMainActivity"
             android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name=".Activity.SubLoginActivity"></activity>
+
+        <activity android:name=".Activity.SubLoginActivity" />
+
+        <activity
+            android:name=".Activity.DetailsInfoActivity"
+            android:theme="@style/AppTheme.NoActionBar">
+
+        </activity>
     </application>
 
 </manifest>

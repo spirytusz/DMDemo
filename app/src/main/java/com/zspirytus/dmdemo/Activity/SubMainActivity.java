@@ -5,26 +5,20 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.zspirytus.dmdemo.Fragment.DetailsInfoFragment;
 import com.zspirytus.dmdemo.Interface.getRLDetailsInfoResponse;
 import com.zspirytus.dmdemo.Interface.getRLInfoResponse;
 import com.zspirytus.dmdemo.Interface.getRepBasInfoResponse;
@@ -57,13 +51,9 @@ public class SubMainActivity extends AppCompatActivity {
     private int i;
     private String title;
     private String Sno;
-    private ProgressBar mProgressBar;
     private ListView listView;
-    private DetailsInfoFragment dif;
     private ArrayList<String> pictures = null;
     private ArrayList<String> texts = null;
-
-    private boolean isNextListView = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -107,20 +97,6 @@ public class SubMainActivity extends AppCompatActivity {
         return super.onKeyDown(keyCode, event);
     }*/
 
-    @Override
-    public void onBackPressed() {
-
-        if (isNextListView) {
-            //listView.setAdapter(mBasicInfoAdapter);
-            setIsNextListView(false);
-            //listView.setVisibility(View.GONE);
-            //mFrameLayout.setVisibility(View.VISIBLE);
-            hideFragment();
-        } else {
-            super.onBackPressed();
-        }
-    }
-
     private void getArgs(){
         Intent intent = getIntent();
         i = intent.getIntExtra(typeKey,-1);
@@ -135,18 +111,11 @@ public class SubMainActivity extends AppCompatActivity {
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.d(TAG,"isNextListView back:"+Boolean.toString(isNextListView));
-                if(isNextListView){
-                    setIsNextListView(false);
-                    hideFragment();
-                } else {
-                    finish();
-                }
+                finish();
             }
         });
         toolbar.setTitle(title);
         toolbar.inflateMenu(R.menu.blank);
-        mProgressBar = (ProgressBar) findViewById(R.id.submainactivity_progressbar);
         listView = (ListView)findViewById(R.id.submainactivity_listview);
     }
 
@@ -165,7 +134,7 @@ public class SubMainActivity extends AppCompatActivity {
 
     private void getRepResponse(){
         MyAsyncTask<getRepBasInfoResponse> myAsyncTask
-                = new MyAsyncTask<getRepBasInfoResponse>(this, WebServiceConnector.METHOD_GETREPAIRBASICINFOBYSNO,mProgressBar);
+                = new MyAsyncTask<getRepBasInfoResponse>(this, WebServiceConnector.METHOD_GETREPAIRBASICINFOBYSNO);
         myAsyncTask.setListener(new getRepBasInfoResponse() {
             @Override
             public void getResult(ArrayList<String> result) {
@@ -182,7 +151,6 @@ public class SubMainActivity extends AppCompatActivity {
                 RefreshUI(result);
                 getRepPicResponse();
                 setRepInfoText(result);
-                mProgressBar.setVisibility(View.GONE);
             }
         });
         myAsyncTask.execute(getParamType(),getInput());
@@ -202,7 +170,7 @@ public class SubMainActivity extends AppCompatActivity {
 
     private void getSLSResponse(){
         MyAsyncTask<getSLSInfoResponse> myAsyncTask
-                = new MyAsyncTask<getSLSInfoResponse>(this, WebServiceConnector.METHOD_GETSLSBASICINFO,mProgressBar);
+                = new MyAsyncTask<getSLSInfoResponse>(this, WebServiceConnector.METHOD_GETSLSBASICINFO);
         myAsyncTask.setListener(new getSLSInfoResponse() {
             @Override
             public void getResult(ArrayList<String> result) {
@@ -217,7 +185,6 @@ public class SubMainActivity extends AppCompatActivity {
                     return;
                 }
                 RefreshUI(result);
-                mProgressBar.setVisibility(View.GONE);
             }
         });
         myAsyncTask.execute(getParamType(),getInput());
@@ -225,7 +192,7 @@ public class SubMainActivity extends AppCompatActivity {
 
     private void getRLResponse(){
         MyAsyncTask<getRLInfoResponse> myAsyncTask
-                = new MyAsyncTask<getRLInfoResponse>(this, WebServiceConnector.METHOD_GETRETURNLATELYBASICINFO,mProgressBar);
+                = new MyAsyncTask<getRLInfoResponse>(this, WebServiceConnector.METHOD_GETRETURNLATELYBASICINFO);
         myAsyncTask.setListener(new getRLInfoResponse() {
             @Override
             public void getResult(ArrayList<String> result) {
@@ -288,8 +255,8 @@ public class SubMainActivity extends AppCompatActivity {
         return pictures;
     }
 
-    private void showFragment(ArrayList<String> strings){
-        TextView textView = (TextView) findViewById(R.id.submainactivity_textview);
+    private void startNextActivity(ArrayList<String> strings){
+        /*TextView textView = (TextView) findViewById(R.id.submainactivity_textview);
         textView.setVisibility(View.GONE);
         Toolbar toolbar = (Toolbar) findViewById(R.id.tb_toolbar);
         toolbar.setVisibility(View.GONE);
@@ -300,24 +267,8 @@ public class SubMainActivity extends AppCompatActivity {
             ft.add(R.id.sub_fragment_container,dif);
         }
         ft.show(dif);
-        ft.commitAllowingStateLoss();
-    }
-
-    private void hideFragment(){
-        Toolbar toolbar = (Toolbar) findViewById(R.id.tb_toolbar);
-        toolbar.setVisibility(View.VISIBLE);
-        TextView textView = (TextView) findViewById(R.id.submainactivity_textview);
-        textView.setVisibility(View.GONE);
-        listView.setVisibility(View.VISIBLE);
-        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-        ft.hide(dif);
-        ft.remove(dif);
-        dif = null;
-        ft.commitAllowingStateLoss();
-    }
-
-    private void setIsNextListView(boolean isNextListView){
-        this.isNextListView = isNextListView;
+        ft.commitAllowingStateLoss();*/
+        DetailsInfoActivity.StartThisActivity(this,strings,i);
     }
 
     @Override
@@ -351,7 +302,7 @@ public class SubMainActivity extends AppCompatActivity {
         switch (type){
             case 0:
                 MyAsyncTask<getRepDetailsInfoResponse> myAsyncTask
-                        = new MyAsyncTask<getRepDetailsInfoResponse>(this,WebServiceConnector.METHOD_GETREPAIRDETAILSINFO,mProgressBar);
+                        = new MyAsyncTask<getRepDetailsInfoResponse>(this,WebServiceConnector.METHOD_GETREPAIRDETAILSINFO);
                 myAsyncTask.setListener(new getRepDetailsInfoResponse() {
                     @Override
                     public void getResult(ArrayList<String> result) {
@@ -366,21 +317,18 @@ public class SubMainActivity extends AppCompatActivity {
                                 (String[])result.toArray(new String[result.size()])
                         );
                         listView.setAdapter(adapter);*/
-                        String bmp = PhotoUtil.convertIconToString((Bitmap)map.get("bmp"));
                         ArrayList<String> formatResult = new ArrayList<String>();
-                        formatResult.add(bmp);
+                        formatResult.add("");
                         for(int i = 0;i<result.size();i++)
                             formatResult.add(result.get(i));
-                        showFragment(formatResult);
-                        setIsNextListView(true);
-                        Log.d(TAG,"isNextListView:"+Boolean.toString(isNextListView));
+                        startNextActivity(formatResult);
                     }
                 });
                 myAsyncTask.execute(paramType,param);
                 break;
             case 1:
                 MyAsyncTask<getSLSDetailsInfoResponse> myAsyncTask1
-                        = new MyAsyncTask<getSLSDetailsInfoResponse>(this,WebServiceConnector.METHOD_GETSLSDETAILSINFO,mProgressBar);
+                        = new MyAsyncTask<getSLSDetailsInfoResponse>(this,WebServiceConnector.METHOD_GETSLSDETAILSINFO);
                 myAsyncTask1.setListener(new getSLSDetailsInfoResponse() {
                     @Override
                     public void getResult(ArrayList<String> result) {
@@ -395,15 +343,20 @@ public class SubMainActivity extends AppCompatActivity {
                                 (String[])result.toArray(new String[result.size()])
                         );
                         listView.setAdapter(adapter);*/
-                        showFragment(result);
-                        setIsNextListView(true);
+                        ArrayList<String> formatResult = new ArrayList<String>();
+                        formatResult.add("");
+                        formatResult.add(result.get(0));
+                        formatResult.add(DateUtil.FormatDate(result.get(1),"yyyy/MM/dd")+" - "+DateUtil.FormatDate(result.get(2),"yyyy/MM/dd"));
+                        formatResult.add(result.get(3));
+                        formatResult.add(result.get(4));
+                        startNextActivity(formatResult);
                     }
                 });
                 myAsyncTask1.execute(paramType,param);
                 break;
             case 2:
                 MyAsyncTask<getRLDetailsInfoResponse> myAsyncTask2
-                        = new MyAsyncTask<getRLDetailsInfoResponse>(this,WebServiceConnector.METHOD_GETRLDETAILSINFO,mProgressBar);
+                        = new MyAsyncTask<getRLDetailsInfoResponse>(this,WebServiceConnector.METHOD_GETRLDETAILSINFO);
                 myAsyncTask2.setListener(new getRLDetailsInfoResponse() {
                     @Override
                     public void getResult(ArrayList<String> result) {
@@ -418,8 +371,7 @@ public class SubMainActivity extends AppCompatActivity {
                                 (String[])result.toArray(new String[result.size()])
                         );
                         listView.setAdapter(adapter);*/
-                        showFragment(result);
-                        setIsNextListView(true);
+                        startNextActivity(result);
                     }
                 });
                 myAsyncTask2.execute(paramType,param);
