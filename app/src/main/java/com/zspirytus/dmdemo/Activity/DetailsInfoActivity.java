@@ -1,6 +1,7 @@
 package com.zspirytus.dmdemo.Activity;
 
 import android.app.Activity;
+import android.app.DatePickerDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -23,6 +24,7 @@ import android.widget.SimpleAdapter;
 import android.widget.TextView;
 
 import com.zspirytus.dmdemo.Interface.getBooleanTypeResponse;
+import com.zspirytus.dmdemo.JavaSource.Utils.DateUtil;
 import com.zspirytus.dmdemo.JavaSource.Utils.DialogUtil;
 import com.zspirytus.dmdemo.JavaSource.Utils.PhotoUtil;
 import com.zspirytus.dmdemo.JavaSource.WebServiceUtils.SyncTask.MyAsyncTask;
@@ -234,16 +236,24 @@ public class DetailsInfoActivity extends AppCompatActivity {
     }
 
     public void UpdateForRL(){
-        final AlertDialog.Builder dialog = DialogUtil.getCustomDialog(this,R.layout.layout_updatedialogforrl);
-        final View dialogView = LayoutInflater.from(this)
+        final View dialogView = LayoutInflater.from(activity)
                 .inflate(R.layout.layout_updatedialogforrl,null);
-        dialog.setPositiveButton("确定",
+        AlertDialog.Builder customizeDialog =
+                new AlertDialog.Builder(activity);
+        customizeDialog.setView(dialogView);
+        final TextView time = (TextView)dialogView.findViewById(R.id.sub_returnTime);
+        final EditText reason = (EditText) dialogView.findViewById(R.id.sub_reason1);
+        final TextView rno = (TextView) findViewById(R.id.detailsinfoactivity_textview);
+        time.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                DialogUtil.DatePicker(activity,time);
+            }
+        });
+        customizeDialog.setPositiveButton("确定",
                 new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
-                        EditText time = dialogView.findViewById(R.id.sub_returnTime);
-                        EditText reason = dialogView.findViewById(R.id.sub_reason1);
-                        TextView rno = (TextView) findViewById(R.id.detailsinfoactivity_textview);
                         String timeStr = time.getText().toString();
                         String reasonStr = reason.getText().toString();
                         ArrayList<String> paramType = new ArrayList<String>();
@@ -260,18 +270,20 @@ public class DetailsInfoActivity extends AppCompatActivity {
                             requestParams.add(WebServiceConnector.SQL_REASON);
                         else
                             requestParams.add(reasonStr);
+                        for (int x = 0;x<requestParams.size();x++)
+                            Log.d(TAG,"requestParamsss:\t"+requestParams.get(x));
                         doTask(paramType,requestParams);
                     }
                 });
-        dialog.setNegativeButton("取消",
+        customizeDialog.setNegativeButton("取消",
                 new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
 
                     }
                 });
-        dialog.setCancelable(false);
-        dialog.show();
+        customizeDialog.setCancelable(false);
+        customizeDialog.show();
     }
 
     public void doTask(ArrayList<String> paramType,ArrayList<String> request){

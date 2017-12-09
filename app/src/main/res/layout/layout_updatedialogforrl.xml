@@ -19,8 +19,8 @@
         <TextView
             android:id="@+id/sub_returnTime"
             android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="4.5"
+            android:layout_height="37dp"
+            android:layout_weight="4.50"
             android:background="@null"
             android:gravity="center"
             android:hint="@string/Return_Time"

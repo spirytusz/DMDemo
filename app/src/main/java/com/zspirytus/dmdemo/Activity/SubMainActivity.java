@@ -332,6 +332,10 @@ public class SubMainActivity extends AppCompatActivity {
                 myAsyncTask1.setListener(new getSLSDetailsInfoResponse() {
                     @Override
                     public void getResult(ArrayList<String> result) {
+                        if (result == null){
+                            DialogUtil.showNegativeTipsDialog(activity);
+                            return;
+                        }
                         /*String formatResult = "";
                         for(String item:result){
                             formatResult = formatResult + item + "\n";
@@ -360,6 +364,10 @@ public class SubMainActivity extends AppCompatActivity {
                 myAsyncTask2.setListener(new getRLDetailsInfoResponse() {
                     @Override
                     public void getResult(ArrayList<String> result) {
+                        if (result == null || result.size() == 0){
+                            DialogUtil.showNegativeTipsDialog(activity);
+                            return;
+                        }
                         /*String formatResult = "";
                         for(String item:result){
                             formatResult = formatResult + item + "\n";
@@ -371,7 +379,11 @@ public class SubMainActivity extends AppCompatActivity {
                                 (String[])result.toArray(new String[result.size()])
                         );
                         listView.setAdapter(adapter);*/
-                        startNextActivity(result);
+                        ArrayList<String> formatResult = new ArrayList<String>();
+                        formatResult.add("");
+                        for(int i = 0;i<result.size();i++)
+                            formatResult.add(result.get(i));
+                        startNextActivity(formatResult);
                     }
                 });
                 myAsyncTask2.execute(paramType,param);
