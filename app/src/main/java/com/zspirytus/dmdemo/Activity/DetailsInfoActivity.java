@@ -169,7 +169,7 @@ public class DetailsInfoActivity extends AppCompatActivity {
                             requestParams.add(WebServiceConnector.SQL_CONTACT);
                         else
                             requestParams.add(contactText);
-                        doTask(paramType,requestParams);
+                        doTask(paramType,requestParams,0);
                     }
                 });
         customizeDialog.setNegativeButton("取消",
@@ -189,14 +189,26 @@ public class DetailsInfoActivity extends AppCompatActivity {
         AlertDialog.Builder customizeDialog =
                 new AlertDialog.Builder(activity);
         customizeDialog.setView(dialogView);
+        final EditText reason = dialogView.findViewById(R.id.sub_reason);
+        final TextView startTime = dialogView.findViewById(R.id.sub_start_time);
+        startTime.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                DialogUtil.DatePicker(activity,startTime);
+            }
+        });
+        final TextView endTime = dialogView.findViewById(R.id.sub_end_time);
+        endTime.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                DialogUtil.DatePicker(activity,endTime);
+            }
+        });
+        final TextView rno = (TextView) findViewById(R.id.detailsinfoactivity_textview);
         customizeDialog.setPositiveButton("确定",
                 new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
-                        EditText reason = dialogView.findViewById(R.id.sub_reason);
-                        TextView startTime = dialogView.findViewById(R.id.sub_start_time);
-                        TextView endTime = dialogView.findViewById(R.id.sub_end_time);
-                        TextView rno = (TextView) findViewById(R.id.detailsinfoactivity_textview);
                         String startTimeStr = startTime.getText().toString();
                         String endTimeStr = endTime.getText().toString();
                         String reasonStr = reason.getText().toString();
@@ -220,8 +232,8 @@ public class DetailsInfoActivity extends AppCompatActivity {
                         else
                             requestParams.add(reasonStr);
                         for(int x = 0;x<requestParams.size();x++)
-                            Log.d(TAG,"requestParamss:\t"+requestParams.get(x));
-                        doTask(paramType,requestParams);
+                            Log.d(TAG,"requestParam1:\t"+requestParams.get(x));
+                        doTask(paramType,requestParams,1);
                     }
                 });
         customizeDialog.setNegativeButton("取消",
@@ -247,7 +259,7 @@ public class DetailsInfoActivity extends AppCompatActivity {
         time.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                DialogUtil.DatePicker(activity,time);
+                DialogUtil.TimePicker(activity,time);
             }
         });
         customizeDialog.setPositiveButton("确定",
@@ -271,8 +283,8 @@ public class DetailsInfoActivity extends AppCompatActivity {
                         else
                             requestParams.add(reasonStr);
                         for (int x = 0;x<requestParams.size();x++)
-                            Log.d(TAG,"requestParamsss:\t"+requestParams.get(x));
-                        doTask(paramType,requestParams);
+                            Log.d(TAG,"requestParam2:\t"+requestParams.get(x));
+                        doTask(paramType,requestParams,2);
                     }
                 });
         customizeDialog.setNegativeButton("取消",
@@ -286,8 +298,19 @@ public class DetailsInfoActivity extends AppCompatActivity {
         customizeDialog.show();
     }
 
-    public void doTask(ArrayList<String> paramType,ArrayList<String> request){
-        MyAsyncTask<getBooleanTypeResponse> myAsyncTask = new MyAsyncTask<getBooleanTypeResponse>(this, WebServiceConnector.METHOD_UPDATEREP);
+    public void doTask(ArrayList<String> paramType,ArrayList<String> request,int type){
+        MyAsyncTask<getBooleanTypeResponse> myAsyncTask = null;
+        switch(type){
+            case 0:
+                myAsyncTask = new MyAsyncTask<getBooleanTypeResponse>(this, WebServiceConnector.METHOD_UPDATEREP);
+                break;
+            case 1:
+                myAsyncTask = new MyAsyncTask<getBooleanTypeResponse>(this, WebServiceConnector.METHOD_UPDATEELS);
+                break;
+            case 2:
+                myAsyncTask = new MyAsyncTask<getBooleanTypeResponse>(this, WebServiceConnector.METHOD_UPDATERL);
+                break;
+        }
         myAsyncTask.setListener(new getBooleanTypeResponse() {
             @Override
             public void showDialog(ArrayList<String> result) {
