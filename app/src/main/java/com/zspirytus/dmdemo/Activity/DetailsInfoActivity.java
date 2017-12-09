@@ -1,12 +1,9 @@
 package com.zspirytus.dmdemo.Activity;
 
 import android.app.Activity;
-import android.app.DatePickerDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.nfc.Tag;
-import android.preference.DialogPreference;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -20,7 +17,6 @@ import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
-import android.widget.SimpleAdapter;
 import android.widget.TextView;
 
 import com.zspirytus.dmdemo.Interface.getBooleanTypeResponse;

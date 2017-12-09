@@ -1,6 +1,5 @@
 package com.zspirytus.dmdemo.JavaSource.Utils;
 
-import android.util.Log;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;

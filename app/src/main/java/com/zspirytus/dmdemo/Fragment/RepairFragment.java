@@ -25,9 +25,7 @@ import com.zspirytus.dmdemo.JavaSource.WebServiceUtils.WebServiceConnector;
 import com.zspirytus.dmdemo.R;
 
 import java.io.File;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 
 /**
  * Created by 97890 on 2017/9/17.
