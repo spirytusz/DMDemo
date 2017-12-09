@@ -276,8 +276,16 @@ public class DetailsInfoActivity extends AppCompatActivity {
                         requestParams.add(rno.getText().toString());
                         if (timeStr.equals(""))
                             requestParams.add(WebServiceConnector.SQL_RETURNTIME);
-                        else
+                        else {
+                            timeStr = DateUtil.getNowYear_int()
+                                    + "-" + DateUtil.getNowMonth_int()
+                                    + "-" + DateUtil.getNowDay_int()
+                                    + " " + timeStr
+                                    + ":00";
+                            if (DateUtil.isNextDay(timeStr,"yyyy-MM-dd HH:mm:ss"))
+                                timeStr = DateUtil.AddOneDay(timeStr, 1, "yyyy-MM-dd HH:mm:ss");
                             requestParams.add(timeStr);
+                        }
                         if (reasonStr.equals(""))
                             requestParams.add(WebServiceConnector.SQL_REASON);
                         else
