@@ -38,6 +38,9 @@ public class WebServiceConnector {
     public static final String METHOD_UPDATEREP = "updateRepair";
     public static final String METHOD_UPDATEELS = "updateSLS";
     public static final String METHOD_UPDATERL = "updateReturnLately";
+    public static final String METHOD_DELETEREP = "";
+    public static final String METHOD_DELETEELS = "";
+    public static final String METHOD_DELETERL = "";
 
     public static final String PARAMTYPE_SNO = "Sno";
     public static final String PARAMTYPE_ACCOUNT = "account";
@@ -56,6 +59,7 @@ public class WebServiceConnector {
     public static final String PARAMTYPE_RETURNTIME = "returnTime";
     public static final String PARAMTYPE_REPORTDATE = "reportDate";
     public static final String PARAMTYPE_SLSNO = "SLSNo";
+    public static final String PARAMTYPE_DELETENO = "deleteNo";
 
     public static final String SQL_REPAIRPLACE = "RepairPlace";
     public static final String SQL_REPAIRTYPE = "RepairType";

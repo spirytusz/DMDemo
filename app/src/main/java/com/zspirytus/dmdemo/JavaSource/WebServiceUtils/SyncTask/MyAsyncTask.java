@@ -27,7 +27,7 @@ import java.util.ArrayList;
  * Created by ZSpirytus on 2017/11/4.
  */
 
-public class MyAsyncTask<T> extends AsyncTask<ArrayList<String>, Integer, ArrayList<String>> {
+public class MyAsyncTask<T> extends AsyncTask<ArrayList<String>, Void, ArrayList<String>> {
 
     public T response;
 
@@ -73,6 +73,14 @@ public class MyAsyncTask<T> extends AsyncTask<ArrayList<String>, Integer, ArrayL
         ArrayList<String> result = WebServiceConnector.executingMethod(methodName, paramType,param);
         Log.d(TAG,"AsyncTask doInBackground Test:\t"+Boolean.toString(result == null));
         return result;
+    }
+
+    @Override
+    public void onProgressUpdate(Void...param)
+    {
+        //Task被取消了，不再继续执行后面的代码
+        if(isCancelled())
+            return;
     }
 
     @Override

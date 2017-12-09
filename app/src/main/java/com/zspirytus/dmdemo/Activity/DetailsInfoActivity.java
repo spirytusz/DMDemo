@@ -17,9 +17,14 @@ import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.ProgressBar;
+import android.widget.SimpleAdapter;
 import android.widget.TextView;
 
 import com.zspirytus.dmdemo.Interface.getBooleanTypeResponse;
+import com.zspirytus.dmdemo.Interface.getRLDetailsInfoResponse;
+import com.zspirytus.dmdemo.Interface.getRepDetailsInfoResponse;
+import com.zspirytus.dmdemo.Interface.getSLSDetailsInfoResponse;
 import com.zspirytus.dmdemo.JavaSource.Utils.DateUtil;
 import com.zspirytus.dmdemo.JavaSource.Utils.DialogUtil;
 import com.zspirytus.dmdemo.JavaSource.Utils.PhotoUtil;
@@ -32,8 +37,9 @@ import java.util.ArrayList;
 public class DetailsInfoActivity extends AppCompatActivity {
 
     private static final String TAG = "DetailsInfoActivity";
-    private static final String infoKey = "info";
+    private static final String PrimaryKey = "primaryKey";
     private static final String typeKey = "type";
+
 
     private final Activity activity = this;
 
@@ -43,6 +49,7 @@ public class DetailsInfoActivity extends AppCompatActivity {
         setContentView(R.layout.activity_details_info);
         Log.e(TAG,TAG+"\tStart!");
         LoadPane();
+        GetMessage();
     }
 
     @Override
@@ -70,6 +77,7 @@ public class DetailsInfoActivity extends AppCompatActivity {
                 }
                 break;
             case R.id.dlf_delete:
+                Delete();
                 break;
         }
         return super.onOptionsItemSelected(item);
@@ -86,26 +94,97 @@ public class DetailsInfoActivity extends AppCompatActivity {
                 finish();
             }
         });
-        LoadInfo();
     }
 
-    private void LoadInfo(){
+    private void LoadInfo(ArrayList<String> result){
         ImageView imageView = (ImageView) findViewById(R.id.detailsinfoactivity_imageview);
         TextView textView = (TextView) findViewById(R.id.detailsinfoactivity_textview);
         ListView listView = (ListView) findViewById(R.id.detailsiinfoactivity_listview);
-        ArrayList<String> info = getIntent().getStringArrayListExtra(infoKey);
-        Log.d(TAG,TAG+"1234567\t"+info.size());
-        imageView.setImageBitmap(PhotoUtil.convertStringToIcon(info.get(0)));
-        textView.setText(info.get(1));
-        String[] listViewItem = new String[info.size()-2];
-        for(int i = 2;i<info.size();i++)
-            listViewItem[i-2] = info.get(i);
+        imageView.setImageBitmap(PhotoUtil.convertStringToIcon(result.get(0)));
+        textView.setText(result.get(1));
+        String[] listViewItem = new String[result.size()-2];
+        for(int i = 2;i<result.size();i++)
+            listViewItem[i-2] = result.get(i);
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(
                 this,
                 android.R.layout.simple_list_item_1,
                 listViewItem
         );
         listView.setAdapter(adapter);
+    }
+
+    private void GetMessage(){
+        Intent intent = getIntent();
+        String primaryKey = intent.getStringExtra(PrimaryKey);
+        int type = intent.getIntExtra(typeKey,-1);
+        doTask(primaryKey,type);
+    }
+
+    private void doTask(final String primaryKey,int type){
+        ArrayList<String> paramType = new ArrayList<>();
+        ArrayList<String> param = new ArrayList<>();
+        paramType.add(WebServiceConnector.PARAMTYPE_RNO);
+        param.add(primaryKey);
+        final ProgressBar progressBar = (ProgressBar) findViewById(R.id.detailinfo_progressbar);
+        switch (type){
+            case 0:
+                MyAsyncTask<getRepDetailsInfoResponse> myAsyncTask
+                        = new MyAsyncTask<getRepDetailsInfoResponse>(this,WebServiceConnector.METHOD_GETREPAIRDETAILSINFO,progressBar);
+                myAsyncTask.setListener(new getRepDetailsInfoResponse() {
+                    @Override
+                    public void getResult(ArrayList<String> result) {
+                        ArrayList<String> formatResult = new ArrayList<String>();
+                        for(int i = 0;i<result.size();i++)
+                            formatResult.add(result.get(i));
+                        //Refresh UI
+                        LoadInfo(formatResult);
+                    }
+                });
+                myAsyncTask.execute(paramType,param);
+                break;
+            case 1:
+                MyAsyncTask<getSLSDetailsInfoResponse> myAsyncTask1
+                        = new MyAsyncTask<getSLSDetailsInfoResponse>(this,WebServiceConnector.METHOD_GETSLSDETAILSINFO,progressBar);
+                myAsyncTask1.setListener(new getSLSDetailsInfoResponse() {
+                    @Override
+                    public void getResult(ArrayList<String> result) {
+                        if (result == null){
+                            DialogUtil.showNegativeTipsDialog(activity);
+                            return;
+                        }
+                        ArrayList<String> formatResult = new ArrayList<String>();
+                        formatResult.add("");
+                        formatResult.add(result.get(0));
+                        formatResult.add(DateUtil.FormatDate(result.get(1),"yyyy/MM/dd")+" - "+DateUtil.FormatDate(result.get(2),"yyyy/MM/dd"));
+                        formatResult.add(result.get(3));
+                        formatResult.add(result.get(4));
+                        //Refresh UI
+                        LoadInfo(formatResult);
+                    }
+                });
+                myAsyncTask1.execute(paramType,param);
+                break;
+            case 2:
+                MyAsyncTask<getRLDetailsInfoResponse> myAsyncTask2
+                        = new MyAsyncTask<getRLDetailsInfoResponse>(this,WebServiceConnector.METHOD_GETRLDETAILSINFO,progressBar);
+                myAsyncTask2.setListener(new getRLDetailsInfoResponse() {
+                    @Override
+                    public void getResult(ArrayList<String> result) {
+                        if (result == null || result.size() == 0){
+                            DialogUtil.showNegativeTipsDialog(activity);
+                            return;
+                        }
+                        ArrayList<String> formatResult = new ArrayList<String>();
+                        formatResult.add("");
+                        for(int i = 0;i<result.size();i++)
+                            formatResult.add(result.get(i));
+                        //Refresh UI
+                        LoadInfo(formatResult);
+                    }
+                });
+                myAsyncTask2.execute(paramType,param);
+                break;
+        }
     }
 
     public void UpdateForRep(){
@@ -165,7 +244,7 @@ public class DetailsInfoActivity extends AppCompatActivity {
                             requestParams.add(WebServiceConnector.SQL_CONTACT);
                         else
                             requestParams.add(contactText);
-                        doTask(paramType,requestParams,0);
+                        Update(paramType,requestParams,0);
                     }
                 });
         customizeDialog.setNegativeButton("取消",
@@ -229,7 +308,7 @@ public class DetailsInfoActivity extends AppCompatActivity {
                             requestParams.add(reasonStr);
                         for(int x = 0;x<requestParams.size();x++)
                             Log.d(TAG,"requestParam1:\t"+requestParams.get(x));
-                        doTask(paramType,requestParams,1);
+                        Update(paramType,requestParams,1);
                     }
                 });
         customizeDialog.setNegativeButton("取消",
@@ -288,7 +367,7 @@ public class DetailsInfoActivity extends AppCompatActivity {
                             requestParams.add(reasonStr);
                         for (int x = 0;x<requestParams.size();x++)
                             Log.d(TAG,"requestParam2:\t"+requestParams.get(x));
-                        doTask(paramType,requestParams,2);
+                        Update(paramType,requestParams,2);
                     }
                 });
         customizeDialog.setNegativeButton("取消",
@@ -302,7 +381,7 @@ public class DetailsInfoActivity extends AppCompatActivity {
         customizeDialog.show();
     }
 
-    public void doTask(ArrayList<String> paramType,ArrayList<String> request,int type){
+    public void Update(ArrayList<String> paramType,ArrayList<String> request,int type){
         MyAsyncTask<getBooleanTypeResponse> myAsyncTask = null;
         switch(type){
             case 0:
@@ -329,9 +408,91 @@ public class DetailsInfoActivity extends AppCompatActivity {
         myAsyncTask.execute(paramType,request);
     }
 
-    public static void StartThisActivity(Context context, ArrayList<String> info, int type){
+    /*private void showDeleteTipsDialog(){
+        AlertDialog.Builder dialog = new AlertDialog.Builder(activity);
+        dialog.setTitle("提示");
+        dialog.setMessage("删除");
+        dialog.setPositiveButton("确定",
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+
+                    }
+                });
+        dialog.setNegativeButton("取消",
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+
+                    }
+                });
+        dialog.show();
+    }*/
+
+    private void Delete(){
+        Intent intent = getIntent();
+        String primaryKey = intent.getStringExtra(PrimaryKey);
+        int type = intent.getIntExtra(typeKey,-1);
+        Delete(primaryKey,type);
+    }
+
+    private void Delete(final String primaryKey,final int type){
+        AlertDialog.Builder dialog = new AlertDialog.Builder(activity);
+        dialog.setTitle("提示");
+        dialog.setMessage("删除记录: "+primaryKey+" 吗?");
+        dialog.setPositiveButton("确定",
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+
+                    }
+                });
+        dialog.setNegativeButton("取消",
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+
+                    }
+                });
+        dialog.show();
+    }
+
+    private void doDelete(final String primaryKey,final int type){
+        MyAsyncTask<getBooleanTypeResponse> myAsyncTask = null;
+        ArrayList<String> paramType = new ArrayList<>();
+        ArrayList<String> requestParams = new ArrayList<>();
+        paramType.add(WebServiceConnector.PARAMTYPE_DELETENO);
+        requestParams.add(primaryKey);
+        switch (type){
+            case 0:
+                myAsyncTask = new MyAsyncTask<getBooleanTypeResponse>(activity,WebServiceConnector.METHOD_DELETEREP);
+                break;
+            case 1:
+                myAsyncTask = new MyAsyncTask<getBooleanTypeResponse>(activity,WebServiceConnector.METHOD_DELETEELS);
+                break;
+            case 2:
+                myAsyncTask = new MyAsyncTask<getBooleanTypeResponse>(activity,WebServiceConnector.METHOD_DELETERL);
+                break;
+            default:
+                break;
+        }
+        myAsyncTask.setListener(new getBooleanTypeResponse() {
+            @Override
+            public void showDialog(ArrayList<String> result) {
+                if(result == null||result.size() == 0){
+                    DialogUtil.showNegativeTipsDialog(activity,"响应失败");
+                    return;
+                }
+                boolean isSuccess = result.get(0).replaceAll("\r|\n|\t","").equals("true");
+                DialogUtil.showResultDialog(activity,isSuccess);
+            }
+        });
+        myAsyncTask.execute(paramType,requestParams);
+    }
+
+    public static void StartThisActivity(Context context, String primaryKey, int type){
         Intent intent = new Intent(context,DetailsInfoActivity.class);
-        intent.putExtra(infoKey,info);
+        intent.putExtra(PrimaryKey,primaryKey);
         intent.putExtra(typeKey,type);
         context.startActivity(intent);
     }

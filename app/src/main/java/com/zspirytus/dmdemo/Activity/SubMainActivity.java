@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
@@ -54,6 +55,11 @@ public class SubMainActivity extends AppCompatActivity {
     private ArrayList<String> pictures = null;
     private ArrayList<String> texts = null;
 
+    private MyAsyncTask<getRepBasInfoResponse> myAsyncTaskForRep;
+    private MyAsyncTask<getRepPicResponse> myAsyncTaskForRepPic;
+    private MyAsyncTask<getSLSInfoResponse> myAsyncTaskForSLS;
+    private MyAsyncTask<getRLInfoResponse> myAsyncTaskForRL;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -74,6 +80,28 @@ public class SubMainActivity extends AppCompatActivity {
         Log.e(TAG,TAG+"OptionMenu");
         getMenuInflater().inflate(R.menu.blank, menu);
         return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public void onDestroy(){
+        ActivityManager.removeActivity(this);
+        cancelTask();
+        super.onDestroy();
+    }
+
+    private void cancelTask(){
+        if(myAsyncTaskForRep != null && myAsyncTaskForRep.getStatus() == AsyncTask.Status.RUNNING){
+            myAsyncTaskForRep.cancel(true);
+        }
+        if(myAsyncTaskForRepPic != null && myAsyncTaskForRepPic.getStatus() == AsyncTask.Status.RUNNING){
+            myAsyncTaskForRepPic.cancel(true);
+        }
+        if(myAsyncTaskForSLS != null && myAsyncTaskForSLS.getStatus() == AsyncTask.Status.RUNNING){
+            myAsyncTaskForSLS.cancel(true);
+        }
+        if(myAsyncTaskForRL != null && myAsyncTaskForRL.getStatus() == AsyncTask.Status.RUNNING){
+            myAsyncTaskForRL.cancel(true);
+        }
     }
 
     /*@Override
@@ -132,9 +160,9 @@ public class SubMainActivity extends AppCompatActivity {
     }
 
     private void getRepResponse(){
-        MyAsyncTask<getRepBasInfoResponse> myAsyncTask
+        myAsyncTaskForRep
                 = new MyAsyncTask<getRepBasInfoResponse>(this, WebServiceConnector.METHOD_GETREPAIRBASICINFOBYSNO);
-        myAsyncTask.setListener(new getRepBasInfoResponse() {
+        myAsyncTaskForRep.setListener(new getRepBasInfoResponse() {
             @Override
             public void getResult(ArrayList<String> result) {
                 if(result == null){
@@ -152,25 +180,25 @@ public class SubMainActivity extends AppCompatActivity {
                 setRepInfoText(result);
             }
         });
-        myAsyncTask.execute(getParamType(),getInput());
+        myAsyncTaskForRep.execute(getParamType(),getInput());
     }
 
     private void getRepPicResponse(){
-        MyAsyncTask<getRepPicResponse> myAsyncTask = new MyAsyncTask<getRepPicResponse>(this,WebServiceConnector.METHOD_GETREPBASICINFOBMP);
-        myAsyncTask.setListener(new getRepPicResponse() {
+        myAsyncTaskForRepPic = new MyAsyncTask<getRepPicResponse>(this,WebServiceConnector.METHOD_GETREPBASICINFOBMP);
+        myAsyncTaskForRepPic.setListener(new getRepPicResponse() {
             @Override
             public void getResult(ArrayList<String> result) {
                 setRepInfoPic(result);
                 RefreshUI(getRepInfoText());
             }
         });
-        myAsyncTask.execute(getParamType(),getInput());
+        myAsyncTaskForRepPic.execute(getParamType(),getInput());
     }
 
     private void getSLSResponse(){
-        MyAsyncTask<getSLSInfoResponse> myAsyncTask
+        myAsyncTaskForSLS
                 = new MyAsyncTask<getSLSInfoResponse>(this, WebServiceConnector.METHOD_GETSLSBASICINFO);
-        myAsyncTask.setListener(new getSLSInfoResponse() {
+        myAsyncTaskForSLS.setListener(new getSLSInfoResponse() {
             @Override
             public void getResult(ArrayList<String> result) {
                 if(result == null){
@@ -186,13 +214,13 @@ public class SubMainActivity extends AppCompatActivity {
                 RefreshUI(result);
             }
         });
-        myAsyncTask.execute(getParamType(),getInput());
+        myAsyncTaskForSLS.execute(getParamType(),getInput());
     }
 
     private void getRLResponse(){
-        MyAsyncTask<getRLInfoResponse> myAsyncTask
+        myAsyncTaskForRL
                 = new MyAsyncTask<getRLInfoResponse>(this, WebServiceConnector.METHOD_GETRETURNLATELYBASICINFO);
-        myAsyncTask.setListener(new getRLInfoResponse() {
+        myAsyncTaskForRL.setListener(new getRLInfoResponse() {
             @Override
             public void getResult(ArrayList<String> result) {
                 if(result == null){
@@ -208,7 +236,7 @@ public class SubMainActivity extends AppCompatActivity {
                 RefreshUI(result);
             }
         });
-        myAsyncTask.execute(getParamType(),getInput());
+        myAsyncTaskForRL.execute(getParamType(),getInput());
     }
 
     private ArrayList<String> getParamType(){
@@ -233,7 +261,8 @@ public class SubMainActivity extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 HashMap<String,Object> map=(HashMap<String,Object>)adapterView.getItemAtPosition(i);
-                doTask(map,type);
+                String primaryKey = (String)map.get("title");
+                DetailsInfoActivity.StartThisActivity(activity,primaryKey,type);
             }
         });
     }
@@ -252,142 +281,6 @@ public class SubMainActivity extends AppCompatActivity {
 
     private ArrayList<String> getRepInfoPic(){
         return pictures;
-    }
-
-    private void startNextActivity(ArrayList<String> strings){
-        /*TextView textView = (TextView) findViewById(R.id.submainactivity_textview);
-        textView.setVisibility(View.GONE);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.tb_toolbar);
-        toolbar.setVisibility(View.GONE);
-        listView.setVisibility(View.GONE);
-        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-        if(dif == null){
-            dif = DetailsInfoFragment.GetThisFragment(strings,i);
-            ft.add(R.id.sub_fragment_container,dif);
-        }
-        ft.show(dif);
-        ft.commitAllowingStateLoss();*/
-        DetailsInfoActivity.StartThisActivity(this,strings,i);
-    }
-
-    @Override
-    public void onDestroy(){
-        ActivityManager.removeActivity(this);
-        super.onDestroy();
-    }
-
-    /*@Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case android.R.id.home:
-                Log.d(TAG,"isNextListView back:"+Boolean.toString(isNextListView));
-                if(isNextListView){
-                    listView.setAdapter(mBasicInfoAdapter);
-                    setIsNextListView(false);
-                } else {
-                    finish();
-                }
-                break;
-        }
-        return super.onOptionsItemSelected(item);
-    }*/
-
-    private void doTask(final HashMap<String,Object> map,int type){
-        final ListView listView = (ListView) findViewById(R.id.submainactivity_listview);
-        ArrayList<String> paramType = new ArrayList<>();
-        ArrayList<String> param = new ArrayList<>();
-        paramType.add(WebServiceConnector.PARAMTYPE_RNO);
-        param.add((String)map.get("title"));
-        switch (type){
-            case 0:
-                MyAsyncTask<getRepDetailsInfoResponse> myAsyncTask
-                        = new MyAsyncTask<getRepDetailsInfoResponse>(this,WebServiceConnector.METHOD_GETREPAIRDETAILSINFO);
-                myAsyncTask.setListener(new getRepDetailsInfoResponse() {
-                    @Override
-                    public void getResult(ArrayList<String> result) {
-                        /*String formatResult = "";
-                        for(String item:result){
-                            formatResult = formatResult + item + "\n";
-                        }
-                        //Toast.makeText(activity,formatResult,Toast.LENGTH_SHORT).show();
-                        ArrayAdapter<String> adapter = new ArrayAdapter<String>(
-                                SubMainActivity.this,
-                                android.R.layout.simple_list_item_1,
-                                (String[])result.toArray(new String[result.size()])
-                        );
-                        listView.setAdapter(adapter);*/
-                        ArrayList<String> formatResult = new ArrayList<String>();
-                        formatResult.add("");
-                        for(int i = 0;i<result.size();i++)
-                            formatResult.add(result.get(i));
-                        startNextActivity(formatResult);
-                    }
-                });
-                myAsyncTask.execute(paramType,param);
-                break;
-            case 1:
-                MyAsyncTask<getSLSDetailsInfoResponse> myAsyncTask1
-                        = new MyAsyncTask<getSLSDetailsInfoResponse>(this,WebServiceConnector.METHOD_GETSLSDETAILSINFO);
-                myAsyncTask1.setListener(new getSLSDetailsInfoResponse() {
-                    @Override
-                    public void getResult(ArrayList<String> result) {
-                        if (result == null){
-                            DialogUtil.showNegativeTipsDialog(activity);
-                            return;
-                        }
-                        /*String formatResult = "";
-                        for(String item:result){
-                            formatResult = formatResult + item + "\n";
-                        }
-                        //Toast.makeText(activity,formatResult,Toast.LENGTH_SHORT).show();
-                        ArrayAdapter<String> adapter = new ArrayAdapter<String>(
-                                SubMainActivity.this,
-                                android.R.layout.simple_list_item_1,
-                                (String[])result.toArray(new String[result.size()])
-                        );
-                        listView.setAdapter(adapter);*/
-                        ArrayList<String> formatResult = new ArrayList<String>();
-                        formatResult.add("");
-                        formatResult.add(result.get(0));
-                        formatResult.add(DateUtil.FormatDate(result.get(1),"yyyy/MM/dd")+" - "+DateUtil.FormatDate(result.get(2),"yyyy/MM/dd"));
-                        formatResult.add(result.get(3));
-                        formatResult.add(result.get(4));
-                        startNextActivity(formatResult);
-                    }
-                });
-                myAsyncTask1.execute(paramType,param);
-                break;
-            case 2:
-                MyAsyncTask<getRLDetailsInfoResponse> myAsyncTask2
-                        = new MyAsyncTask<getRLDetailsInfoResponse>(this,WebServiceConnector.METHOD_GETRLDETAILSINFO);
-                myAsyncTask2.setListener(new getRLDetailsInfoResponse() {
-                    @Override
-                    public void getResult(ArrayList<String> result) {
-                        if (result == null || result.size() == 0){
-                            DialogUtil.showNegativeTipsDialog(activity);
-                            return;
-                        }
-                        /*String formatResult = "";
-                        for(String item:result){
-                            formatResult = formatResult + item + "\n";
-                        }
-                        //Toast.makeText(activity,formatResult,Toast.LENGTH_SHORT).show();
-                        ArrayAdapter<String> adapter = new ArrayAdapter<String>(
-                                SubMainActivity.this,
-                                android.R.layout.simple_list_item_1,
-                                (String[])result.toArray(new String[result.size()])
-                        );
-                        listView.setAdapter(adapter);*/
-                        ArrayList<String> formatResult = new ArrayList<String>();
-                        formatResult.add("");
-                        for(int i = 0;i<result.size();i++)
-                            formatResult.add(result.get(i));
-                        startNextActivity(formatResult);
-                    }
-                });
-                myAsyncTask2.execute(paramType,param);
-                break;
-        }
     }
 
     private SimpleAdapter getAdapter(ArrayList<String> response){
