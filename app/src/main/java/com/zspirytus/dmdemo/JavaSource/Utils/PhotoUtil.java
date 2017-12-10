@@ -44,7 +44,7 @@ public class PhotoUtil {
     public static final File compressFileName = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/dmdemo/compress.jpg");
 
     public static final int AVATAR_QUALITY = 50;
-    public static final int REPAIRPHOTO_QUALITY = 70;
+    public static final int REPAIRPHOTO_QUALITY = 30;
     public static final int UPLOAD_MAXSIZE = 1024*100;
 
     private static final String TAG = "PhotoUtil";

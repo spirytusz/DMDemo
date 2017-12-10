@@ -43,6 +43,7 @@ import com.zspirytus.dmdemo.JavaSource.WebServiceUtils.WebServiceConnector;
 import com.zspirytus.dmdemo.R;
 import com.zspirytus.dmdemo.Reproduction.CircleImageView;
 
+import java.io.File;
 import java.util.ArrayList;
 
 public class MainActivity extends BaseActivity
@@ -232,7 +233,9 @@ public class MainActivity extends BaseActivity
                     //相册回调
                     picUri = data.getData();
                     if(isRepairPicDir){
-                        repairPicDir.setText(PhotoUtil.getRealFilePath(this,picUri));
+                        File compressFile = new File(PhotoUtil.getRealFilePath(this,picUri));
+                        PhotoUtil.saveCompressFile(compressFile,PhotoUtil.REPAIRPHOTO_QUALITY);
+                        repairPicDir.setText(PhotoUtil.compressFileName.getAbsolutePath());
                         break;
                     }
                     PhotoUtil.cropPicture(this, picUri);

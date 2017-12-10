@@ -515,12 +515,10 @@ public class DetailsInfoActivity extends AppCompatActivity {
                         new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i) {
-                                Intent intent = getIntent();
-                                intent.putExtra(PrimaryKey,primaryKey);
-                                setResult(0,intent);
-                                finish();
+                                activity.finish();
                             }
                         });
+                dialog.show();
             }
         });
         myAsyncTask.execute(paramType,requestParams);
