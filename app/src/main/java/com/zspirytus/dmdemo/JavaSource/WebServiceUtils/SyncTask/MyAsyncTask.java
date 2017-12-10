@@ -10,11 +10,14 @@ import android.widget.ProgressBar;
 import com.zspirytus.dmdemo.Interface.getAvatarResponse;
 import com.zspirytus.dmdemo.Interface.getBooleanTypeResponse;
 import com.zspirytus.dmdemo.Interface.getModRegResponse;
+import com.zspirytus.dmdemo.Interface.getRLBasicInfoByManager;
 import com.zspirytus.dmdemo.Interface.getRLDetailsInfoResponse;
 import com.zspirytus.dmdemo.Interface.getRLInfoResponse;
 import com.zspirytus.dmdemo.Interface.getRepBasInfoResponse;
+import com.zspirytus.dmdemo.Interface.getRepBasicInfoByManager;
 import com.zspirytus.dmdemo.Interface.getRepDetailsInfoResponse;
 import com.zspirytus.dmdemo.Interface.getRepPicResponse;
+import com.zspirytus.dmdemo.Interface.getSLSBasicInfoByManager;
 import com.zspirytus.dmdemo.Interface.getSLSDetailsInfoResponse;
 import com.zspirytus.dmdemo.Interface.getSLSInfoResponse;
 import com.zspirytus.dmdemo.Interface.getSnobyAccountResponse;
@@ -130,6 +133,15 @@ public class MyAsyncTask<T> extends AsyncTask<ArrayList<String>, Void, ArrayList
                 break;
             case WebServiceConnector.METHOD_GETREPBASICINFOBMP:
                 ((getRepPicResponse)response).getResult(result);
+                break;
+            case WebServiceConnector.METHOD_GETREPBASICBYMANAGER:
+                ((getRepBasicInfoByManager)response).getResult(result);
+                break;
+            case WebServiceConnector.METHOD_GETSLSBASICBYMANAGER:
+                ((getSLSBasicInfoByManager)response).getResult(result);
+                break;
+            case WebServiceConnector.METHOD_GETRLBASICBYMANAGER:
+                ((getRLBasicInfoByManager)response).getResult(result);
                 break;
             case WebServiceConnector.METHOD_NEWRETURNLATELY:
                 ((getBooleanTypeResponse)response).showDialog(result);

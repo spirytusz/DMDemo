@@ -126,7 +126,7 @@ public class LoginActivity extends BaseActivity {
         mButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                mAccountValue = mAccount.getText().toString();
+                /*mAccountValue = mAccount.getText().toString();
                 mPwdValue = mPwd.getText().toString();
                 if(!isEmpty(mAccount,mPwd)){
                     if(mCheckBox.isChecked()){
@@ -137,7 +137,8 @@ public class LoginActivity extends BaseActivity {
                         editor.apply();
                     }
                     StartNextActivity(mAccount.getText().toString(),mPwd.getText().toString());
-                }
+                }*/
+                AdminActivity.StartThisActivity(activity,"52811234100");
             }
         });
         mForget = (TextView) findViewById(R.id.forget_pwd);

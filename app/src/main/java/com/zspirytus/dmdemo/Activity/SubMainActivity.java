@@ -335,7 +335,7 @@ public class SubMainActivity extends AppCompatActivity {
                         rsf = new RSFListViewItem();
                         rsf.setmBitmap(BitmapFactory.decodeResource(getResources(),R.drawable.ic_directions_run_black_48dp));
                         rsf.setmTitle(result.get(i));
-                        rsf.setmTime(DateUtil.FormatDate(result.get(i+1),"yyyy/MM/dd")+"\t"+DateUtil.FormatDate(result.get(i+2),"yyyy/MM/dd"));
+                        rsf.setmTime(DateUtil.FormatDate(result.get(i+1),"yyyy/MM/dd")+" - "+DateUtil.FormatDate(result.get(i+2),"yyyy/MM/dd"));
                         list.add(rsf);
                     }
                     break;

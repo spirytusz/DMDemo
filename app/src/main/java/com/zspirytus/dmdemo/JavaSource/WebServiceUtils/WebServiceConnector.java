@@ -1,5 +1,7 @@
 package com.zspirytus.dmdemo.JavaSource.WebServiceUtils;
 
+import android.util.Log;
+
 import com.zspirytus.dmdemo.JavaSource.Utils.XmlUtil;
 
 import java.io.BufferedReader;
@@ -39,6 +41,9 @@ public class WebServiceConnector {
     public static final String METHOD_DELETEREP = "deleteRepair";
     public static final String METHOD_DELETEELS = "deleteSLS";
     public static final String METHOD_DELETERL = "deleteReturnLately";
+    public static final String METHOD_GETREPBASICBYMANAGER = "getRepBasicInfoByManager";
+    public static final String METHOD_GETSLSBASICBYMANAGER = "getSLSBasicInfoByManager";
+    public static final String METHOD_GETRLBASICBYMANAGER = "getRLBasicInfoByManager";
 
     public static final String PARAMTYPE_SNO = "Sno";
     public static final String PARAMTYPE_ACCOUNT = "account";
@@ -58,6 +63,7 @@ public class WebServiceConnector {
     public static final String PARAMTYPE_REPORTDATE = "reportDate";
     public static final String PARAMTYPE_SLSNO = "SLSNo";
     public static final String PARAMTYPE_DELETENO = "deleteNo";
+    public static final String PARAMTYPE_ENO = "Eno";
 
     public static final String SQL_REPAIRPLACE = "RepairPlace";
     public static final String SQL_REPAIRTYPE = "RepairType";
@@ -82,6 +88,7 @@ public class WebServiceConnector {
      */
     public static ArrayList<String> executingMethod(String methodName, ArrayList<String> paramType, ArrayList<String> param) {
         String request = getRequest(methodName, paramType, param);
+        Log.d(TAG,"requestTest:\t"+request);
         try {
             URL url = new URL(WSDL_URI);
             HttpURLConnection con = (HttpURLConnection) url.openConnection();
@@ -159,6 +166,7 @@ public class WebServiceConnector {
             while ((line = reader.readLine()) != null) {
                 str.append(line + "\n");
             }
+            Log.d(TAG,"responseTest:\t"+str.toString());
             return str.toString();
         } catch (IOException e) {
             e.printStackTrace();

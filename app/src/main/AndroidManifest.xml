@@ -39,14 +39,13 @@
         <activity
             android:name=".Activity.SubMainActivity"
             android:theme="@style/AppTheme.NoActionBar" />
-
         <activity android:name=".Activity.SubLoginActivity" />
-
         <activity
             android:name=".Activity.DetailsInfoActivity"
-            android:theme="@style/AppTheme.NoActionBar">
-
-        </activity>
+            android:theme="@style/AppTheme.NoActionBar"></activity>
+        <activity
+            android:name=".Activity.AdminActivity"
+            android:label="@string/title_activity_admin"></activity>
     </application>
 
 </manifest>

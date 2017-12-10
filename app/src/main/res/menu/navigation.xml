@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/navigation_rep"
+        android:icon="@drawable/ic_build_black_48dp"
+        android:title="@string/Repair" />
+
+    <item
+        android:id="@+id/navigation_sls"
+        android:icon="@drawable/ic_directions_run_black_24dp"
+        android:title="@string/Enrollment" />
+
+    <item
+        android:id="@+id/navigation_rl"
+        android:icon="@drawable/ic_av_timer_black_48dp"
+        android:title="@string/Back_late" />
+
+</menu>
