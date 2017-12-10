@@ -12,6 +12,7 @@ import android.support.v7.app.ActionBar;
 import android.text.Editable;
 import android.text.InputType;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
@@ -126,7 +127,7 @@ public class LoginActivity extends BaseActivity {
         mButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                /*mAccountValue = mAccount.getText().toString();
+                mAccountValue = mAccount.getText().toString();
                 mPwdValue = mPwd.getText().toString();
                 if(!isEmpty(mAccount,mPwd)){
                     if(mCheckBox.isChecked()){
@@ -137,8 +138,8 @@ public class LoginActivity extends BaseActivity {
                         editor.apply();
                     }
                     StartNextActivity(mAccount.getText().toString(),mPwd.getText().toString());
-                }*/
-                AdminActivity.StartThisActivity(activity,"52811234100");
+                }
+                //AdminActivity.StartThisActivity(activity,"52811234100");
             }
         });
         mForget = (TextView) findViewById(R.id.forget_pwd);
@@ -206,28 +207,31 @@ public class LoginActivity extends BaseActivity {
     }
 
     private void StartNextActivity(String Account,String Pwd){
-        SharedPreferences pref = getSharedPreferences(AccountInfoFileName,Context.MODE_PRIVATE);
-        String account = pref.getString(mAccountKey,"");
-        if(account.equals(Account)){
-            String sno = pref.getString(mSnoKey,"");
-            if(!sno.equals("")){
-                MainActivity.StartThisActivity(activity,sno);
-                return;
-            }
-        }
-        MyAsyncTask<getSnobyAccountResponse> myAsyncTask = new MyAsyncTask<getSnobyAccountResponse>(this, WebServiceConnector.METHOD_GETSNOBYACCOUNT);
-        myAsyncTask.setListener(new getSnobyAccountResponse() {
-            @Override
-            public void getSno(ArrayList<String> result) {
-                if(result.size() > 0) {
-                    RememberSno(result.get(0));
-                    MainActivity.StartThisActivity(activity,result.get(0));
+        boolean isManager = mAccount.getText().toString().indexOf("5281") != -1;
+        if(!isManager){
+            SharedPreferences pref = getSharedPreferences(AccountInfoFileName,Context.MODE_PRIVATE);
+            String account = pref.getString(mAccountKey,"");
+            if(account.equals(Account)){
+                String sno = pref.getString(mSnoKey,"");
+                if(!sno.equals("")){
+                    MainActivity.StartThisActivity(activity,sno);
+                    return;
                 }
-                else
-                    Toast.makeText(activity,"账号密码错误...",Toast.LENGTH_SHORT).show();
             }
-        });
-        myAsyncTask.execute(getParamType(),getInput());
+            MyAsyncTask<getSnobyAccountResponse> myAsyncTask = new MyAsyncTask<getSnobyAccountResponse>(this, WebServiceConnector.METHOD_GETSNOBYACCOUNT);
+            myAsyncTask.setListener(new getSnobyAccountResponse() {
+                @Override
+                public void getSno(ArrayList<String> result) {
+                    if(result.size() > 0) {
+                        RememberSno(result.get(0));
+                        MainActivity.StartThisActivity(activity,result.get(0));
+                    }
+                    else
+                        Toast.makeText(activity,"账号密码错误...",Toast.LENGTH_SHORT).show();
+                }
+            });
+            myAsyncTask.execute(getParamType(),getInput());
+        }
     }
 
     private ArrayList<String> getParamType(){
