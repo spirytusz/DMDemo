@@ -10,12 +10,14 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.SimpleAdapter;
 import android.widget.Toast;
 
+import com.zspirytus.dmdemo.Activity.DetailsInfoActivity;
 import com.zspirytus.dmdemo.JavaSource.ListViewModule.RSFListViewItem;
 import com.zspirytus.dmdemo.JavaSource.Utils.DateUtil;
 import com.zspirytus.dmdemo.JavaSource.Utils.PhotoUtil;
@@ -55,6 +57,15 @@ public class RepManagerFragment extends Fragment {
         listView = view.findViewById(R.id.repmanager_listview);
         ArrayList<String> result = getArguments().getStringArrayList(mResultKey);
         listView.setAdapter(getAdapter(result));
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                HashMap<String,Object> map=(HashMap<String,Object>)adapterView.getItemAtPosition(i);
+                String rno = (String)map.get("title");
+                //Toast.makeText(mParentActivity,rno,Toast.LENGTH_SHORT).show();
+                DetailsInfoActivity.StartThisActivity(mParentActivity,rno,0);
+            }
+        });
     }
 
     private SimpleAdapter getAdapter(ArrayList<String> response){

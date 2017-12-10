@@ -8,6 +8,8 @@ import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ProgressBar;
@@ -36,6 +38,9 @@ public class AdminActivity extends AppCompatActivity {
     private SLSManagerFragment mSLSManagerFragment;
     private RLManagerFragment mRLManagerFragment;
 
+    private boolean flagOfLoaded = false;
+    private int inThisFragment = R.id.navigation_rep;
+
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
             = new BottomNavigationView.OnNavigationItemSelectedListener() {
 
@@ -52,6 +57,7 @@ public class AdminActivity extends AppCompatActivity {
                     FragmentCollector.HideAllFragment(ft);
                     ft.show(mRepManagerFragment);
                     ft.commitAllowingStateLoss();
+                    inThisFragment = R.id.navigation_rep;
                     return true;
                 case R.id.navigation_sls:
                     if (mSLSManagerFragment == null) {
@@ -61,6 +67,7 @@ public class AdminActivity extends AppCompatActivity {
                     FragmentCollector.HideAllFragment(ft);
                     ft.show(mSLSManagerFragment);
                     ft.commitAllowingStateLoss();
+                    inThisFragment = R.id.navigation_sls;
                     return true;
                 case R.id.navigation_rl:
                     if (mRLManagerFragment == null) {
@@ -70,6 +77,7 @@ public class AdminActivity extends AppCompatActivity {
                     FragmentCollector.addFragment(mRLManagerFragment);
                     ft.show(mRLManagerFragment);
                     ft.commitAllowingStateLoss();
+                    inThisFragment = R.id.navigation_rl;
                     return true;
             }
             return false;
@@ -86,7 +94,26 @@ public class AdminActivity extends AppCompatActivity {
         LoadPane();
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.admin_menu, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if(flagOfLoaded && item.getItemId() == R.id.refresh){
+            //do refresh
+            FragmentTransaction ft = mFragmentManager.beginTransaction();
+            getInfo(inThisFragment,ft);
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
     private void LoadPane() {
+        Toolbar toolbar = (Toolbar) findViewById(R.id.dia_toolbar);
+        toolbar.setTitle("Admin");
+        setSupportActionBar(toolbar);
         mProgressBar = (ProgressBar) findViewById(R.id.admin_progressbar);
         mProgressBar.setVisibility(View.GONE);
         mFragmentManager = getSupportFragmentManager();
@@ -107,6 +134,7 @@ public class AdminActivity extends AppCompatActivity {
                     @Override
                     public void getResult(ArrayList<String> result) {
                         initAndShowRepFragment(ft,result);
+                        flagOfLoaded = true;
                     }
                 });
                 myAsyncTask0.execute(getParamType(), getInput());
@@ -118,6 +146,7 @@ public class AdminActivity extends AppCompatActivity {
                     @Override
                     public void getResult(ArrayList<String> result) {
                         initAndShowSLSFragment(ft,result);
+                        flagOfLoaded = true;
                     }
                 });
                 myAsyncTask1.execute(getParamType(), getInput());
@@ -129,6 +158,7 @@ public class AdminActivity extends AppCompatActivity {
                     @Override
                     public void getResult(ArrayList<String> result) {
                         initAndShowRLFragment(ft,result);
+                        flagOfLoaded = true;
                     }
                 });
                 myAsyncTask2.execute(getParamType(), getInput());

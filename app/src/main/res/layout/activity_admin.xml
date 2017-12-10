@@ -8,6 +8,15 @@
     android:orientation="vertical"
     tools:context="com.zspirytus.dmdemo.Activity.AdminActivity">
 
+    <android.support.v7.widget.Toolbar
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/dia_toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        app:title="@string/app_name"
+        app:titleTextColor="@android:color/white"
+        android:background="@color/colorPrimary"/>
+
     <FrameLayout
         android:id="@+id/admin_fragment_container"
         android:layout_width="match_parent"
