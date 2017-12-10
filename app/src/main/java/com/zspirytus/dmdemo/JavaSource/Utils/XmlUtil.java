@@ -1,7 +1,5 @@
 package com.zspirytus.dmdemo.JavaSource.Utils;
 
-import android.util.Log;
-
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
 import org.dom4j.DocumentHelper;
@@ -23,13 +21,11 @@ public class XmlUtil {
             Document document = DocumentHelper.parseText(str);
             return document;
         } catch (DocumentException e) {
-            Log.d(TAG, "function:getDocument catch DocumentException");
             return null;
         }
     }
 
     public static ArrayList<String> getAnalysisResult(String str) {
-        Log.d("","responseTest:\n"+str);
         Document document = getDocument(str);
         Element target = document.getRootElement();
         ArrayList<String> result = new ArrayList<>();

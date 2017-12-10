@@ -9,7 +9,6 @@ import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -78,7 +77,6 @@ public class SubMainActivity extends AppCompatActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        Log.e(TAG,TAG+"OptionMenu");
         getMenuInflater().inflate(R.menu.blank, menu);
         return super.onCreateOptionsMenu(menu);
     }
@@ -117,26 +115,6 @@ public class SubMainActivity extends AppCompatActivity {
             myAsyncTaskForRL.cancel(true);
         }
     }
-
-    /*@Override
-    public boolean onKeyDown(int keyCode, KeyEvent event) {
-        if (keyCode == KeyEvent.KEYCODE_BACK && event.getRepeatCount() == 0) {
-            if(isNextListView){
-                //listView.setAdapter(mBasicInfoAdapter);
-                setIsNextListView(false);
-                //listView.setVisibility(View.GONE);
-                //mFrameLayout.setVisibility(View.VISIBLE);
-                hideFragment();
-            } else {
-                finish();
-            }
-        } else if(keyCode == R.id.dlf_delete){
-            Toast.makeText(this,"delete",Toast.LENGTH_SHORT).show();
-        } else if (keyCode == R.id.dlf_update){
-            Toast.makeText(this,"update",Toast.LENGTH_SHORT).show();
-        }
-        return super.onKeyDown(keyCode, event);
-    }*/
 
     private void getArgs(){
         Intent intent = getIntent();

@@ -33,26 +33,6 @@ public class Settings extends Fragment {
     private View view;
     private ListView listView;
 
-    /*@Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        if (savedInstanceState != null) {
-            boolean isSupportHidden = savedInstanceState.getBoolean(FRAGMENT_HIDDEN_STATUS);
-            FragmentTransaction ft = getFragmentManager().beginTransaction();
-            if (isSupportHidden) {
-                ft.hide(this);
-            } else {
-                ft.show(this);
-            }
-            ft.commit();
-        }
-    }
-
-    @Override
-    public void onSaveInstanceState(Bundle outState){
-        outState.putBoolean(FRAGMENT_HIDDEN_STATUS,isHidden());
-    }*/
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState){
         view = inflater.inflate(R.layout.layout_settingsfragment,container,false);

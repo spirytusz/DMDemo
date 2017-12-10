@@ -1,7 +1,5 @@
 package com.zspirytus.dmdemo.JavaSource.WebServiceUtils;
 
-import android.util.Log;
-
 import com.zspirytus.dmdemo.JavaSource.Utils.XmlUtil;
 
 import java.io.BufferedReader;
@@ -84,7 +82,6 @@ public class WebServiceConnector {
      */
     public static ArrayList<String> executingMethod(String methodName, ArrayList<String> paramType, ArrayList<String> param) {
         String request = getRequest(methodName, paramType, param);
-        Log.d(TAG,"requestTest:\t"+request);
         try {
             URL url = new URL(WSDL_URI);
             HttpURLConnection con = (HttpURLConnection) url.openConnection();
@@ -137,7 +134,6 @@ public class WebServiceConnector {
             command = command + "</" + methodName + ">";
         } else
             command = "\t<" + methodName + " xmlns=\"" + NAMESPACE + "\"/> ";
-        Log.d(TAG,"request:\n"+command);
         return SOAP_HEADER + command + SOAP_END;
     }
 

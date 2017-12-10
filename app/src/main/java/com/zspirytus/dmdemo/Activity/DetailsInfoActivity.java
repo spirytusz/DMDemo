@@ -9,7 +9,6 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -51,7 +50,6 @@ public class DetailsInfoActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_details_info);
-        Log.e(TAG,TAG+"\tStart!");
         LoadPane();
         GetMessage();
     }
@@ -322,8 +320,6 @@ public class DetailsInfoActivity extends AppCompatActivity {
                             requestParams.add(WebServiceConnector.SQL_REASON);
                         else
                             requestParams.add(reasonStr);
-                        for(int x = 0;x<requestParams.size();x++)
-                            Log.d(TAG,"requestParam1:\t"+requestParams.get(x));
                         Update(paramType,requestParams,1);
                     }
                 });
@@ -381,8 +377,6 @@ public class DetailsInfoActivity extends AppCompatActivity {
                             requestParams.add(WebServiceConnector.SQL_REASON);
                         else
                             requestParams.add(reasonStr);
-                        for (int x = 0;x<requestParams.size();x++)
-                            Log.d(TAG,"requestParam2:\t"+requestParams.get(x));
                         Update(paramType,requestParams,2);
                     }
                 });
@@ -431,27 +425,6 @@ public class DetailsInfoActivity extends AppCompatActivity {
         });
         myAsyncTask.execute(paramType,request);
     }
-
-    /*private void showDeleteTipsDialog(){
-        AlertDialog.Builder dialog = new AlertDialog.Builder(activity);
-        dialog.setTitle("提示");
-        dialog.setMessage("删除");
-        dialog.setPositiveButton("确定",
-                new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-
-                    }
-                });
-        dialog.setNegativeButton("取消",
-                new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-
-                    }
-                });
-        dialog.show();
-    }*/
 
     private void Delete(){
         Intent intent = getIntent();
@@ -503,13 +476,11 @@ public class DetailsInfoActivity extends AppCompatActivity {
         myAsyncTask.setListener(new getBooleanTypeResponse() {
             @Override
             public void showDialog(ArrayList<String> result) {
-                Log.d(TAG,"isSuccess?\t"+result.get(0));
                 if(result == null||result.size() == 0){
                     DialogUtil.showNegativeTipsDialog(activity,"响应失败");
                     return;
                 }
                 boolean isSuccess = result.get(0).replaceAll("\r|\n|\t","").equals("true");
-                Log.d(TAG,"isSuccess?\t"+Boolean.toString(isSuccess));
                 AlertDialog.Builder dialog = DialogUtil.getDialog(activity,"成功");
                 dialog.setPositiveButton("确定",
                         new DialogInterface.OnClickListener() {

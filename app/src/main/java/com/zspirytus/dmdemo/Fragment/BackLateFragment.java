@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -118,9 +117,6 @@ public class BackLateFragment extends Fragment {
         input.add(Rno);
         input.add(returnTime);
         input.add(reason);
-        for(String str:input){
-            Log.d(TAG,"RLTest:\t"+str);
-        }
         return input;
     }
 

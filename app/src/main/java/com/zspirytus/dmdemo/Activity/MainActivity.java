@@ -258,20 +258,6 @@ public class MainActivity extends BaseActivity
                         PhotoUtil.picName.delete();
                     if(PhotoUtil.cropPicName.exists())
                         PhotoUtil.cropPicName.delete();
-                    /*if (isAlbum) {
-                        if(PhotoUtil.cropPicName.exists())
-                            PhotoUtil.cropPicName.delete();
-                        if(PhotoUtil.compressFileName.exists())
-                            PhotoUtil.compressFileName.delete();
-                    }
-                    else if(!isRepairPicDir){
-                        if(PhotoUtil.picName.exists())
-                            PhotoUtil.picName.delete();
-                        if(PhotoUtil.cropPicName.exists())
-                            PhotoUtil.cropPicName.delete();
-                        if(PhotoUtil.compressFileName.exists())
-                            PhotoUtil.compressFileName.delete();
-                    }*/
                     break;
             }
         }

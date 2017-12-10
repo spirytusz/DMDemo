@@ -74,12 +74,6 @@ public class LoginActivity extends BaseActivity {
             MainActivity.StartThisActivity(this,sno);
     }
 
-    private boolean check(String account,String pwd){
-        if(account.equals("")||pwd.equals(""))
-            return false;
-        return  true;
-    }
-
     private void LoadPane(){
         final ActionBar actionbar = this.getSupportActionBar();
         actionbar.hide();
