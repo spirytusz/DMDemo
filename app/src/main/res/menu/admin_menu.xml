@@ -3,9 +3,15 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
-        android:id="@+id/refresh"
+    android:id="@+id/refresh"
+    android:orderInCategory="100"
+    android:title="刷新"
+    app:showAsAction="never" />
+
+    <item
+        android:id="@+id/backToLogin"
         android:orderInCategory="100"
-        android:title="刷新"
+        android:title="返回登录界面"
         app:showAsAction="never" />
 
 </menu>

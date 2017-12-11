@@ -23,6 +23,7 @@ import android.widget.Toast;
 
 import com.zspirytus.dmdemo.Interface.getSnobyAccountResponse;
 import com.zspirytus.dmdemo.JavaSource.Manager.ActivityManager;
+import com.zspirytus.dmdemo.JavaSource.Utils.DialogUtil;
 import com.zspirytus.dmdemo.JavaSource.Utils.PhotoUtil;
 import com.zspirytus.dmdemo.JavaSource.WebServiceUtils.SyncTask.MyAsyncTask;
 import com.zspirytus.dmdemo.JavaSource.WebServiceUtils.WebServiceConnector;
@@ -71,8 +72,15 @@ public class LoginActivity extends BaseActivity {
     private void skip(){
         SharedPreferences pref = getSharedPreferences(AccountInfoFileName,MODE_PRIVATE);
         String sno = pref.getString(mSnoKey,"");
-        if(!sno.equals(""))
-            MainActivity.StartThisActivity(this,sno);
+        if(!sno.equals("")){
+            boolean isManager = sno.indexOf("5281") != -1;
+            if(!isManager){
+                MainActivity.StartThisActivity(this,sno);
+            }
+            else
+                AdminActivity.StartThisActivity(this,sno);
+        }
+
     }
 
     private void LoadPane(){
@@ -130,16 +138,11 @@ public class LoginActivity extends BaseActivity {
                 mAccountValue = mAccount.getText().toString();
                 mPwdValue = mPwd.getText().toString();
                 if(!isEmpty(mAccount,mPwd)){
-                    if(mCheckBox.isChecked()){
-                        RememberIt();
-                    }else{
-                        SharedPreferences.Editor editor = getSharedPreferences(AccountInfoFileName,MODE_PRIVATE).edit();
-                        editor.putBoolean(isRememberKey,false);
-                        editor.apply();
+                    if(mAccountValue.equals("admin") && mPwdValue.equals("admin")){
+                        AdminActivity.StartThisActivity(activity,WebServiceConnector.PARAMTYPE_ENO);
                     }
-                    StartNextActivity(mAccount.getText().toString(),mPwd.getText().toString());
+                    StartNextActivity();
                 }
-                //AdminActivity.StartThisActivity(activity,"52811234100");
             }
         });
         mForget = (TextView) findViewById(R.id.forget_pwd);
@@ -189,15 +192,24 @@ public class LoginActivity extends BaseActivity {
         }
     }
 
-    private void RememberIt(){
-        clear();
-        String account = mAccount.getText().toString();
-        String pwd = mPwd.getText().toString();
-        SharedPreferences.Editor editor = getSharedPreferences(AccountInfoFileName,Context.MODE_PRIVATE).edit();
-        editor.putString(mAccountKey,account);
-        editor.putString(mPwdKey,pwd);
-        editor.putBoolean(isRememberKey,true);
-        editor.apply();
+    private void RememberItOrClearIt(ArrayList<String> response){
+        if(mCheckBox.isChecked()){
+            // clear oldAccountInfo
+            clear();
+            //save newAccountInfo
+            String account = mAccountValue;
+            String pwd = mPwdValue;
+            SharedPreferences.Editor editor = getSharedPreferences(AccountInfoFileName,Context.MODE_PRIVATE).edit();
+            editor.putString(mSnoKey,response.get(0));
+            editor.putString(mAccountKey,account);
+            editor.putString(mPwdKey,pwd);
+            editor.putBoolean(isRememberKey,true);
+            editor.apply();
+        } else {
+            SharedPreferences.Editor editor = getSharedPreferences(AccountInfoFileName,MODE_PRIVATE).edit();
+            editor.putBoolean(isRememberKey,false);
+            editor.apply();
+        }
     }
 
     private void RememberSno(String Sno){
@@ -206,32 +218,28 @@ public class LoginActivity extends BaseActivity {
         editor.apply();
     }
 
-    private void StartNextActivity(String Account,String Pwd){
-        boolean isManager = mAccount.getText().toString().indexOf("5281") != -1;
-        if(!isManager){
-            SharedPreferences pref = getSharedPreferences(AccountInfoFileName,Context.MODE_PRIVATE);
-            String account = pref.getString(mAccountKey,"");
-            if(account.equals(Account)){
-                String sno = pref.getString(mSnoKey,"");
-                if(!sno.equals("")){
-                    MainActivity.StartThisActivity(activity,sno);
-                    return;
-                }
-            }
-            MyAsyncTask<getSnobyAccountResponse> myAsyncTask = new MyAsyncTask<getSnobyAccountResponse>(this, WebServiceConnector.METHOD_GETSNOBYACCOUNT);
+    private void StartNextActivity(){
+            MyAsyncTask<getSnobyAccountResponse> myAsyncTask = new MyAsyncTask<getSnobyAccountResponse>(this, WebServiceConnector.METHOD_GETNO);
             myAsyncTask.setListener(new getSnobyAccountResponse() {
                 @Override
                 public void getSno(ArrayList<String> result) {
-                    if(result.size() > 0) {
-                        RememberSno(result.get(0));
-                        MainActivity.StartThisActivity(activity,result.get(0));
+                    if(result != null) {
+                        if(result.size() > 0 && !result.get(0).equals("-1")){
+                            //save AccountInfo
+                            RememberItOrClearIt(result);
+                            boolean isManager = result.get(0).indexOf("5281") != -1;
+                            if(!isManager)
+                                MainActivity.StartThisActivity(activity,result.get(0));
+                            else
+                                AdminActivity.StartThisActivity(activity,result.get(0));
+                        } else
+                            Toast.makeText(activity,"账号密码错误...",Toast.LENGTH_SHORT).show();
+                    } else {
+                        DialogUtil.showNegativeTipsDialog(activity);
                     }
-                    else
-                        Toast.makeText(activity,"账号密码错误...",Toast.LENGTH_SHORT).show();
                 }
             });
             myAsyncTask.execute(getParamType(),getInput());
-        }
     }
 
     private ArrayList<String> getParamType(){
@@ -245,8 +253,8 @@ public class LoginActivity extends BaseActivity {
     private ArrayList<String> getInput(){
         ArrayList<String> input = new ArrayList<>();
         input.clear();
-        input.add(mAccount.getText().toString());
-        input.add(mPwd.getText().toString());
+        input.add(mAccountValue);
+        input.add(mPwdValue);
         return input;
     }
 

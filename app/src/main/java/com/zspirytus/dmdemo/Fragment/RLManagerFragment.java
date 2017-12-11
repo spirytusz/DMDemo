@@ -52,16 +52,20 @@ public class RLManagerFragment extends Fragment {
     private void LoadPane(View view){
         listView = view.findViewById(R.id.rlmanager_listview);
         ArrayList<String> result = getArguments().getStringArrayList(mResultKey);
-        listView.setAdapter(getAdapter(result));
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                HashMap<String,Object> map=(HashMap<String,Object>)adapterView.getItemAtPosition(i);
-                String rno = (String)map.get("title");
-                //Toast.makeText(mParentActivity,rno,Toast.LENGTH_SHORT).show();
-                DetailsInfoActivity.StartThisActivity(mParentActivity,rno,2);
-            }
-        });
+        if(result.size() > 0){
+            listView.setAdapter(getAdapter(result));
+            listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                    HashMap<String,Object> map=(HashMap<String,Object>)adapterView.getItemAtPosition(i);
+                    String rno = (String)map.get("title");
+                    //Toast.makeText(mParentActivity,rno,Toast.LENGTH_SHORT).show();
+                    DetailsInfoActivity.StartThisActivity(mParentActivity,rno,2);
+                }
+            });
+        } else {
+            listView.setVisibility(View.GONE);
+        }
     }
 
     private SimpleAdapter getAdapter(ArrayList<String> response){

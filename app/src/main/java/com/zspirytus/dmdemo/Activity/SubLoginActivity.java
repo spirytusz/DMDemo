@@ -95,15 +95,20 @@ public class SubLoginActivity extends AppCompatActivity {
         paramType.add(WebServiceConnector.PARAMTYPE_SNO);
         paramType.add(WebServiceConnector.PARAMTYPE_ACCOUNT);
         paramType.add(WebServiceConnector.PARAMTYPE_PWD);
+        paramType.add(WebServiceConnector.PARAMTYPE_TYPE);
         return paramType;
     }
 
     private ArrayList<String> getRegInput(){
         ArrayList<String> input = new ArrayList<>();
-        input.clear();
+        boolean isManager = mSno.getText().toString().indexOf("5281") != -1;
         input.add(mSno.getText().toString());
         input.add(mAccount.getText().toString());
         input.add(mPwd.getText().toString());
+        if(isManager)
+            input.add("1");
+        else
+            input.add("0");
         return input;
     }
 

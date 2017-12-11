@@ -101,7 +101,7 @@ public class MyAsyncTask<T> extends AsyncTask<ArrayList<String>, Void, ArrayList
             case WebServiceConnector.METHOD_GETBASICINFOBYSNO:
                 ((getStudentBasicInfoResponse)response).getResult(result);
                 break;
-            case WebServiceConnector.METHOD_GETSNOBYACCOUNT:
+            case WebServiceConnector.METHOD_GETNO:
                 ((getSnobyAccountResponse)response).getSno(result);
                 break;
             case WebServiceConnector.METHOD_MODIFYPWD:

@@ -1,5 +1,6 @@
 package com.zspirytus.dmdemo.Activity;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -40,6 +41,10 @@ public class AdminActivity extends AppCompatActivity {
 
     private boolean flagOfLoaded = false;
     private int inThisFragment = R.id.navigation_rep;
+
+    private MyAsyncTask<getRepBasicInfoByManager> myAsyncTask0;
+    private MyAsyncTask<getSLSBasicInfoByManager> myAsyncTask1;
+    private MyAsyncTask<getRLBasicInfoByManager> myAsyncTask2;
 
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
             = new BottomNavigationView.OnNavigationItemSelectedListener() {
@@ -106,13 +111,31 @@ public class AdminActivity extends AppCompatActivity {
             //do refresh
             FragmentTransaction ft = mFragmentManager.beginTransaction();
             getInfo(inThisFragment,ft);
+        } else if(item.getItemId() == R.id.backToLogin){
+            this.finish();
+            LoginActivity.StartThisActivity(this);
         }
         return super.onOptionsItemSelected(item);
     }
 
+    @Override
+    public void onDestroy(){
+        cancelTask();
+        super.onDestroy();
+    }
+
+    private void cancelTask(){
+        if(myAsyncTask0 != null)
+            myAsyncTask0.cancel(true);
+        if(myAsyncTask1 != null)
+            myAsyncTask1.cancel(true);
+        if(myAsyncTask2 != null)
+            myAsyncTask2.cancel(true);
+    }
+
     private void LoadPane() {
         Toolbar toolbar = (Toolbar) findViewById(R.id.dia_toolbar);
-        toolbar.setTitle("Admin");
+        toolbar.setTitle(getIntent().getStringExtra(mEnoKey));
         setSupportActionBar(toolbar);
         mProgressBar = (ProgressBar) findViewById(R.id.admin_progressbar);
         mProgressBar.setVisibility(View.GONE);
@@ -128,7 +151,7 @@ public class AdminActivity extends AppCompatActivity {
     private void getInfo(int fragmentId,final FragmentTransaction ft) {
         switch (fragmentId) {
             case R.id.navigation_rep:
-                MyAsyncTask<getRepBasicInfoByManager> myAsyncTask0
+                myAsyncTask0
                         = new MyAsyncTask<getRepBasicInfoByManager>(this, WebServiceConnector.METHOD_GETREPBASICBYMANAGER, mProgressBar);
                 myAsyncTask0.setListener(new getRepBasicInfoByManager() {
                     @Override
@@ -140,7 +163,7 @@ public class AdminActivity extends AppCompatActivity {
                 myAsyncTask0.execute(getParamType(), getInput());
                 break;
             case R.id.navigation_sls:
-                MyAsyncTask<getSLSBasicInfoByManager> myAsyncTask1
+                myAsyncTask1
                         = new MyAsyncTask<getSLSBasicInfoByManager>(this, WebServiceConnector.METHOD_GETSLSBASICBYMANAGER, mProgressBar);
                 myAsyncTask1.setListener(new getSLSBasicInfoByManager() {
                     @Override
@@ -152,7 +175,7 @@ public class AdminActivity extends AppCompatActivity {
                 myAsyncTask1.execute(getParamType(), getInput());
                 break;
             case R.id.navigation_rl:
-                MyAsyncTask<getRLBasicInfoByManager> myAsyncTask2
+                myAsyncTask2
                         = new MyAsyncTask<getRLBasicInfoByManager>(this, WebServiceConnector.METHOD_GETRLBASICBYMANAGER,mProgressBar);
                 myAsyncTask2.setListener(new getRLBasicInfoByManager() {
                     @Override
@@ -215,6 +238,7 @@ public class AdminActivity extends AppCompatActivity {
     public static void StartThisActivity(Context context, String Eno) {
         Intent intent = new Intent(context, AdminActivity.class);
         intent.putExtra(mEnoKey, Eno);
+        ((Activity) context).finish();
         context.startActivity(intent);
     }
 

@@ -8,4 +8,11 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"></ListView>
 
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:text="空"
+        android:gravity="center"
+        android:textSize="16dp"/>
+
 </LinearLayout>
