@@ -3,6 +3,7 @@ package com.zspirytus.dmdemo.Activity;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
@@ -28,7 +29,7 @@ import com.zspirytus.dmdemo.R;
 
 import java.util.ArrayList;
 
-public class AdminActivity extends AppCompatActivity {
+public class AdminActivity extends BaseActivity {
 
     private static final String TAG = "AdminActivity";
     private static final String mEnoKey = "Eno";
@@ -124,15 +125,21 @@ public class AdminActivity extends AppCompatActivity {
         super.onDestroy();
     }
 
+    /**
+     * stop doing AsyncTask
+     */
     private void cancelTask(){
-        if(myAsyncTask0 != null)
+        if(myAsyncTask0 != null && myAsyncTask0.getStatus() == AsyncTask.Status.RUNNING)
             myAsyncTask0.cancel(true);
-        if(myAsyncTask1 != null)
+        if(myAsyncTask1 != null && myAsyncTask1.getStatus() == AsyncTask.Status.RUNNING)
             myAsyncTask1.cancel(true);
-        if(myAsyncTask2 != null)
+        if(myAsyncTask2 != null && myAsyncTask2.getStatus() == AsyncTask.Status.RUNNING)
             myAsyncTask2.cancel(true);
     }
 
+    /**
+     * init Pane
+     */
     private void LoadPane() {
         Toolbar toolbar = (Toolbar) findViewById(R.id.dia_toolbar);
         toolbar.setTitle(getIntent().getStringExtra(mEnoKey));
@@ -143,11 +150,19 @@ public class AdminActivity extends AppCompatActivity {
         setDefaultFragment();
     }
 
+    /**
+     * set Default Fragment
+     */
     private void setDefaultFragment() {
         FragmentTransaction ft = mFragmentManager.beginTransaction();
         getInfo(R.id.navigation_rep,ft);
     }
 
+    /**
+     *  get Basic Info and get adapter of listView
+     * @param fragmentId in which fragment
+     * @param ft         fragmentTransaction
+     */
     private void getInfo(int fragmentId,final FragmentTransaction ft) {
         switch (fragmentId) {
             case R.id.navigation_rep:
@@ -190,18 +205,31 @@ public class AdminActivity extends AppCompatActivity {
 
     }
 
+    /**
+     *  get WebService Method Params Name
+     * @return Params Name
+     */
     private ArrayList<String> getParamType() {
         ArrayList<String> paramType = new ArrayList<>();
         paramType.add(WebServiceConnector.PARAMTYPE_ENO);
         return paramType;
     }
 
+    /**
+     *  get WebService Method Params
+     * @return Params
+     */
     private ArrayList<String> getInput() {
         ArrayList<String> input = new ArrayList<>();
         input.add(getIntent().getStringExtra(mEnoKey));
         return input;
     }
 
+    /**
+     * init RepManagerFragment and show it
+     * @param ft Fragment Transaction
+     * @param result the response of WebService Method
+     */
     private void initAndShowRepFragment(FragmentTransaction ft,ArrayList<String> result){
         if (mRepManagerFragment == null) {
             mRepManagerFragment = RepManagerFragment.GetThisFragment(result);
@@ -213,6 +241,11 @@ public class AdminActivity extends AppCompatActivity {
         ft.commitAllowingStateLoss();
     }
 
+    /**
+     *  init SLSManagerFragment and show it
+     * @param ft Fragment Transaction
+     * @param result the response of WebService Method
+     */
     private void initAndShowSLSFragment(FragmentTransaction ft,ArrayList<String> result){
         if (mSLSManagerFragment == null) {
             mSLSManagerFragment = SLSManagerFragment.GetThisFragment(result);
@@ -224,6 +257,11 @@ public class AdminActivity extends AppCompatActivity {
         ft.commitAllowingStateLoss();
     }
 
+    /**
+     *  init RLManagerFragment and show it
+     * @param ft Fragment Transaction
+     * @param result the response of WebService Method
+     */
     private void initAndShowRLFragment(FragmentTransaction ft,ArrayList<String> result){
         if (mRLManagerFragment == null) {
             mRLManagerFragment = RLManagerFragment.GetThisFragment(result);
@@ -235,6 +273,11 @@ public class AdminActivity extends AppCompatActivity {
         ft.commitAllowingStateLoss();
     }
 
+    /**
+     * Start This Activity
+     * @param context Context
+     * @param Eno Administrator No
+     */
     public static void StartThisActivity(Context context, String Eno) {
         Intent intent = new Intent(context, AdminActivity.class);
         intent.putExtra(mEnoKey, Eno);

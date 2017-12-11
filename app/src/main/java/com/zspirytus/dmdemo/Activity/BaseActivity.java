@@ -1,3 +1,6 @@
+/**
+ * Base Activity, all activity extended this activity
+ */
 package com.zspirytus.dmdemo.Activity;
 
 import android.app.Activity;

@@ -95,6 +95,9 @@ public class DetailsInfoActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    /**
+     * init Pane
+     */
     private void LoadPane(){
         Toolbar toolbar = (Toolbar) findViewById(R.id.dia_toolbar);
         toolbar.setTitle("详细信息");
@@ -108,6 +111,10 @@ public class DetailsInfoActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * Loading listView's content
+     * @param result
+     */
     private void LoadInfo(ArrayList<String> result){
         resultMemory = result;
         ImageView imageView = (ImageView) findViewById(R.id.detailsinfoactivity_imageview);
@@ -127,6 +134,9 @@ public class DetailsInfoActivity extends AppCompatActivity {
         flagOfLoaded = true;
     }
 
+    /**
+     * prepared params of requesting WebService and request WebService
+     */
     private void GetMessage(){
         Intent intent = getIntent();
         String primaryKey = intent.getStringExtra(PrimaryKey);
@@ -134,6 +144,11 @@ public class DetailsInfoActivity extends AppCompatActivity {
         doTask(primaryKey,type);
     }
 
+    /**
+     * request WebService
+     * @param primaryKey Sno or Eno
+     * @param type RepInfo or SLSInfo or RlInfo
+     */
     private void doTask(final String primaryKey,int type){
         ArrayList<String> paramType = new ArrayList<>();
         ArrayList<String> param = new ArrayList<>();
@@ -201,7 +216,10 @@ public class DetailsInfoActivity extends AppCompatActivity {
         }
     }
 
-    public void UpdateForRep(){
+    /**
+     * Update Repair Info
+     */
+    private void UpdateForRep(){
         final String[] mCategory = {
                 getString(R.string.Electrician).toString(),
                 getString(R.string.Hydraulic).toString(),
@@ -272,7 +290,10 @@ public class DetailsInfoActivity extends AppCompatActivity {
         customizeDialog.show();
     }
 
-    public void UpdateForELS(){
+    /**
+     * Update Enrollment Leaving School Info
+     */
+    private void UpdateForELS(){
         final View dialogView = LayoutInflater.from(activity)
                 .inflate(R.layout.layout_updatedialogforels,null);
         AlertDialog.Builder customizeDialog =
@@ -334,7 +355,10 @@ public class DetailsInfoActivity extends AppCompatActivity {
         customizeDialog.show();
     }
 
-    public void UpdateForRL(){
+    /**
+     * Update ReturnLately Info
+     */
+    private void UpdateForRL(){
         final View dialogView = LayoutInflater.from(activity)
                 .inflate(R.layout.layout_updatedialogforrl,null);
         AlertDialog.Builder customizeDialog =
@@ -391,6 +415,12 @@ public class DetailsInfoActivity extends AppCompatActivity {
         customizeDialog.show();
     }
 
+    /**
+     *  do Update
+     * @param paramType Params Name
+     * @param request Params
+     * @param type Update Rep or SLS or RL
+     */
     public void Update(ArrayList<String> paramType,ArrayList<String> request,int type){
         MyAsyncTask<getBooleanTypeResponse> myAsyncTask = null;
         switch(type){
@@ -426,6 +456,9 @@ public class DetailsInfoActivity extends AppCompatActivity {
         myAsyncTask.execute(paramType,request);
     }
 
+    /**
+     * prepare params for delete
+     */
     private void Delete(){
         Intent intent = getIntent();
         String primaryKey = intent.getStringExtra(PrimaryKey);
@@ -433,6 +466,11 @@ public class DetailsInfoActivity extends AppCompatActivity {
         Delete(primaryKey,type);
     }
 
+    /**
+     * delete Rep or SLS or RL
+     * @param primaryKey Rno
+     * @param type delete Rep or SLS or RL
+     */
     private void Delete(final String primaryKey,final int type){
         AlertDialog.Builder dialog = new AlertDialog.Builder(activity);
         dialog.setTitle("提示");
@@ -454,6 +492,11 @@ public class DetailsInfoActivity extends AppCompatActivity {
         dialog.show();
     }
 
+    /**
+     * do delete
+     * @param primaryKey Rno
+     * @param type delete Rep or SLS or RL
+     */
     private void doDelete(final String primaryKey,final int type){
         MyAsyncTask<getBooleanTypeResponse> myAsyncTask = null;
         ArrayList<String> paramType = new ArrayList<>();
@@ -495,6 +538,12 @@ public class DetailsInfoActivity extends AppCompatActivity {
         myAsyncTask.execute(paramType,requestParams);
     }
 
+    /**
+     *  Start This Activity
+     * @param context Context
+     * @param primaryKey Sno
+     * @param type Rep or SLS or RL
+     */
     public static void StartThisActivity(Context context, String primaryKey, int type){
         Intent intent = new Intent(context,DetailsInfoActivity.class);
         intent.putExtra(PrimaryKey,primaryKey);

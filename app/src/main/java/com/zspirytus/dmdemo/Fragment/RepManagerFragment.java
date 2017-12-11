@@ -3,10 +3,8 @@ package com.zspirytus.dmdemo.Fragment;
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,11 +13,9 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.SimpleAdapter;
-import android.widget.Toast;
 
 import com.zspirytus.dmdemo.Activity.DetailsInfoActivity;
 import com.zspirytus.dmdemo.JavaSource.ListViewModule.RSFListViewItem;
-import com.zspirytus.dmdemo.JavaSource.Utils.DateUtil;
 import com.zspirytus.dmdemo.JavaSource.Utils.PhotoUtil;
 import com.zspirytus.dmdemo.R;
 
@@ -36,6 +32,9 @@ public class RepManagerFragment extends Fragment {
 
     private static final String TAG = "RepManagerFragment";
     private static final String mResultKey = "result";
+    private static final String BMP = "bmp";
+    private static final String TITLE = "title";
+    private static final String TIME = "time";
 
     private ListView listView;
     private Activity mParentActivity;
@@ -53,6 +52,10 @@ public class RepManagerFragment extends Fragment {
         mParentActivity = (Activity)context;
     }
 
+    /**
+     * init Pane
+     * @param view root View
+     */
     private void LoadPane(View view){
         listView = view.findViewById(R.id.repmanager_listview);
         ArrayList<String> result = getArguments().getStringArrayList(mResultKey);
@@ -72,6 +75,11 @@ public class RepManagerFragment extends Fragment {
         }
     }
 
+    /**
+     * get listView's adapter
+     * @param response listView content,WebService Method's response
+     * @return listView's adapter
+     */
     private SimpleAdapter getAdapter(ArrayList<String> response){
         List<RSFListViewItem> list = getListViewItemList(response);
         List<Map<String,Object>> result = getListDate(list);
@@ -79,7 +87,7 @@ public class RepManagerFragment extends Fragment {
                 mParentActivity,
                 result,
                 R.layout.layout_repairschedulefragment_lisviewlayout,
-                new String[]{"bmp","title","time"},
+                new String[]{BMP,TITLE,TIME},
                 new int[]{R.id.rsf_ls_imageview,R.id.rfs_ls_textviewtitle,R.id.rsf_ls_textviewtime}
         );
         adapter.setViewBinder(new SimpleAdapter.ViewBinder(){
@@ -100,8 +108,8 @@ public class RepManagerFragment extends Fragment {
     }
 
     /**
-     *
-     * @return 加入了RSFListViewItem的List<RSFListViewItem> list
+     * get list of listView content
+     * @return list of listView content
      */
     private List<RSFListViewItem> getListViewItemList(ArrayList<String> result){
         if(result.size()>0) {
@@ -131,16 +139,21 @@ public class RepManagerFragment extends Fragment {
         for(RSFListViewItem rsf:list){
             Map<String, Object> map = new HashMap<String, Object>();
             Bitmap bmp=rsf.getmBitmap();
-            map.put("bmp", bmp);
+            map.put(BMP, bmp);
             String title=rsf.getmTitle();
-            map.put("title", title);
+            map.put(TITLE, title);
             String time = rsf.getmTime();
-            map.put("time", time);
+            map.put(TIME, time);
             result.add(map);
         }
         return result;
     }
 
+    /**
+     *  get this Fragment
+     * @param result listView content,WebService Method's response
+     * @return this Fragment
+     */
     public static RepManagerFragment GetThisFragment(ArrayList<String> result){
         RepManagerFragment rmf = new RepManagerFragment();
         Bundle bundle = new Bundle();

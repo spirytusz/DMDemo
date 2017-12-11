@@ -111,6 +111,11 @@ public class MainActivity extends BaseActivity
 
     }
 
+    /**
+     * get Student Basic Info
+     * @param paramType WebService Method's Params Name
+     * @param param WebService Method's Params
+     */
     private void getInform(String paramType,String param){
         MyAsyncTask<getStudentBasicInfoResponse> gs = new MyAsyncTask<getStudentBasicInfoResponse>(this,WebServiceConnector.METHOD_GETBASICINFOBYSNO,mProgressBar);
         gs.setListener(new getStudentBasicInfoResponse() {
@@ -130,13 +135,19 @@ public class MainActivity extends BaseActivity
         gs.execute(list1,list2);
     }
 
-    public void RestoreAvatar() {
+    /**
+     * if exists avatar,restore avatar
+     */
+    private void RestoreAvatar() {
         SharedPreferences pref = getSharedPreferences("data", MODE_PRIVATE);
         String avatar = pref.getString(mAvatarKey, "");
         if (!avatar.equals(""))
             mAvatar.setImageBitmap(PhotoUtil.getBitmapbyString(avatar));
     }
 
+    /**
+     * init Pane
+     */
     private void LoadPane() {
         mProgressBar = (ProgressBar) findViewById(R.id.progressbar);
         mProgressBar.setVisibility(View.GONE);
@@ -161,6 +172,12 @@ public class MainActivity extends BaseActivity
         mAvatar.setImageResource(R.drawable.ic_account_circle_black_24dp);
     }
 
+    /**
+     * this method will be called after requesting permissions failed
+     * @param requestCode request Code
+     * @param permissions permissions
+     * @param grantResults grant Results
+     */
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
                                            @NonNull int[] grantResults) {
@@ -191,6 +208,11 @@ public class MainActivity extends BaseActivity
         }
     }
 
+    /**
+     * Interface called by MyInfoFragment
+     * @param img MyInfoFragment's avatar CircleImageView
+     * @param by  call camera or album
+     */
     @Override
     public void setAvatar(CircleImageView img, int by) {
         if (by == BY_CAMERA)
@@ -202,6 +224,11 @@ public class MainActivity extends BaseActivity
         cimg = img;
     }
 
+    /**
+     * Interface called by RepairFragment
+     * @param textView RepairFragment 's textView which show photo directory
+     * @param by by camera or album
+     */
     @Override
     public void setUploadPicPath(TextView textView, int by) {
         repairPicDir = textView;
@@ -212,6 +239,12 @@ public class MainActivity extends BaseActivity
             PhotoUtil.applyPermissionForAlbum(this);
     }
 
+    /**
+     * this method will be called after start an activity for result
+     * @param requestCode request Code match an activity
+     * @param resultCode  result Code match a calling activity's result
+     * @param data intent
+     */
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -263,6 +296,12 @@ public class MainActivity extends BaseActivity
         }
     }
 
+    /**
+     * back key listener
+     * @param keyCode key Code
+     * @param event
+     * @return
+     */
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -283,6 +322,11 @@ public class MainActivity extends BaseActivity
         return super.onKeyDown(keyCode, event);
     }
 
+    /**
+     * drawLayout listener
+     * @param item menu item
+     * @return
+     */
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
@@ -339,7 +383,8 @@ public class MainActivity extends BaseActivity
         return true;
     }
 
-    public void initFragment(){
+    /*
+    private void initFragment(){
         FragmentTransaction ft = mFragmentManager.beginTransaction();
         mRepairFragment = new RepairFragment();
         FragmentCollector.addFragment(mRepairFragment);
@@ -357,14 +402,22 @@ public class MainActivity extends BaseActivity
         FragmentCollector.addFragment(mAboutFragment);
         ft.add(R.id.fragment_container,mAboutFragment);
         ft.commitAllowingStateLoss();
-    }
+    }*/
 
-    public void setDefaultFragment(FragmentManager fm,ArrayList<String> strList) {
+    /**
+     *  set Default Fragment
+     * @param fm Fragment Manager
+     * @param strList WebService Method response
+     */
+    private void setDefaultFragment(FragmentManager fm,ArrayList<String> strList) {
         mMInfoFragment = MyInfoFragment.GetThisFragment(this,strList);
         FragmentCollector.addFragment(mMInfoFragment);
         fm.beginTransaction().add(R.id.fragment_container, mMInfoFragment, mMInfoFragment.getClass().getName()).show(mMInfoFragment).commit();
     }
 
+    /**
+     * Update Avatar
+     */
     private void UpdateAvatar(){
         MyAsyncTask<getBooleanTypeResponse> myAsyncTask = new MyAsyncTask<getBooleanTypeResponse>(this,WebServiceConnector.METHOD_UPDATEAVATAR);
         myAsyncTask.setListener(new getBooleanTypeResponse() {
@@ -385,6 +438,10 @@ public class MainActivity extends BaseActivity
         myAsyncTask.execute(getParamType(),getInput());
     }
 
+    /**
+     * get WebService Method Params Name
+     * @return Params Name
+     */
     private ArrayList<String> getParamType(){
         ArrayList<String> paramType = new ArrayList<>();
         paramType.clear();
@@ -393,6 +450,10 @@ public class MainActivity extends BaseActivity
         return paramType;
     }
 
+    /**
+     * get WebService Method Params
+     * @return Params
+     */
     private ArrayList<String> getInput(){
         ArrayList<String> input = new ArrayList<>();
         input.clear();
@@ -403,13 +464,22 @@ public class MainActivity extends BaseActivity
         return input;
     }
 
-    public boolean isNetWorkConnected(){
+    /**
+     * is NetWork available
+     * @return
+     */
+    private boolean isNetWorkConnected(){
         ConnectivityManager con=(ConnectivityManager)getSystemService(Activity.CONNECTIVITY_SERVICE);
         boolean wifi=con.getNetworkInfo(ConnectivityManager.TYPE_WIFI).isConnectedOrConnecting();
         boolean internet=con.getNetworkInfo(ConnectivityManager.TYPE_MOBILE).isConnectedOrConnecting();
         return wifi||internet;
     }
 
+    /**
+     * Start This Activity
+     * @param context Context
+     * @param Sno Sno
+     */
     public static void StartThisActivity(Context context, String Sno) {
         Intent intent = new Intent(context, MainActivity.class);
         intent.putExtra(mSnoKey, Sno);

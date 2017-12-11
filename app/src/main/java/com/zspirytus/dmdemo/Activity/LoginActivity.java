@@ -12,7 +12,6 @@ import android.support.v7.app.ActionBar;
 import android.text.Editable;
 import android.text.InputType;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
@@ -69,6 +68,9 @@ public class LoginActivity extends BaseActivity {
         RestoreEditArea();
     }
 
+    /**
+     * if exists account info,skip this activity and start next activity
+     */
     private void skip(){
         SharedPreferences pref = getSharedPreferences(AccountInfoFileName,MODE_PRIVATE);
         String sno = pref.getString(mSnoKey,"");
@@ -83,6 +85,9 @@ public class LoginActivity extends BaseActivity {
 
     }
 
+    /**
+     * init Pane
+     */
     private void LoadPane(){
         final ActionBar actionbar = this.getSupportActionBar();
         actionbar.hide();
@@ -161,6 +166,9 @@ public class LoginActivity extends BaseActivity {
         });
     }
 
+    /**
+     * set StatusBar Background Color
+     */
     private void setStatusBarBackgroundColor() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             getWindow().getDecorView().setSystemUiVisibility(
@@ -169,6 +177,9 @@ public class LoginActivity extends BaseActivity {
         }
     }
 
+    /**
+     * if exists account info,restore the EditText
+     */
     private void RestoreEditArea(){
         SharedPreferences pref = getSharedPreferences(AccountInfoFileName,Context.MODE_PRIVATE);
         boolean isRemember = pref.getBoolean(isRememberKey,false);
@@ -182,6 +193,9 @@ public class LoginActivity extends BaseActivity {
         }
     }
 
+    /**
+     * if it is new account,clear old one
+     */
     private void clear(){
         SharedPreferences pref = getSharedPreferences(AccountInfoFileName,Context.MODE_PRIVATE);
         String oldAccount = pref.getString(mAccountKey,"");
@@ -192,6 +206,11 @@ public class LoginActivity extends BaseActivity {
         }
     }
 
+    /**
+     *  If checkBox is checked,remember account and pwd;
+     *  else clear the remembered account and pwd
+     * @param response Sno or Eno
+     */
     private void RememberItOrClearIt(ArrayList<String> response){
         if(mCheckBox.isChecked()){
             // clear oldAccountInfo
@@ -212,12 +231,9 @@ public class LoginActivity extends BaseActivity {
         }
     }
 
-    private void RememberSno(String Sno){
-        SharedPreferences.Editor editor = getSharedPreferences(AccountInfoFileName,Context.MODE_PRIVATE).edit();
-        editor.putString(mSnoKey,Sno);
-        editor.apply();
-    }
-
+    /**
+     * Request WebService and start next activity according to response
+     */
     private void StartNextActivity(){
             MyAsyncTask<getSnobyAccountResponse> myAsyncTask = new MyAsyncTask<getSnobyAccountResponse>(this, WebServiceConnector.METHOD_GETNO);
             myAsyncTask.setListener(new getSnobyAccountResponse() {
@@ -242,6 +258,10 @@ public class LoginActivity extends BaseActivity {
             myAsyncTask.execute(getParamType(),getInput());
     }
 
+    /**
+     * get WebService Method Params Name
+     * @return Params Name
+     */
     private ArrayList<String> getParamType(){
         ArrayList<String> paramType = new ArrayList<>();
         paramType.clear();
@@ -250,6 +270,10 @@ public class LoginActivity extends BaseActivity {
         return paramType;
     }
 
+    /**
+     * get WebService Method Params
+     * @return Params
+     */
     private ArrayList<String> getInput(){
         ArrayList<String> input = new ArrayList<>();
         input.clear();
@@ -258,10 +282,20 @@ public class LoginActivity extends BaseActivity {
         return input;
     }
 
+    /**
+     *  is et1 or et1 empty?
+     * @param et1 EditText et1
+     * @param et2 EditText et2
+     * @return is et1 or et1 empty
+     */
     private boolean isEmpty(EditText et1,EditText et2){
         return et1.getText().toString().isEmpty()||et2.getText().toString().isEmpty();
     }
 
+    /**
+     * Start This Activity
+     * @param context Context
+     */
     public static void StartThisActivity(Context context){
         Intent intent = new Intent(context,LoginActivity.class);
         intent.putExtra(isExitKey,true);

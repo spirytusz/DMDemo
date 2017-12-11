@@ -6,7 +6,6 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,7 +14,6 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.SimpleAdapter;
-import android.widget.Toast;
 
 import com.zspirytus.dmdemo.Activity.DetailsInfoActivity;
 import com.zspirytus.dmdemo.JavaSource.ListViewModule.RSFListViewItem;
@@ -52,6 +50,10 @@ public class SLSManagerFragment extends Fragment {
         mParentActivity = (Activity)context;
     }
 
+    /**
+     * init Pane
+     * @param view root View
+     */
     private void LoadPane(View view){
         listView = view.findViewById(R.id.slsmanager_listview);
         ArrayList<String> result = getArguments().getStringArrayList(mResultKey);
@@ -62,7 +64,6 @@ public class SLSManagerFragment extends Fragment {
                 public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                     HashMap<String,Object> map=(HashMap<String,Object>)adapterView.getItemAtPosition(i);
                     String rno = (String)map.get("title");
-                    //Toast.makeText(mParentActivity,rno,Toast.LENGTH_SHORT).show();
                     DetailsInfoActivity.StartThisActivity(mParentActivity,rno,1);
                 }
             });
@@ -71,6 +72,11 @@ public class SLSManagerFragment extends Fragment {
         }
     }
 
+    /**
+     * get listView's adapter
+     * @param response listView content,WebService Method's response
+     * @return
+     */
     private SimpleAdapter getAdapter(ArrayList<String> response){
         List<RSFListViewItem> list = getListViewItemList(response);
         List<Map<String,Object>> result = getListDate(list);
@@ -99,8 +105,8 @@ public class SLSManagerFragment extends Fragment {
     }
 
     /**
-     *
-     * @return 加入了RSFListViewItem的List<RSFListViewItem> list
+     * get List of listView content
+     * @return list
      */
     private List<RSFListViewItem> getListViewItemList(ArrayList<String> result){
         if(result.size()>0) {
@@ -140,6 +146,11 @@ public class SLSManagerFragment extends Fragment {
         return result;
     }
 
+    /**
+     *  get this Fragment
+     * @param result WebService Method's response
+     * @return this Fragment
+     */
     public static SLSManagerFragment GetThisFragment(ArrayList<String> result){
         SLSManagerFragment smf = new SLSManagerFragment();
         Bundle bundle = new Bundle();
