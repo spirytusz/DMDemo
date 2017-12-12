@@ -19,23 +19,10 @@ public class DateUtil {
     private static final String DATE = YEAR+"-"+MONTH+"-"+DAY;
     private static final String TIME = HOUR+":"+MINUTES+":ss";
 
-
-    public static String getNowYear_str(){
-        Date date = new Date();
-        SimpleDateFormat mFormat = new SimpleDateFormat(YEAR);
-        return mFormat.format(date);
-    }
-
     public static int getNowYear_int(){
         Date date = new Date();
         SimpleDateFormat mFormat = new SimpleDateFormat(YEAR);
         return Integer.parseInt(mFormat.format(date));
-    }
-
-    public static String getNowMonth_str(){
-        Date date = new Date();
-        SimpleDateFormat mFormat = new SimpleDateFormat(MONTH);
-        return mFormat.format(date);
     }
 
     public static int getNowMonth_int(){
@@ -44,11 +31,6 @@ public class DateUtil {
         return Integer.parseInt(mFormat.format(date));
     }
 
-    public static String getNowDay_str(){
-        Date date = new Date();
-        SimpleDateFormat mFormat = new SimpleDateFormat(DAY);
-        return mFormat.format(date);
-    }
 
     public static int getNowDay_int(){
         Date date = new Date();
@@ -56,11 +38,6 @@ public class DateUtil {
         return Integer.parseInt(mFormat.format(date));
     }
 
-    public static String getNowHour_str(){
-        Date date = new Date();
-        SimpleDateFormat mFormat = new SimpleDateFormat(HOUR);
-        return mFormat.format(date);
-    }
 
     public static int getNowHour_int(){
         Date date = new Date();
@@ -68,11 +45,6 @@ public class DateUtil {
         return Integer.parseInt(mFormat.format(date));
     }
 
-    public static String getNowMinute_str(){
-        Date date = new Date();
-        SimpleDateFormat mFormat = new SimpleDateFormat(MINUTES);
-        return mFormat.format(date);
-    }
 
     public static int getNowMinute_int(){
         Date date = new Date();
@@ -92,11 +64,6 @@ public class DateUtil {
         return mFormat.format(date);
     }
 
-    public static String getNowTime(){
-        Date date = new Date();
-        SimpleDateFormat mFormat = new SimpleDateFormat(TIME);
-        return mFormat.format(date);
-    }
 
     public static String getNowTime(String format){
         Date date = new Date();

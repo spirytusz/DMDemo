@@ -101,6 +101,9 @@ public class SubMainActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * cancel the executing asyncTask
+     */
     private void cancelTask(){
         if(myAsyncTaskForRep != null && myAsyncTaskForRep.getStatus() == AsyncTask.Status.RUNNING){
             myAsyncTaskForRep.cancel(true);
@@ -116,6 +119,9 @@ public class SubMainActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * get parent params
+     */
     private void getArgs(){
         Intent intent = getIntent();
         i = intent.getIntExtra(typeKey,-1);
@@ -123,6 +129,9 @@ public class SubMainActivity extends AppCompatActivity {
         Sno = intent.getStringExtra(mSnoKey);
     }
 
+    /**
+     * init Pane
+     */
     private void LoadPane(){
         Toolbar toolbar = (Toolbar)findViewById(R.id.tb_toolbar);
         setSupportActionBar(toolbar);
@@ -138,6 +147,9 @@ public class SubMainActivity extends AppCompatActivity {
         listView = (ListView)findViewById(R.id.submainactivity_listview);
     }
 
+    /**
+     * executing suitable asyncTask
+     */
     private void GetMessage(){
         switch (i){
             case 0:
@@ -151,6 +163,9 @@ public class SubMainActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * execute WebService Method to get RepBasicInfo
+     */
     private void getRepResponse(){
         myAsyncTaskForRep
                 = new MyAsyncTask<getRepBasInfoResponse>(this, WebServiceConnector.METHOD_GETREPAIRBASICINFOBYSNO);
@@ -175,6 +190,9 @@ public class SubMainActivity extends AppCompatActivity {
         myAsyncTaskForRep.execute(getParamType(),getInput());
     }
 
+    /**
+     * execute WebService Method to get RepPic
+     */
     private void getRepPicResponse(){
         myAsyncTaskForRepPic = new MyAsyncTask<getRepPicResponse>(this,WebServiceConnector.METHOD_GETREPBASICINFOBMP);
         myAsyncTaskForRepPic.setListener(new getRepPicResponse() {
@@ -187,6 +205,9 @@ public class SubMainActivity extends AppCompatActivity {
         myAsyncTaskForRepPic.execute(getParamType(),getInput());
     }
 
+    /**
+     * execute WebService Method to get SLSBasicInfo
+     */
     private void getSLSResponse(){
         myAsyncTaskForSLS
                 = new MyAsyncTask<getSLSInfoResponse>(this, WebServiceConnector.METHOD_GETSLSBASICINFO);
@@ -209,6 +230,9 @@ public class SubMainActivity extends AppCompatActivity {
         myAsyncTaskForSLS.execute(getParamType(),getInput());
     }
 
+    /**
+     * execute WebService Method to get RRlBasicInfo
+     */
     private void getRLResponse(){
         myAsyncTaskForRL
                 = new MyAsyncTask<getRLInfoResponse>(this, WebServiceConnector.METHOD_GETRETURNLATELYBASICINFO);
@@ -231,6 +255,10 @@ public class SubMainActivity extends AppCompatActivity {
         myAsyncTaskForRL.execute(getParamType(),getInput());
     }
 
+    /**
+     * get WebService Method Params Name
+     * @return Params Name
+     */
     private ArrayList<String> getParamType(){
         ArrayList<String> paramType = new ArrayList<>();
         paramType.clear();
@@ -238,6 +266,10 @@ public class SubMainActivity extends AppCompatActivity {
         return paramType;
     }
 
+    /**
+     * get WebService Method Params
+     * @return Params
+     */
     private ArrayList<String> getInput(){
         ArrayList<String> input = new ArrayList<>();
         input.clear();
@@ -245,6 +277,10 @@ public class SubMainActivity extends AppCompatActivity {
         return input;
     }
 
+    /**
+     * after getting RepPic,refresh listView
+     * @param result
+     */
     private void RefreshUI(ArrayList<String> result){
         final int type = i;
         listView = (ListView) findViewById(R.id.submainactivity_listview);
@@ -260,22 +296,43 @@ public class SubMainActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * save RepTextInfo
+     * @param texts RepText Info
+     */
     private void setRepInfoText(ArrayList<String> texts){
         this.texts = texts;
     }
 
+    /**
+     * get RepTextInfo
+     * @return RepTextInfo
+     */
     private ArrayList<String> getRepInfoText(){
         return texts;
     }
 
+    /**
+     * save RepPic
+     * @param pictures RepPic
+     */
     private void setRepInfoPic(ArrayList<String> pictures){
         this.pictures = pictures;
     }
 
+    /**
+     * get RepPic
+     * @return RepPic
+     */
     private ArrayList<String> getRepInfoPic(){
         return pictures;
     }
 
+    /**
+     * get listView adapter
+     * @param response WebService response
+     * @return listView adapter
+     */
     private SimpleAdapter getAdapter(ArrayList<String> response){
         List<RSFListViewItem> list = getListViewItemList(response);
         List<Map<String,Object>> result = getListDate(list);
@@ -304,8 +361,8 @@ public class SubMainActivity extends AppCompatActivity {
     }
 
     /**
-     *
-     * @return 加入了RSFListViewItem的List<RSFListViewItem> list
+     * get listView content
+     * @return List<RSFListViewItem> list
      */
     private List<RSFListViewItem> getListViewItemList(ArrayList<String> result){
         if(result.size()>0) {
@@ -381,6 +438,13 @@ public class SubMainActivity extends AppCompatActivity {
         this.startActivity(intent);
     }
 
+    /**
+     * Start This Activity
+     * @param context Context
+     * @param title toolbar title
+     * @param i Rep or SLS or RL
+     * @param Sno Sno
+     */
     public static void StartThisActivity(Context context,final String title,final int i,final String Sno) {
         Intent intent = new Intent(context, SubMainActivity.class);
         intent.putExtra(titleKey,title);

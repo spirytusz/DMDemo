@@ -177,20 +177,4 @@ public class WebServiceConnector {
         }
     }
 
-    /**
-     * 判断给定方法是否为单一返回值
-     *
-     * @param methodName 方法名
-     * @return 返回值类型是否为单一返回值
-     */
-    /*private static boolean isSingleResponse(String methodName) {
-        return methodName == METHOD_NEWREPAIRREPORT
-                || methodName == METHOD_NEWRETURNLATELY
-                || methodName == METHOD_NEWSTUDENTLEAVINGSCHOOL
-                || methodName == METHOD_REGISTERACCOUNT
-                || methodName == METHOD_UPDATEAVATAR
-                || methodName == METHOD_MODIFYPWD
-                || methodName == METHOD_GETSNOBYACCOUNT
-                || methodName == METHOD_GETAVATAR;
-    }*/
 }

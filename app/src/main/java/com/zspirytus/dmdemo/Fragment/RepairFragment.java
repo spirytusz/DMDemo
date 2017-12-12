@@ -69,7 +69,11 @@ public class RepairFragment extends Fragment {
         super.onDestroyView();
     }
 
-    public void LoadPane(View v){
+    /**
+     * init Pane
+     * @param v rootView
+     */
+    private void LoadPane(View v){
         final String[] mArea = {
                 getString(R.string.Public_Area).toString(),
                 getString(R.string.Living_Area).toString()
@@ -150,6 +154,9 @@ public class RepairFragment extends Fragment {
         });
     }
 
+    /**
+     * Send Message to WebService
+     */
     private void SendMessage(){
         MyAsyncTask<getBooleanTypeResponse> myAsyncTask = new MyAsyncTask<getBooleanTypeResponse>(mParentActivity,WebServiceConnector.METHOD_NEWREPAIRREPORT);
         myAsyncTask.setListener(new getBooleanTypeResponse() {
@@ -175,6 +182,10 @@ public class RepairFragment extends Fragment {
         myAsyncTask.execute(getParamType(),getInput());
     }
 
+    /**
+     * get WebService Method Params
+     * @return Params
+     */
     private ArrayList<String> getInput(){
         String Sno = getArguments().getString(mSnoKey);
         String repairNo = DateUtil.getNowDate("ddHHmmssSSS");
@@ -212,6 +223,10 @@ public class RepairFragment extends Fragment {
         return input;
     }
 
+    /**
+     * get WebService Method Params Name
+     * @return Params Name
+     */
     private ArrayList<String> getParamType(){
         ArrayList<String> paraType = new ArrayList<String>();
         paraType.clear();
@@ -227,6 +242,10 @@ public class RepairFragment extends Fragment {
         return paraType;
     }
 
+    /**
+     * is input legal
+     * @return true or false
+     */
     private boolean isInputLegal(){
         String area = mRepairArea.getText().toString();
         String place = mRepairPlace.getText().toString();
@@ -238,6 +257,12 @@ public class RepairFragment extends Fragment {
         }
         return true;
     }
+
+    /**
+     * set Args and get this Fragment
+     * @param Sno Sno
+     * @return this Fragment
+     */
     public static RepairFragment GetThisFragment(String Sno){
         RepairFragment rf = new RepairFragment();
         Bundle bundle = new Bundle();

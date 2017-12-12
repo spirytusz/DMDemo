@@ -45,6 +45,10 @@ public class SubLoginActivity extends AppCompatActivity {
         super.onDestroy();
     }
 
+    /**
+     * if it is register view,set register view,else set modifyPwd view
+     * @param view register view or modifyPwd view
+     */
     private void mySetContentView(int view){
         switch(view){
             case REGISTER:
@@ -58,6 +62,9 @@ public class SubLoginActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * init register view
+     */
     private void initRegView(){
         mSno = (EditText)findViewById(R.id.edittext_reg_sno);
         mAccount = (EditText)findViewById(R.id.edittext_reg_account);
@@ -89,6 +96,10 @@ public class SubLoginActivity extends AppCompatActivity {
         actionBar.setTitle(R.string.New_Member);
     }
 
+    /**
+     * get WebService Method： Reg Params Name
+     * @return Reg Params Name
+     */
     private ArrayList<String> getRegParamType(){
         ArrayList<String> paramType = new ArrayList<>();
         paramType.clear();
@@ -99,6 +110,10 @@ public class SubLoginActivity extends AppCompatActivity {
         return paramType;
     }
 
+    /**
+     * get WebService Method： Reg Params
+     * @return Reg Params
+     */
     private ArrayList<String> getRegInput(){
         ArrayList<String> input = new ArrayList<>();
         boolean isManager = mSno.getText().toString().indexOf("5281") != -1;
@@ -112,6 +127,9 @@ public class SubLoginActivity extends AppCompatActivity {
         return input;
     }
 
+    /**
+     * init ModifyPwd view
+     */
     private void initModifyPwdView(){
         mAccount = (EditText)findViewById(R.id.edittext_mPwd_account);
         mPwd = (EditText)findViewById(R.id.edittext_mPwd_pwd);
@@ -144,6 +162,10 @@ public class SubLoginActivity extends AppCompatActivity {
         actionBar.setTitle(R.string.Modify_Pwd);
     }
 
+    /**
+     * get WebService Method: modifyPwd Params Name
+     * @return modifyPwd Params Name
+     */
     private ArrayList<String> getModParamType(){
         ArrayList<String> paramType = new ArrayList<>();
         paramType.clear();
@@ -152,6 +174,10 @@ public class SubLoginActivity extends AppCompatActivity {
         return paramType;
     }
 
+    /**
+     * get WebService Method: modifyPwd Params
+     * @return modifyPwd Params
+     */
     private ArrayList<String> getModInput(){
         ArrayList<String> input = new ArrayList<>();
         input.clear();
@@ -160,6 +186,11 @@ public class SubLoginActivity extends AppCompatActivity {
         return input;
     }
 
+    /**
+     * Start This Activity
+     * @param context Context
+     * @param view viewId
+     */
     public static void StartThisActivity(Context context,int view){
         Intent intent = new Intent(context, SubLoginActivity.class);
         intent.putExtra(viewKey, view);

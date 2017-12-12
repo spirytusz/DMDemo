@@ -49,6 +49,10 @@ public class RLManagerFragment extends Fragment {
         mParentActivity = (Activity)context;
     }
 
+    /**
+     * init Pane
+     * @param view rootView
+     */
     private void LoadPane(View view){
         listView = view.findViewById(R.id.rlmanager_listview);
         ArrayList<String> result = getArguments().getStringArrayList(mResultKey);
@@ -68,6 +72,11 @@ public class RLManagerFragment extends Fragment {
         }
     }
 
+    /**
+     * get listView adapter
+     * @param response WebService response
+     * @return
+     */
     private SimpleAdapter getAdapter(ArrayList<String> response){
         List<RSFListViewItem> list = getListViewItemList(response);
         List<Map<String,Object>> result = getListDate(list);
@@ -97,7 +106,7 @@ public class RLManagerFragment extends Fragment {
 
     /**
      *
-     * @return 加入了RSFListViewItem的List<RSFListViewItem> list
+     * @return List<RSFListViewItem> list
      */
     private List<RSFListViewItem> getListViewItemList(ArrayList<String> result){
         if(result.size()>0) {
@@ -137,6 +146,11 @@ public class RLManagerFragment extends Fragment {
         return result;
     }
 
+    /**
+     * set Args and get this Fragment
+     * @param result WebService response
+     * @return this Fragment
+     */
     public static RLManagerFragment GetThisFragment(ArrayList<String> result){
         RLManagerFragment rmf = new RLManagerFragment();
         Bundle bundle = new Bundle();

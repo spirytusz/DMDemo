@@ -52,7 +52,11 @@ public class Settings extends Fragment {
         super.onDestroyView();
     }
 
-    public void LoadPane(View v){
+    /**
+     * init Pane
+     * @param v rootView
+     */
+    private void LoadPane(View v){
         String[] mListViewItem = {
                 getString(R.string.Switch_Account).toString(),
                 getString(R.string.Delete_Account_Info).toString()
@@ -78,6 +82,9 @@ public class Settings extends Fragment {
         });
     }
 
+    /**
+     * clear all account info
+     */
     private void clearAccountInfo(){
         SharedPreferences pref1 = mParentActivity.getSharedPreferences("data", Context.MODE_PRIVATE);
         pref1.edit().clear().commit();

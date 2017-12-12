@@ -50,6 +50,10 @@ public class BackLateFragment extends Fragment {
         mParentActivity = (Activity) context;
     }
 
+    /**
+     * init Pane
+     * @param view rootView
+     */
     private void LoadPane(View view) {
         mReturnTime = view.findViewById(R.id.blf_returnTime);
         mReturnTime.setOnClickListener(new View.OnClickListener() {
@@ -72,6 +76,9 @@ public class BackLateFragment extends Fragment {
         });
     }
 
+    /**
+     * Send Message to WebService
+     */
     private void SendMessage() {
         MyAsyncTask<getBooleanTypeResponse> myAsyncTask = new MyAsyncTask<getBooleanTypeResponse>(mParentActivity, WebServiceConnector.METHOD_NEWRETURNLATELY);
         myAsyncTask.setListener(new getBooleanTypeResponse() {
@@ -89,6 +96,10 @@ public class BackLateFragment extends Fragment {
         myAsyncTask.execute(getParamType(), getInput());
     }
 
+    /**
+     * get WebService Method Params Name
+     * @return Params Name
+     */
     private ArrayList<String> getParamType() {
         ArrayList<String> param = new ArrayList<>();
         param.clear();
@@ -99,6 +110,10 @@ public class BackLateFragment extends Fragment {
         return param;
     }
 
+    /**
+     * get WebService Method Params
+     * @return Params
+     */
     private ArrayList<String> getInput() {
         ArrayList<String> input = new ArrayList<>();
         input.clear();
@@ -120,12 +135,20 @@ public class BackLateFragment extends Fragment {
         return input;
     }
 
+    /**
+     * is Input legal
+     * @return true or false
+     */
     private boolean isInputLegal() {
         if (mReason.getText().toString().equals("") || mReturnTime.getText().toString().equals(getString(R.string.Return_Time)))
             return false;
         return true;
     }
 
+    /**
+     * Generated Rno randomly
+     * @return Rno
+     */
     private String getRno() {
         SimpleDateFormat format = new SimpleDateFormat("ddHHmmssSSS");
         Date curDate = new Date(System.currentTimeMillis());
@@ -133,6 +156,11 @@ public class BackLateFragment extends Fragment {
         return Rno;
     }
 
+    /**
+     * set Args and get this Fragment
+     * @param Sno Sno
+     * @return this Fragment
+     */
     public static BackLateFragment GetThisFragment(String Sno) {
         BackLateFragment blf = new BackLateFragment();
         Bundle bundle = new Bundle();

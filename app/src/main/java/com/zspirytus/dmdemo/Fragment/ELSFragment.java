@@ -60,7 +60,11 @@ public class ELSFragment extends Fragment {
         super.onDestroyView();
     }
 
-    public void LoadPane(View v) {
+    /**
+     * init Pane
+     * @param v rootView
+     */
+    private void LoadPane(View v) {
         mStartTime = v.findViewById(R.id.els_start_time);
         mStartTime.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -89,7 +93,10 @@ public class ELSFragment extends Fragment {
         });
     }
 
-    public void SendMessage() {
+    /**
+     * Send Message to WebService
+     */
+    private void SendMessage() {
         MyAsyncTask<getBooleanTypeResponse> myAsyncTask = new MyAsyncTask<getBooleanTypeResponse>(mParentActivity, WebServiceConnector.METHOD_NEWSTUDENTLEAVINGSCHOOL);
         myAsyncTask.setListener(new getBooleanTypeResponse() {
             @Override
@@ -107,6 +114,10 @@ public class ELSFragment extends Fragment {
         myAsyncTask.execute(getParamType(), getInput());
     }
 
+    /**
+     * is input legal
+     * @return true or false
+     */
     private boolean isInputLegal() {
         String start = mStartTime.getText().toString();
         String end = mEndTime.getText().toString();
@@ -117,6 +128,10 @@ public class ELSFragment extends Fragment {
                 && DateUtil.isDateOneBigger(mEndTime.getText().toString(),mStartTime.getText().toString());
     }
 
+    /**
+     * get WebService Method Params Name
+     * @return Params Name
+     */
     private ArrayList<String> getParamType() {
         ArrayList<String> paramType = new ArrayList<>();
         paramType.clear();
@@ -128,6 +143,10 @@ public class ELSFragment extends Fragment {
         return paramType;
     }
 
+    /**
+     * get WebService Method Params
+     * @return Params
+     */
     private ArrayList<String> getInput() {
         ArrayList<String> input = new ArrayList<>();
         input.clear();
@@ -140,6 +159,11 @@ public class ELSFragment extends Fragment {
         return input;
     }
 
+    /**
+     * set Args and get this Fragment
+     * @param Sno Sno
+     * @return this Fragment
+     */
     public static ELSFragment GetThisFragment(String Sno) {
         ELSFragment els = new ELSFragment();
         Bundle bundle = new Bundle();

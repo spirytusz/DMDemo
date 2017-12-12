@@ -60,6 +60,12 @@ public class MyInfoFragment extends Fragment{
     private ArrayList<String> inform;
     private ProgressBar mProgressBar;
 
+    /**
+     * set Args and get this Fragment
+     * @param context Context
+     * @param obj WebService response
+     * @return this Fragment
+     */
     public static MyInfoFragment GetThisFragment(Context context,Object...obj){
         MyInfoFragment mFragment = new MyInfoFragment();
         saveStudentInfo(context,(ArrayList<String>) obj[0]);
@@ -69,6 +75,11 @@ public class MyInfoFragment extends Fragment{
         return mFragment;
     }
 
+    /**
+     * format WebService response
+     * @param oldList WebService response
+     * @return formated WebService response
+     */
     public static ArrayList<String> FormatList(ArrayList<String> oldList){
         ArrayList<String> list = new ArrayList<String>();
         list.clear();
@@ -111,6 +122,9 @@ public class MyInfoFragment extends Fragment{
             mAvatar.setImageBitmap(PhotoUtil.getBitmapbyString(avatar));
     }
 
+    /**
+     * Restore avatar from database
+     */
     private void RestoreAvatarFromDatabase(){
         MyAsyncTask<getAvatarResponse> myAsyncTask = new MyAsyncTask<getAvatarResponse>(mParentActivity,WebServiceConnector.METHOD_GETAVATAR,mProgressBar);
         myAsyncTask.setListener(new getAvatarResponse() {
@@ -130,6 +144,10 @@ public class MyInfoFragment extends Fragment{
         myAsyncTask.execute(getParamType(),getInput());
     }
 
+    /**
+     * get WebService Method Params Name
+     * @return Params Name
+     */
     private ArrayList<String> getParamType(){
         ArrayList<String> paramType = new ArrayList<>();
         paramType.clear();
@@ -137,6 +155,10 @@ public class MyInfoFragment extends Fragment{
         return paramType;
     }
 
+    /**
+     * get WebService Method Params
+     * @return Params
+     */
     private ArrayList<String> getInput(){
         ArrayList<String> input = new ArrayList<>();
         input.clear();
@@ -147,9 +169,9 @@ public class MyInfoFragment extends Fragment{
     }
 
     /**
-     *  保存学生信息，减少不必要的访问数据库次数
-     * @param context 上下文
-     * @param list     封装成ArrayList<String>的查询数据库获得的结果
+     *  save StudentInfo
+     * @param context Context
+     * @param list     WebService response
      */
     private static void saveStudentInfo(Context context,ArrayList<String> list){
         SharedPreferences.Editor editor = context.getSharedPreferences(INFO_FILENAME,Context.MODE_PRIVATE).edit();
@@ -161,9 +183,9 @@ public class MyInfoFragment extends Fragment{
     }
 
     /**
-     *   获取保存了的学生信息
-     * @param activity  上下文
-     * @return            保存的学生信息
+     *   get saved StudentInfo
+     * @param activity  Context
+     * @return saved StudentInf
      */
     public static ArrayList<String> getStudentInfobyLocalFile(Activity activity,String Sno){
         SharedPreferences pref = activity.getSharedPreferences(INFO_FILENAME,Context.MODE_PRIVATE);
@@ -184,6 +206,10 @@ public class MyInfoFragment extends Fragment{
         return list;
     }
 
+    /**
+     * get listView adapter
+     * @return listView adapter
+     */
     private SimpleAdapter getAdapter(){
         List<InfoItem> list = getListViewItemList();
         List<Map<String,String>> result = getListData(list);
@@ -199,7 +225,7 @@ public class MyInfoFragment extends Fragment{
 
     /**
      *
-     * @return 加入了InfoItem的List<InfoItem> list
+     * @return List<InfoItem> list
      */
     private List<InfoItem> getListViewItemList(){
         String[] str = {
@@ -238,7 +264,11 @@ public class MyInfoFragment extends Fragment{
         return result;
     }
 
-    public void LoadPane(View v){
+    /**
+     * init Pane
+     * @param v rootView
+     */
+    private void LoadPane(View v){
         mProgressBar = v.findViewById(R.id.myinfofragment_progressbar);
         mProgressBar.setVisibility(View.GONE);
         String[] mInfoItem = {
