@@ -163,8 +163,16 @@ public class DetailsInfoActivity extends AppCompatActivity {
                     @Override
                     public void getResult(ArrayList<String> result) {
                         ArrayList<String> formatResult = new ArrayList<String>();
-                        for(int i = 0;i<result.size();i++)
-                            formatResult.add(result.get(i));
+                        for(int i = 0;i<result.size();i++){
+                            String str = result.get(i);
+                            if(!str.equals("1")
+                                    && !str.equals("2")
+                                    && !str.equals("3")
+                                    && !str.equals("4"))
+                                formatResult.add(str);
+                            else
+                                formatResult.add(getStatus(Integer.parseInt(str)));
+                        }
                         //Refresh UI
                         LoadInfo(formatResult);
                     }
@@ -186,7 +194,7 @@ public class DetailsInfoActivity extends AppCompatActivity {
                         formatResult.add(result.get(0));
                         formatResult.add(DateUtil.FormatDate(result.get(1),"yyyy/MM/dd")+" - "+DateUtil.FormatDate(result.get(2),"yyyy/MM/dd"));
                         formatResult.add(result.get(3));
-                        formatResult.add(result.get(4));
+                        formatResult.add(getStatus(Integer.parseInt(result.get(4))));
                         //Refresh UI
                         LoadInfo(formatResult);
                     }
@@ -205,14 +213,37 @@ public class DetailsInfoActivity extends AppCompatActivity {
                         }
                         ArrayList<String> formatResult = new ArrayList<String>();
                         formatResult.add(PhotoUtil.convertIconToString(BitmapFactory.decodeResource(getResources(),R.drawable.ic_av_timer_black_custom_48dp)));
-                        for(int i = 0;i<result.size();i++)
-                            formatResult.add(result.get(i));
+                        for(int i = 0;i<result.size();i++){
+                            String str = result.get(i);
+                            if(!str.equals("1")
+                                    && !str.equals("2")
+                                    && !str.equals("3")
+                                    && !str.equals("4"))
+                            formatResult.add(str);
+                            else
+                                formatResult.add(getStatus(Integer.parseInt(str)));
+                        }
                         //Refresh UI
                         LoadInfo(formatResult);
                     }
                 });
                 myAsyncTask2.execute(paramType,param);
                 break;
+        }
+    }
+
+    private String getStatus(int i){
+        switch (i){
+            case 1:
+                return "已提交";
+            case 2:
+                return "开始处理";
+            case 3:
+                return "处理中";
+            case 4:
+                return "处理完成";
+            default:
+                return "-1";
         }
     }
 
