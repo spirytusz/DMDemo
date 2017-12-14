@@ -4,13 +4,13 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <TextView
+    <ImageView
         android:id="@+id/aboutfragment_text"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
         android:gravity="center"
-        android:text="aboutfragment" />
+        android:src="@mipmap/ic_launcher_custom" />
 
     <TextView
         android:id="@+id/aboutfragment_webservice_git"

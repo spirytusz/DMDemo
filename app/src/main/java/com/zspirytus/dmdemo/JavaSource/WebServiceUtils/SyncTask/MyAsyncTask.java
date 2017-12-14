@@ -1,8 +1,11 @@
 package com.zspirytus.dmdemo.JavaSource.WebServiceUtils.SyncTask;
 
+import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.os.AsyncTask;
+import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.View;
 import android.widget.ProgressBar;
@@ -22,9 +25,12 @@ import com.zspirytus.dmdemo.Interface.getSLSDetailsInfoResponse;
 import com.zspirytus.dmdemo.Interface.getSLSInfoResponse;
 import com.zspirytus.dmdemo.Interface.getSnobyAccountResponse;
 import com.zspirytus.dmdemo.Interface.getStudentBasicInfoResponse;
+import com.zspirytus.dmdemo.JavaSource.Manager.ActivityManager;
+import com.zspirytus.dmdemo.JavaSource.Utils.DialogUtil;
 import com.zspirytus.dmdemo.JavaSource.WebServiceUtils.WebServiceConnector;
 
 import java.util.ArrayList;
+import java.util.EmptyStackException;
 
 /**
  * Created by ZSpirytus on 2017/11/4.
@@ -88,6 +94,17 @@ public class MyAsyncTask<T> extends AsyncTask<ArrayList<String>, Void, ArrayList
 
     @Override
     protected void onPostExecute(ArrayList<String> result) {
+        if(result == null){
+            AlertDialog.Builder dialog = DialogUtil.showNegativeTipsDialog(context,"请求服务器连接失败");
+            dialog.setPositiveButton("好",
+                    new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            ActivityManager.finishAll();
+                        }
+                    });
+            dialog.show();
+        }
         getTaskResult(result);
         if(mProgressBar != null)
             mProgressBar.setVisibility(View.GONE);

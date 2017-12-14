@@ -8,6 +8,7 @@ import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.zspirytus.dmdemo.R;
@@ -22,7 +23,7 @@ public class AboutFragment extends Fragment {
     }
 
     private void LoadPane(View view){
-        TextView centerTextView = view.findViewById(R.id.aboutfragment_text);
+        ImageView centerTextView = view.findViewById(R.id.aboutfragment_text);
         TextView webTextView = view.findViewById(R.id.aboutfragment_webservice_git);
         TextView appTextView = view.findViewById(R.id.aboutfragment_app_git);
         final String app = getString(R.string.app_git);

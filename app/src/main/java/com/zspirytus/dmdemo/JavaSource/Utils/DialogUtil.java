@@ -136,6 +136,13 @@ public class DialogUtil {
         dialog.show();
     }
 
+    public static AlertDialog.Builder showNegativeTipsDialog(Context context,String errorMessage){
+        AlertDialog.Builder dialog = new AlertDialog.Builder(context);
+        dialog.setTitle(TIP);
+        dialog.setMessage(errorMessage);
+        return dialog;
+    }
+
     public static void showListDialog(Activity activity,final String[] list,final TextView textView){
         AlertDialog.Builder builder = new AlertDialog.Builder(activity);
         builder.setSingleChoiceItems(list, 0, new DialogInterface.OnClickListener() {// 2默认的选中
