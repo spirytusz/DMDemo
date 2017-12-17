@@ -33,7 +33,7 @@ import com.zspirytus.dmdemo.R;
 
 import java.util.ArrayList;
 
-public class DetailsInfoActivity extends AppCompatActivity {
+public class DetailsInfoActivity extends BaseActivity {
 
     private static final String TAG = "DetailsInfoActivity";
     private static final String PrimaryKey = "primaryKey";

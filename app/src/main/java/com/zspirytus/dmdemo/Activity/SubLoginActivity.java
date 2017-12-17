@@ -19,7 +19,7 @@ import com.zspirytus.dmdemo.R;
 
 import java.util.ArrayList;
 
-public class SubLoginActivity extends AppCompatActivity {
+public class SubLoginActivity extends BaseActivity {
 
     private static final String viewKey = "viewKey";
     private static final int REGISTER = 1;
@@ -40,7 +40,7 @@ public class SubLoginActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onDestroy(){
+    public void onDestroy(){
         ActivityManager.removeActivity(this);
         super.onDestroy();
     }

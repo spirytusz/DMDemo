@@ -38,7 +38,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class SubMainActivity extends AppCompatActivity {
+public class SubMainActivity extends BaseActivity {
 
     private static final String TAG = "SubMainActivity";
     private static final String titleKey = "titleKey";
