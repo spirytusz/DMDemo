@@ -116,7 +116,7 @@ public class SLSManagerFragment extends Fragment {
             RSFListViewItem rsf;
             for(int i = 0;i<length;i+=3){
                 rsf = new RSFListViewItem();
-                rsf.setmBitmap(BitmapFactory.decodeResource(getResources(),R.drawable.ic_directions_run_black_48dp));
+                rsf.setmBitmap(BitmapFactory.decodeResource(getResources(),R.drawable.ic_directions_run_black_custom_48dp));
                 rsf.setmTitle(result.get(i));
                 rsf.setmTime(DateUtil.FormatDate(result.get(i+1),"yyyy/MM/dd")+"\t"+DateUtil.FormatDate(result.get(i+2),"yyyy/MM/dd"));
                 list.add(rsf);

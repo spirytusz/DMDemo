@@ -169,7 +169,7 @@ public class MainActivity extends BaseActivity
         mSno.setText(mSnoValue);
         mName  = headerView.findViewById(R.id.side_name);
         mAvatar = headerView.findViewById(R.id.imageView);
-        mAvatar.setImageResource(R.drawable.ic_account_circle_black_24dp);
+        mAvatar.setImageResource(R.drawable.ic_account_circle_black_48dp);
     }
 
     /**

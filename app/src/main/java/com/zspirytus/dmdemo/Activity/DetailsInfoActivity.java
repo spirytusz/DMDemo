@@ -6,9 +6,9 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.BitmapFactory;
 import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -52,14 +52,6 @@ public class DetailsInfoActivity extends BaseActivity {
         setContentView(R.layout.activity_details_info);
         LoadPane();
         GetMessage();
-    }
-
-    @Override
-    public void onDestroy(){
-        Intent intent = getIntent();
-        intent.putExtra(doNothing,doNothing);
-        setResult(0,intent);
-        super.onDestroy();
     }
 
     @Override
@@ -190,7 +182,7 @@ public class DetailsInfoActivity extends BaseActivity {
                             return;
                         }
                         ArrayList<String> formatResult = new ArrayList<String>();
-                        formatResult.add(PhotoUtil.convertIconToString(BitmapFactory.decodeResource(getResources(),R.drawable.ic_directions_run_black_48dp)));
+                        formatResult.add(PhotoUtil.convertIconToString(BitmapFactory.decodeResource(getResources(),R.drawable.ic_directions_run_black_custom_48dp)));
                         formatResult.add(result.get(0));
                         formatResult.add(DateUtil.FormatDate(result.get(1),"yyyy/MM/dd")+" - "+DateUtil.FormatDate(result.get(2),"yyyy/MM/dd"));
                         formatResult.add(result.get(3));
@@ -576,6 +568,9 @@ public class DetailsInfoActivity extends BaseActivity {
      * @param type Rep or SLS or RL
      */
     public static void StartThisActivity(Context context, String primaryKey, int type){
+        Log.e(TAG,"sizeTest:\t"+primaryKey.length());
+        Log.e(TAG,"sizeTest:\t"+Boolean.toString(context != null));
+        Log.e(TAG,"sizeTest:\t"+context.getCacheDir().length());
         Intent intent = new Intent(context,DetailsInfoActivity.class);
         intent.putExtra(PrimaryKey,primaryKey);
         intent.putExtra(typeKey,type);

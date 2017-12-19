@@ -133,7 +133,7 @@ public class MyInfoFragment extends Fragment{
                 if(result == null)
                     Toast.makeText(mParentActivity,"从数据库获取头像失败！",Toast.LENGTH_SHORT).show();
                 if(result.size() == 0){
-                    mAvatar.setImageResource(R.drawable.ic_account_circle_black_24dp);
+                    mAvatar.setImageResource(R.drawable.ic_account_circle_black_48dp);
                 } else if(result.size() > 0){
                     Bitmap bitmap = PhotoUtil.convertStringToIcon(result.get(0));
                     mAvatar.setImageBitmap(bitmap);

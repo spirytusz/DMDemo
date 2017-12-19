@@ -109,7 +109,7 @@ public class LoginActivity extends BaseActivity {
             public void afterTextChanged(Editable editable) {
                 String account = pref.getString(mAccountKey,"");
                 if(!mAccount.getText().toString().equals(account)){
-                    mAvatar.setImageResource(R.drawable.ic_account_circle_black_24dp);
+                    mAvatar.setImageResource(R.drawable.ic_account_circle_black_48dp);
                 }
                 else if(!account.equals("")){
                     if(!pref.getString(mAvatarKey,"").equals("")){

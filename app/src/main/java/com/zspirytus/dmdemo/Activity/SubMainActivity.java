@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
@@ -18,7 +17,6 @@ import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.zspirytus.dmdemo.Interface.getRLInfoResponse;
 import com.zspirytus.dmdemo.Interface.getRepBasInfoResponse;
@@ -86,19 +84,6 @@ public class SubMainActivity extends BaseActivity {
         ActivityManager.removeActivity(this);
         cancelTask();
         super.onDestroy();
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if(requestCode == mResquestCode){
-            if(resultCode == 0){
-                // delete listView item
-                Bundle bundle = data.getExtras();
-                String deleteNo = bundle.getString(PrimaryKey);
-                Toast.makeText(this,deleteNo,Toast.LENGTH_SHORT).show();
-            }
-        }
     }
 
     /**
@@ -390,7 +375,7 @@ public class SubMainActivity extends BaseActivity {
                 case 1:
                     for(int i = 0;i<length;i+=3){
                         rsf = new RSFListViewItem();
-                        rsf.setmBitmap(BitmapFactory.decodeResource(getResources(),R.drawable.ic_directions_run_black_48dp));
+                        rsf.setmBitmap(BitmapFactory.decodeResource(getResources(),R.drawable.ic_directions_run_black_custom_48dp));
                         rsf.setmTitle(result.get(i));
                         rsf.setmTime(DateUtil.FormatDate(result.get(i+1),"yyyy/MM/dd")+" - "+DateUtil.FormatDate(result.get(i+2),"yyyy/MM/dd"));
                         list.add(rsf);

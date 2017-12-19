@@ -35,8 +35,6 @@ public class BaseActivity extends AppCompatActivity{
 
     private Context context = this;
 
-    private MyNetWorkConnectBroadCaster myNetWorkConnectBroadCaster;
-
     @Override
     protected void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
@@ -51,7 +49,7 @@ public class BaseActivity extends AppCompatActivity{
         }
     }
 
-    @Override
+    /*@Override
     public void onResume(){
         super.onResume();
         IntentFilter intentFilter = new IntentFilter();
@@ -67,7 +65,7 @@ public class BaseActivity extends AppCompatActivity{
         if(myNetWorkConnectBroadCaster != null)
             unregisterReceiver(myNetWorkConnectBroadCaster);
         myNetWorkConnectBroadCaster = null;
-    }
+    }*/
 
     @Override
     public void onDestroy(){
@@ -75,53 +73,4 @@ public class BaseActivity extends AppCompatActivity{
         super.onDestroy();
     }
 
-    public static void setMobileDataState(Context context, boolean enabled) {
-        TelephonyManager mTelephonyManager = (TelephonyManager)context.getSystemService(Context.TELEPHONY_SERVICE);
-        ConnectivityManager mConnectivityManager =(ConnectivityManager)context.getSystemService(Context.CONNECTIVITY_SERVICE);
-        // if api level >= L, use ConnectivityManager, else use TelephonyManager
-        Object object = Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP?       mTelephonyManager : mConnectivityManager;
-        String methodName = Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP? "setDataEnabled" : "setMobileDataEnabled";
-        Method setMobileDataEnable;
-        try {
-            setMobileDataEnable = mConnectivityManager.getClass().getMethod("setDataEnabled", boolean.class);
-            setMobileDataEnable.invoke(object, enabled);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    public static boolean getMobileDataState(Context context) {
-        TelephonyManager mTelephonyManager = (TelephonyManager)context.getSystemService(Context.TELEPHONY_SERVICE);
-        ConnectivityManager mConnectivityManager =(ConnectivityManager)context.getSystemService(Context.CONNECTIVITY_SERVICE);
-        // if api level >= L, use ConnectivityManager, else use TelephonyManager
-        Object object = Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP? mConnectivityManager:mTelephonyManager;
-        String methodName = Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP? "getDataEnabled" : "getMobileDataEnabled";
-        try {
-            Method getMobileDataEnable = mConnectivityManager.getClass().getMethod("getDataEnabled", null);
-            return (Boolean) getMobileDataEnable.invoke(object, null);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return false;
-    }
-
-    class MyNetWorkConnectBroadCaster extends BroadcastReceiver {
-
-        @Override
-        public void onReceive(final Context context, Intent intent){
-            boolean isNetWorkAvailable = NetWorkUtil.isMobileConnected(context) || NetWorkUtil.isWifiConnected(context);
-            if(!isNetWorkAvailable){
-                AlertDialog.Builder dialog = DialogUtil.getDialog((Activity)context,"网络连接未打开,请打开网络");
-                dialog.setPositiveButton("好",
-                        new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialogInterface, int i) {
-
-                            }
-                        });
-                dialog.show();
-            }
-        }
-
-    }
 }

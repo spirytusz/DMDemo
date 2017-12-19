@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -73,15 +74,16 @@ public class SubLoginActivity extends BaseActivity {
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(mSno.getText().toString().equals("") || mAccount.getText().toString().equals("") || mPwd.getText().toString().equals("")){
-                    Toast.makeText(activity,"请输入值！",Toast.LENGTH_SHORT).show();
+                if(!isInputLegalForReg()){
+                    Toast.makeText(activity,"输入值不符合规范！",Toast.LENGTH_SHORT).show();
                     return;
                 }
                 MyAsyncTask<getModRegResponse> myAsyncTask = new MyAsyncTask<getModRegResponse>(activity,WebServiceConnector.METHOD_REGISTERACCOUNT);
                 myAsyncTask.setListener(new getModRegResponse() {
                     @Override
                     public void getResult(ArrayList<String> result) {
-                        if(result.size() > 0 && result.get(0).equals("true")){
+                        boolean isSuccess = result.size() > 0 && result.get(0).indexOf("true") != -1;
+                        if(isSuccess){
                             Toast.makeText(activity,"注册成功！请妥善保存好账号密码！",Toast.LENGTH_SHORT).show();
                             activity.finish();
                         }
@@ -94,6 +96,23 @@ public class SubLoginActivity extends BaseActivity {
         });
         ActionBar actionBar = getSupportActionBar();
         actionBar.setTitle(R.string.New_Member);
+    }
+
+    /**
+     * is input legal for activity reg?
+     * @return true or false
+     */
+    private boolean isInputLegalForReg(){
+        String sno = mSno.getText().toString();
+        String acc = mAccount.getText().toString();
+        String pwd = mPwd.getText().toString();
+        if(sno.length() != 11)
+            return false;
+        if(acc.length() > 9)
+            return false;
+        if (pwd.length() > 16)
+            return false;
+        return true;
     }
 
     /**
@@ -137,15 +156,16 @@ public class SubLoginActivity extends BaseActivity {
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(mAccount.getText().toString().equals("") || mPwd.getText().toString().equals("")){
-                    Toast.makeText(activity,"请输入值！",Toast.LENGTH_SHORT).show();
+                if(!isInputLegalForMod()){
+                    Toast.makeText(activity,"输入值不符合规范！",Toast.LENGTH_SHORT).show();
                     return;
                 }
                 MyAsyncTask<getModRegResponse> myAsyncTask = new MyAsyncTask<getModRegResponse>(activity,WebServiceConnector.METHOD_MODIFYPWD);
                 myAsyncTask.setListener(new getModRegResponse() {
                     @Override
                     public void getResult(ArrayList<String> result) {
-                        if(result.size() > 0 && result.get(0).equals("true")){
+                        boolean isSuccess = result.size() > 0 && result.get(0).indexOf("true") != -1;
+                        if(isSuccess){
                             Toast.makeText(activity,"修改成功！请妥善保存好账号密码！",Toast.LENGTH_SHORT).show();
                             activity.finish();
                         }
@@ -160,6 +180,20 @@ public class SubLoginActivity extends BaseActivity {
         });
         ActionBar actionBar = getSupportActionBar();
         actionBar.setTitle(R.string.Modify_Pwd);
+    }
+
+    /**
+     * is input legal for activity modify pwd?
+     * @return true or false
+     */
+    private boolean isInputLegalForMod(){
+        String acc = mAccount.getText().toString();
+        String pwd = mPwd.getText().toString();
+        if(acc.length() > 9)
+            return false;
+        if(pwd.length() > 16)
+            return false;
+        return true;
     }
 
     /**
