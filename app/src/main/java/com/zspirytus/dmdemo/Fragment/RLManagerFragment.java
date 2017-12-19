@@ -30,7 +30,6 @@ import java.util.Map;
 
 public class RLManagerFragment extends Fragment {
 
-    private static final String TAG = "RLManagerFragment";
     private static final String mResultKey = "result";
 
     private ListView listView;

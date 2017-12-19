@@ -53,7 +53,6 @@ public class MainActivity extends BaseActivity
 
     public CircleImageView mAvatar;
 
-    private static final String TAG = "MainActivity";
     private static final String mSnoKey = "Sno";
     private static final String mAvatarKey = "Avatar";
     private static final int REQ_CAMERA = 0x01;
@@ -81,7 +80,6 @@ public class MainActivity extends BaseActivity
 
     private String mSnoValue;
     private Uri picUri;
-    private boolean isAlbum = false;
     private boolean isRepairPicDir = false;
 
     private CircleImageView cimg;
@@ -219,7 +217,6 @@ public class MainActivity extends BaseActivity
             picUri = PhotoUtil.applyPermissionForCamera(this);
         else if (by == BY_ALBUM) {
             PhotoUtil.applyPermissionForAlbum(this);
-            isAlbum = true;
         }
         cimg = img;
     }
@@ -462,17 +459,6 @@ public class MainActivity extends BaseActivity
         input.add(sno);
         input.add(photo);
         return input;
-    }
-
-    /**
-     * is NetWork available
-     * @return
-     */
-    private boolean isNetWorkConnected(){
-        ConnectivityManager con=(ConnectivityManager)getSystemService(Activity.CONNECTIVITY_SERVICE);
-        boolean wifi=con.getNetworkInfo(ConnectivityManager.TYPE_WIFI).isConnectedOrConnecting();
-        boolean internet=con.getNetworkInfo(ConnectivityManager.TYPE_MOBILE).isConnectedOrConnecting();
-        return wifi||internet;
     }
 
     /**

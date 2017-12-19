@@ -38,8 +38,6 @@ public class DetailsInfoActivity extends BaseActivity {
     private static final String TAG = "DetailsInfoActivity";
     private static final String PrimaryKey = "primaryKey";
     private static final String typeKey = "type";
-    private static final String doNothing = "null";
-    private ArrayList<String> resultMemory;
 
 
     private final Activity activity = this;
@@ -108,7 +106,6 @@ public class DetailsInfoActivity extends BaseActivity {
      * @param result
      */
     private void LoadInfo(ArrayList<String> result){
-        resultMemory = result;
         ImageView imageView = (ImageView) findViewById(R.id.detailsinfoactivity_imageview);
         TextView textView = (TextView) findViewById(R.id.detailsinfoactivity_textview);
         ListView listView = (ListView) findViewById(R.id.detailsiinfoactivity_listview);

@@ -30,7 +30,6 @@ import java.util.Map;
 
 public class RepManagerFragment extends Fragment {
 
-    private static final String TAG = "RepManagerFragment";
     private static final String mResultKey = "result";
     private static final String BMP = "bmp";
     private static final String TITLE = "title";

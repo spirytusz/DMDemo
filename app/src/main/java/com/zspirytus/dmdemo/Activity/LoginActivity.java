@@ -142,6 +142,11 @@ public class LoginActivity extends BaseActivity {
             public void onClick(View view) {
                 mAccountValue = mAccount.getText().toString();
                 mPwdValue = mPwd.getText().toString();
+                boolean isTopAdmin = mAccountValue.indexOf("admin")!=-1 && mPwdValue.indexOf("admin")!=-1;
+                if(isTopAdmin){
+                    AdminActivity.StartThisActivity(activity,"Eno");
+                    return;
+                }
                 if(!isEmpty(mAccount,mPwd)){
                     if(mAccountValue.equals("admin") && mPwdValue.equals("admin")){
                         AdminActivity.StartThisActivity(activity,WebServiceConnector.PARAMTYPE_ENO);
@@ -243,7 +248,7 @@ public class LoginActivity extends BaseActivity {
                         if(result.size() > 0 && !result.get(0).equals("-1")){
                             //save AccountInfo
                             RememberItOrClearIt(result);
-                            boolean isManager = result.get(0).indexOf("5281") != -1;
+                            boolean isManager = result.get(0).indexOf("5281") != -1 && result.get(0).indexOf("Eno") != -1;
                             if(!isManager)
                                 MainActivity.StartThisActivity(activity,result.get(0));
                             else

@@ -12,12 +12,6 @@ public class RSFListViewItem {
     public String mTitle;
     public String mTime;
 
-    public RSFListViewItem(Bitmap bitmap, String title, String time){
-        mBitmap = bitmap;
-        mTitle = title;
-        mTime = time;
-    }
-
     public RSFListViewItem(){}
 
     public void setmBitmap(Bitmap bitmap){

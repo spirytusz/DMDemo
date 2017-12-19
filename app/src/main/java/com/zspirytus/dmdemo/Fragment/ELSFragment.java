@@ -31,7 +31,6 @@ public class ELSFragment extends Fragment {
 
     private Activity mParentActivity;
 
-    private static final String TAG = "ELSchool";
     private static final String mSnoKey = "Sno";
 
     private View view;

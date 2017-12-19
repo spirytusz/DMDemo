@@ -33,8 +33,6 @@ import java.util.Objects;
 
 public class BaseActivity extends AppCompatActivity{
 
-    private Context context = this;
-
     @Override
     protected void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);

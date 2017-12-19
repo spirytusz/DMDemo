@@ -29,7 +29,6 @@ import java.util.Date;
 
 public class BackLateFragment extends Fragment {
 
-    private static final String TAG = "BackLateFragment";
     private static final String mSnoKey = "Sno";
     private Activity mParentActivity;
 

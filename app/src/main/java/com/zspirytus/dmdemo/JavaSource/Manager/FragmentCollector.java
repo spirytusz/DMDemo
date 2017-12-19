@@ -32,7 +32,4 @@ public class FragmentCollector {
         }
     }
 
-    public static final int getFragmentNum(){
-        return fragments.size();
-    }
 }

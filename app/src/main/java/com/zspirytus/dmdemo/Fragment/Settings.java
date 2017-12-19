@@ -27,9 +27,6 @@ import com.zspirytus.dmdemo.R;
 public class Settings extends Fragment {
     private Activity mParentActivity;
 
-    private static final String TAG = "Settings";
-    private static final String FRAGMENT_HIDDEN_STATUS = "FRAGMENT_HIDDEN_STATUS";
-
     private View view;
     private ListView listView;
 

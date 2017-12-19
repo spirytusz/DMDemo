@@ -14,8 +14,6 @@ import java.util.List;
 
 public class XmlUtil {
 
-    private static final String TAG = "XmlUtil";
-
     private static Document getDocument(String str) {
         try {
             Document document = DocumentHelper.parseText(str);

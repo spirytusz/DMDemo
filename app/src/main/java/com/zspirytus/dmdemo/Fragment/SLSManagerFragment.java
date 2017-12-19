@@ -31,7 +31,6 @@ import java.util.Map;
 
 public class SLSManagerFragment extends Fragment {
 
-    private static final String TAG = "SLSManagerFragment";
     private static final String mResultKey = "result";
 
     private ListView listView;

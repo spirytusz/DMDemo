@@ -115,13 +115,6 @@ public class MyInfoFragment extends Fragment{
         super.onDestroyView();
     }
 
-    public void RestoreAvatar(){
-        SharedPreferences pref = mParentActivity.getSharedPreferences("data",Context.MODE_PRIVATE);
-        String avatar = pref.getString(mAvatarKey,"");
-        if(!avatar.equals(""))
-            mAvatar.setImageBitmap(PhotoUtil.getBitmapbyString(avatar));
-    }
-
     /**
      * Restore avatar from database
      */

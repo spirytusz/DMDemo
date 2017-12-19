@@ -17,7 +17,6 @@ public class DateUtil {
     private static final String HOUR = "HH";
     private static final String MINUTES = "mm";
     private static final String DATE = YEAR+"-"+MONTH+"-"+DAY;
-    private static final String TIME = HOUR+":"+MINUTES+":ss";
 
     public static int getNowYear_int(){
         Date date = new Date();

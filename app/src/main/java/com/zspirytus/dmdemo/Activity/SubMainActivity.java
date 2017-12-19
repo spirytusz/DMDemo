@@ -38,12 +38,10 @@ import java.util.Map;
 
 public class SubMainActivity extends BaseActivity {
 
-    private static final String TAG = "SubMainActivity";
     private static final String titleKey = "titleKey";
     private static final String typeKey = "typeKey";
     private static final String PrimaryKey = "primaryKey";
     private static final String mSnoKey = "Sno";
-    private static final int mResquestCode = 2677;
     private final Activity activity = this;
 
     private int i;
@@ -276,7 +274,6 @@ public class SubMainActivity extends BaseActivity {
                 HashMap<String,Object> map=(HashMap<String,Object>)adapterView.getItemAtPosition(i);
                 String primaryKey = (String)map.get("title");
                 DetailsInfoActivity.StartThisActivity(activity,primaryKey,type);
-                //startNextActivityForResult(primaryKey,type);
             }
         });
     }
@@ -303,14 +300,6 @@ public class SubMainActivity extends BaseActivity {
      */
     private void setRepInfoPic(ArrayList<String> pictures){
         this.pictures = pictures;
-    }
-
-    /**
-     * get RepPic
-     * @return RepPic
-     */
-    private ArrayList<String> getRepInfoPic(){
-        return pictures;
     }
 
     /**

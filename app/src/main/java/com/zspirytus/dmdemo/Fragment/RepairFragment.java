@@ -35,7 +35,6 @@ public class RepairFragment extends Fragment {
 
     private Activity mParentActivity;
 
-    private static final String TAG = "RepairFragment";
     private static final String mSnoKey = "Sno";
 
     private View view;

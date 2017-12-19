@@ -31,7 +31,6 @@ import java.util.ArrayList;
 
 public class AdminActivity extends BaseActivity {
 
-    private static final String TAG = "AdminActivity";
     private static final String mEnoKey = "Eno";
 
     private ProgressBar mProgressBar;
@@ -142,7 +141,10 @@ public class AdminActivity extends BaseActivity {
      */
     private void LoadPane() {
         Toolbar toolbar = (Toolbar) findViewById(R.id.dia_toolbar);
-        toolbar.setTitle(getIntent().getStringExtra(mEnoKey));
+        String title = getIntent().getStringExtra(mEnoKey);
+        if(title.equals("Eno"))
+            title = "Administrator";
+        toolbar.setTitle(title);
         setSupportActionBar(toolbar);
         mProgressBar = (ProgressBar) findViewById(R.id.admin_progressbar);
         mProgressBar.setVisibility(View.GONE);

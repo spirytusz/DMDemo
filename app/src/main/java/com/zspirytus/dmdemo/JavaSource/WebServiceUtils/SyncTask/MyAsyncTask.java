@@ -193,10 +193,4 @@ public class MyAsyncTask<T> extends AsyncTask<ArrayList<String>, Void, ArrayList
         }
     }
 
-    private boolean shouldShowProgressDialog(){
-        return !methodName.equals(WebServiceConnector.METHOD_GETREPBASICINFOBMP) ||
-                !methodName.equals(WebServiceConnector.METHOD_GETREPAIRDETAILSINFO) ||
-                !methodName.equals(WebServiceConnector.METHOD_GETRLDETAILSINFO) ||
-                !methodName.equals(WebServiceConnector.METHOD_GETSLSDETAILSINFO);
-    }
 }
